@@ -105,8 +105,9 @@
             connectedCard.style.display = 'block';
         })
         .catch(error => {
-            console.log('Error: ', error);
-        })
+            console.error('Error: ', error);
+            // Ensure there's no error in the process flow
+        });
     }
 
     function onDisconnected(event){
