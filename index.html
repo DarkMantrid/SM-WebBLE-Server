@@ -23,6 +23,9 @@
                 </p>
                 <p class="gray-label">BLE state: <strong><span id="bleState" style="color:#d13a30;">Disconnected</span></strong></p>
             </div>
+            <div class="card" id="connectedCard" style="display: none;">
+                <p>This card is visible when connected.</p>
+            </div>
         </div>
     </div>
 </body>
@@ -100,6 +103,8 @@
             const decodedValue = new TextDecoder().decode(value);
             console.log("Decoded value: ", decodedValue);
             retrievedValue.innerHTML = decodedValue;
+            // Display the connected card
+            document.getElementById('connectedCard').style.display = 'block';
         })
         .catch(error => {
             console.log('Error: ', error);
@@ -140,6 +145,8 @@
             console.error("Bluetooth is not connected.");
             window.alert("Bluetooth is not connected.")
         }
+        // Hide the connected card on disconnection
+        document.getElementById('connectedCard').style.display = 'none';
     }
 </script>
 </html>
