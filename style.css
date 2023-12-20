@@ -73,7 +73,6 @@ button {
     border-radius: 4px;
 }
 
-
 .connectButton {
     background-color: #24af37;
 }
@@ -91,8 +90,8 @@ button {
     font-size: 1.8rem;
 }
 
-/* Add this style for stateContainer */
-.state #stateContainer {
+/* Adjusted style for stateContainer */
+#stateContainer {
     font-size: 1.2rem;
     line-height: 1.6;
     color: #333; /* Adjust color as needed */
@@ -106,4 +105,5 @@ button {
     }
 }
 
+/* Import Google Fonts after your custom styles */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
