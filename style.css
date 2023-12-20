@@ -68,8 +68,7 @@ body {
 }
 
 /* New styles for the connected card */
-#connectedCard {
-    display: none; /* Initially hide the connected card */
+.connectedCard {
     background-color: white;
     box-shadow: 2px 2px 12px 1px rgba(140, 140, 140, 0.5);
     border-radius: 15px;
