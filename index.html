@@ -154,6 +154,7 @@
     }
     const testButton = document.getElementById('testButton');
     testButton.addEventListener('click', () => {
+        console.log("Button Clicked!"); // Log button click for testing
         const connectedCard = document.getElementById('connectedCard');
         connectedCard.style.display = connectedCard.style.display === 'none' ? 'block' : 'none';
     });
