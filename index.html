@@ -31,7 +31,7 @@
             <div class="card">
                 <h2>State of IDx</h2>
                 <p class="state">
-                    <span id="stateContainer">
+                    <span id="stateContainer" style="display: none;">
                         Node state: 'show node state'.<br>
                         I/O state: 'show I/O state'.<br>
                         ERROR CODE: 'show error'
@@ -78,6 +78,15 @@
         return true
     }
 
+    function showStateContainer() {
+            document.getElementById('stateContainer').style.display = 'block';
+        }
+
+    // Function to hide the stateContainer
+    function hideStateContainer() {
+        document.getElementById('stateContainer').style.display = 'none';
+    }
+
     // Connect to BLE Device and Enable Notifications
     function connectToDevice(){
         console.log('Initializing Bluetooth...');
@@ -90,6 +99,7 @@
             bleStateContainer.innerHTML = 'Connected to device ' + device.name;
             bleStateContainer.style.color = "#24af37";
             device.addEventListener('gattservicedisconnected', onDisconnected);
+            showStateContainer(); // Show stateContainer on connection
             return device.gatt.connect();
         })
         .then(gattServer =>{
@@ -125,6 +135,8 @@
         console.log('Device Disconnected:', event.target.device.name);
         bleStateContainer.innerHTML = "Device disconnected";
         bleStateContainer.style.color = "#d13a30";
+
+        hideStateContainer(); // Hide stateContainer on disconnection
 
         connectToDevice();
     }
