@@ -22,6 +22,7 @@
                     <button id="disconnectBleButton" class="disconnectButton"> Disconnect BLE Device</button>
                 </p>
                 <p class="gray-label">BLE state: <strong><span id="bleState" style="color:#d13a30;">Disconnected</span></strong></p>
+                <button id="testButton">Test Visibility</button>
                 <div class="card" id="connectedCard" style="display: none;">
                     <p>This card is visible when connected.</p>
                 </div>
@@ -151,5 +152,10 @@
         // Hide the connected card on disconnection
         document.getElementById('connectedCard').style.display = 'none';
     }
+    const testButton = document.getElementById('testButton');
+    testButton.addEventListener('click', () => {
+        const connectedCard = document.getElementById('connectedCard');
+        connectedCard.style.display = connectedCard.style.display === 'none' ? 'block' : 'none';
+    });
 </script>
 </html>
