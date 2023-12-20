@@ -57,6 +57,16 @@
     var bleServiceFound;
     var sensorCharacteristicFound;
 
+    // Function to show the card containing the stateContainer
+    function showStateCard() {
+        document.querySelector('.state .card').style.display = 'block';
+    }
+
+    // Function to hide the card containing the stateContainer
+    function hideStateCard() {
+        document.querySelector('.state .card').style.display = 'none';
+    }
+
     // Connect Button (search for BLE Devices only if BLE is available)
     connectButton.addEventListener('click', (event) => {
         if (isWebBluetoothEnabled()){
@@ -76,15 +86,6 @@
         }
         console.log('Web Bluetooth API supported in this browser.');
         return true
-    }
-
-    function showStateCard() {
-        document.querySelector('.card').style.display = 'block';
-    }
-
-    // Function to hide the card containing the stateContainer
-    function hideStateCard() {
-        document.querySelector('.card').style.display = 'none';
     }
 
     // Connect to BLE Device and Enable Notifications
@@ -163,7 +164,6 @@
                 console.log("No characteristic found to disconnect.");
             }
         } else {
-            // Throw an error if Bluetooth is not connected
             console.error("Bluetooth is not connected.");
             window.alert("Bluetooth is not connected.")
         }
@@ -171,6 +171,6 @@
 
     // Hide the card initially
     hideStateCard();
-    
+
 </script>
 </html>
