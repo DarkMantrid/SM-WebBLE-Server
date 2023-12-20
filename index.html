@@ -22,9 +22,9 @@
                     <button id="disconnectBleButton" class="disconnectButton"> Disconnect BLE Device</button>
                 </p>
                 <p class="gray-label">BLE state: <strong><span id="bleState" style="color:#d13a30;">Disconnected</span></strong></p>
-            </div>
-            <div class="card" id="connectedCard" style="display: none;">
-                <p>This card is visible when connected.</p>
+                <div class="card" id="connectedCard" style="display: none;">
+                    <p>This card is visible when connected.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -103,7 +103,7 @@
             const decodedValue = new TextDecoder().decode(value);
             console.log("Decoded value: ", decodedValue);
             retrievedValue.innerHTML = decodedValue;
-            // Display the connected card
+            // Show the connected card
             document.getElementById('connectedCard').style.display = 'block';
         })
         .catch(error => {
