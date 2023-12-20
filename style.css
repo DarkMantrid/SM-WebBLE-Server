@@ -73,6 +73,7 @@ button {
     border-radius: 4px;
 }
 
+
 .connectButton {
     background-color: #24af37;
 }
@@ -90,14 +91,6 @@ button {
     font-size: 1.8rem;
 }
 
-/* Adjusted style for stateContainer */
-#stateContainer {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: #333; /* Adjust color as needed */
-    font-weight: 500; /* Adjust font weight as needed */
-}
-
 /* For mobile devices, ensure content is centered */
 @media (max-width: 767px) {
     .card-grid {
@@ -105,5 +98,4 @@ button {
     }
 }
 
-/* Import Google Fonts after your custom styles */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
