@@ -49,8 +49,6 @@
     connectButton.addEventListener('click', (event) => {
         if (isWebBluetoothEnabled()){
             connectToDevice();
-            // Show the connected card
-            connectedCard.style.display = 'block';
         }
     });
 
@@ -103,6 +101,8 @@
             console.log("Read value: ", value);
             const decodedValue = new TextDecoder().decode(value);
             console.log("Decoded value: ", decodedValue);
+            // Show the connected card
+            connectedCard.style.display = 'block';
         })
         .catch(error => {
             console.error('Error: ', error);
