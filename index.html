@@ -6,6 +6,9 @@
     <link rel="icon" type="image/png" href="favicon.ico">
     <link rel="stylesheet" type="text/css" href="style.css">
     <meta charset="UTF-8">
+    <style>
+        /* Add your CSS styles here */
+    </style>
 </head>
 <body>
     <div class="header">
@@ -22,6 +25,18 @@
                     <button id="disconnectBleButton" class="disconnectButton"> Disconnect BLE Device</button>
                 </p>
                 <p class="gray-label">BLE state: <strong><span id="bleState" style="color:#d13a30;">Disconnected</span></strong></p>
+            </div>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <h2>State of IDx</h2>
+                <p class="state">
+                    <span id="stateContainer">
+                        Node state: 'show node state'.<br>
+                        I/O state: 'show I/O state'.<br>
+                        ERROR CODE: 'show error'
+                    </span>
+                </p>
             </div>
         </div>
     </div>
