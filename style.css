@@ -91,6 +91,14 @@ button {
     font-size: 1.8rem;
 }
 
+/* Add this style for stateContainer */
+.state #stateContainer {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #333; /* Adjust color as needed */
+    font-weight: 500; /* Adjust font weight as needed */
+}
+
 /* For mobile devices, ensure content is centered */
 @media (max-width: 767px) {
     .card-grid {
