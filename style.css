@@ -29,7 +29,7 @@ h1 {
 
 /* Logo styles */
 .logo {
-    margin-left: auto; /* Push the logo to the right */
+    margin-right: auto; /* Push the logo to the left */
 }
 
 .logo-img {
