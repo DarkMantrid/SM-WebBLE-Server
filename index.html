@@ -16,10 +16,16 @@
     </div>       
     <div class="content">
         <div class="card-grid">
+            <div class="card" id="bluetoothCard" style="display: none;">
+                <h2>State of IDx</h2>
+                <p>Node state: <strong><span id="nodeState">show node state</span></strong></p>
+                <p>I/O state: <strong><span id="ioState">show I/O state</span></strong></p>
+                <p>ERROR code: <strong><span id="errorCode">show error</span></strong></p>
+            </div>
             <div class="card">
                 <p>
                     <button id="connectBleButton" class="connectButton"> Connect to BLE Device</button>
-                    <button id="disconnectBleButton" class="disconnectButton"> Disconnect BLE Device</button>
+                    <button id="disconnectBleButton" class="disconnectButton" style="display: none;"> Disconnect BLE Device</button>
                 </p>
                 <p class="gray-label">BLE state: <strong><span id="bleState" style="color:#d13a30;">Disconnected</span></strong></p>
             </div>
@@ -63,8 +69,27 @@
         return true
     }
 
-    // Connect to BLE Device and Enable Notifications
-    function connectToDevice(){
+    function handleCharacteristicChange(event) {
+        const value = event.target.value;
+        const decodedValue = new TextDecoder().decode(value);
+        const [nodeState, ioState, errorCode] = decodedValue.split(',');
+
+        document.getElementById('nodeState').innerText = nodeState;
+        document.getElementById('ioState').innerText = ioState;
+        document.getElementById('errorCode').innerText = errorCode;
+    }
+
+    function showBluetoothCard() {
+        const bluetoothCard = document.getElementById('bluetoothCard');
+        bluetoothCard.style.display = 'block';
+    }
+
+    function hideBluetoothCard() {
+        const bluetoothCard = document.getElementById('bluetoothCard');
+        bluetoothCard.style.display = 'none';
+    }
+
+    function connectToDevice() {
         console.log('Initializing Bluetooth...');
         navigator.bluetooth.requestDevice({
             filters: [{name: deviceName}],
@@ -99,7 +124,8 @@
             console.log("Read value: ", value);
             const decodedValue = new TextDecoder().decode(value);
             console.log("Decoded value: ", decodedValue);
-            retrievedValue.innerHTML = decodedValue;
+            // retrievedValue.innerHTML = decodedValue; // This line is removed as it's not defined in the initial HTML provided
+            showBluetoothCard(); // Show the Bluetooth card after successful connection
         })
         .catch(error => {
             console.log('Error: ', error);
@@ -111,7 +137,9 @@
         bleStateContainer.innerHTML = "Device disconnected";
         bleStateContainer.style.color = "#d13a30";
 
-        connectToDevice();
+        connectToDevice(); // Reconnect after disconnection
+
+        hideBluetoothCard(); // Hide the Bluetooth card after disconnection
     }
 
     function disconnectDevice() {
@@ -128,6 +156,7 @@
                         bleStateContainer.innerHTML = "Device Disconnected";
                         bleStateContainer.style.color = "#d13a30";
 
+                        hideBluetoothCard(); // Hide the Bluetooth card after disconnection
                     })
                     .catch(error => {
                         console.log("An error occurred:", error);
