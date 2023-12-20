@@ -78,13 +78,13 @@
         return true
     }
 
-    function showStateContainer() {
-            document.getElementById('stateContainer').style.display = 'block';
-        }
+    function showStateCard() {
+        document.querySelector('.card').style.display = 'block';
+    }
 
-    // Function to hide the stateContainer
-    function hideStateContainer() {
-        document.getElementById('stateContainer').style.display = 'none';
+    // Function to hide the card containing the stateContainer
+    function hideStateCard() {
+        document.querySelector('.card').style.display = 'none';
     }
 
     // Connect to BLE Device and Enable Notifications
@@ -99,7 +99,7 @@
             bleStateContainer.innerHTML = 'Connected to device ' + device.name;
             bleStateContainer.style.color = "#24af37";
             device.addEventListener('gattservicedisconnected', onDisconnected);
-            showStateContainer(); // Show stateContainer on connection
+            showStateCard(); // Show the card containing stateContainer on connection
             return device.gatt.connect();
         })
         .then(gattServer =>{
@@ -136,7 +136,7 @@
         bleStateContainer.innerHTML = "Device disconnected";
         bleStateContainer.style.color = "#d13a30";
 
-        hideStateContainer(); // Hide stateContainer on disconnection
+        hideStateCard(); // Hide the card containing stateContainer on disconnection
 
         connectToDevice();
     }
