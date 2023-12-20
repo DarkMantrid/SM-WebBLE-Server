@@ -87,10 +87,6 @@ button {
     font-size: 1rem;
 }
 
-.reading {
-    font-size: 1.8rem;
-}
-
 /* For mobile devices, ensure content is centered */
 @media (max-width: 767px) {
     .card-grid {
