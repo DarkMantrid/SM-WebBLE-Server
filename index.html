@@ -150,6 +150,13 @@
         }
     }
 
+    function handleCharacteristicChange(event){
+        const newValueReceived = new TextDecoder().decode(event.target.value);
+        console.log("Characteristic value changed: ", newValueReceived);
+        retrievedValue.innerHTML = newValueReceived;
+        timestampContainer.innerHTML = getDateTime();
+    }
+
     function getDateTime() {
         var currentdate = new Date();
         var day = ("00" + currentdate.getDate()).slice(-2); // Convert day to string and slice
