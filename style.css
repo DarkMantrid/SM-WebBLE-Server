@@ -73,6 +73,7 @@ body {
     max-width: 80%; /* Adjust width as needed */
     margin: 0 auto; /* Center the content horizontally */
     font-size: 1rem; /* Adjust the font size */
+    display: none;
 }
 
 button {
