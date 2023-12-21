@@ -108,6 +108,12 @@
             console.log("Read value: ", value);
             const decodedValue = new TextDecoder().decode(value);
             console.log("Decoded value: ", decodedValue);
+            // Show content of 'Status'
+            statusContainer.innerHTML = "Node status: " + decodedValue.nodeStatus + "<br>" +
+                                        "I/O status: " + decodedValue.ioStatus + "<br>" +
+                                        "ERROR code: " + decodedValue.errorCode;
+
+
         })
         .catch(error => {
             console.error('Error: ', error);
