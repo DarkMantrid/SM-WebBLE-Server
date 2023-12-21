@@ -65,8 +65,18 @@ body {
     border-radius: 15px;
     padding: 15px;
     margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
 }
 
+.card #statusContainer {
+    /* Ensure left alignment for individual lines */
+    text-align: left;
+    max-width: 80%; /* Adjust width as needed */
+    margin: 0 auto; /* Center the content horizontally */
+}
 
 button {
     color: white;
@@ -92,12 +102,6 @@ button {
 
 .reading {
     font-size: 1.8rem;
-    text-align: center; /* Center-align the text within the span */
-}
-
-.reading span {
-    display: block;
-    text-align: left; /* Left-align each line within the span */
 }
 
 /* For mobile devices, ensure content is centered */
