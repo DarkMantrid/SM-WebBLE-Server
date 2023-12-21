@@ -110,13 +110,6 @@
             console.log("Decoded value: ", decodedValue);
             // Show content of 'Status'
             statusContainer.textContent = decodedValue;
-
-            // Update timestamp if needed
-            const now = new Date();
-            timestampContainer.textContent = now.toLocaleString(); // Set timestamp when status is updated
-
-
-
         })
         .catch(error => {
             console.error('Error: ', error);
