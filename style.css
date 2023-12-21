@@ -92,6 +92,12 @@ button {
 
 .reading {
     font-size: 1.8rem;
+    text-align: center; /* Center-align the text within the span */
+}
+
+.reading span {
+    display: block;
+    text-align: left; /* Left-align each line within the span */
 }
 
 /* For mobile devices, ensure content is centered */
