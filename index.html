@@ -77,6 +77,12 @@
             console.log('Device Selected:', device.name);
             bleStateContainer.innerHTML = 'Connected to device ' + device.name;
             bleStateContainer.style.color = "#24af37";
+            // Show the connected card by setting its innerHTML
+            connectedCard.innerHTML = '<p>Connected successfully!</p>';
+            // Log to ensure this block is executed
+            console.log("Showing connected card...");
+            // Show the connected card by changing the display property
+            connectedCard.style.display = 'block'; // Or any other appropriate display value
             device.addEventListener('gattservicedisconnected', onDisconnected);
             return device.gatt.connect();
         })
@@ -101,12 +107,6 @@
             console.log("Read value: ", value);
             const decodedValue = new TextDecoder().decode(value);
             console.log("Decoded value: ", decodedValue);
-            // Show the connected card by setting its innerHTML
-            connectedCard.innerHTML = '<p>Connected successfully!</p>';
-            // Log to ensure this block is executed
-            console.log("Showing connected card...");
-            // Show the connected card by changing the display property
-            connectedCard.style.display = 'block'; // Or any other appropriate display value
         })
         .catch(error => {
             console.error('Error: ', error);
