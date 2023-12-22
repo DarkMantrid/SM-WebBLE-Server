@@ -24,8 +24,11 @@
                 <p class="gray-label">BLE state: <strong><span id="bleState" style="color:#d13a30;">Disconnected</span></strong></p>
             </div>
         </div>
+    </div>
+    <div class="content">
         <div class="card-grid">
-            <div class="card", display="none">
+            <!-- Add the status-card class to the status card -->
+            <div class="card status-card" style="display: none;">
                 <h2>Status</h2>
                 <p class="reading"><span id="statusContainer">Node status: 'test'<br>
                                                               I/O status: 'test'<br>
@@ -110,6 +113,16 @@
             console.log("Decoded value: ", decodedValue);
             // Show content of 'Status'
             statusContainer.textContent = decodedValue;
+
+            // Set timestamp
+            const dateTime = getDateTime();
+            timestampContainer.textContent = dateTime;
+
+            // Display the status card
+            const statusCard = document.querySelector('.status-card');
+            if (statusCard) {
+                statusCard.style.display = 'block';
+            }
         })
         .catch(error => {
             console.error('Error: ', error);
