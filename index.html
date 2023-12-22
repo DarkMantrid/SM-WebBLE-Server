@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SM Web tool</title>
+    <title>Simplifier Manager Web tool</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="favicon.ico">
     <link rel="stylesheet" type="text/css" href="style.css">
@@ -112,11 +112,11 @@
             const decodedValue = new TextDecoder().decode(value);
             console.log("Decoded value: ", decodedValue);
             // Show content of 'Status'
-            statusContainer.textContent = decodedValue;
+            statusContainer.innerHTML = `<span>${decodedValue}</span>`;
 
             // Set timestamp
             const dateTime = getDateTime();
-            timestampContainer.textContent = dateTime;
+            timestampContainer.textContent = `Last reading: ${dateTime}`;
 
             // Display the status card
             const statusCard = document.querySelector('.status-card');
