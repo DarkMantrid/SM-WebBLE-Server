@@ -116,11 +116,6 @@
             console.log("Decoded value: ", decodedValue);
             // Show content of 'Status'
             statusContainer.innerHTML = `<span>${decodedValue}</span>`;
-
-            // Set timestamp
-            const dateTime = getDateTime();
-            timestampContainer.textContent = `Last reading: ${dateTime}`;
-
             // Display the status card
             const statusCard = document.querySelector('.status-card');
             if (statusCard) {
