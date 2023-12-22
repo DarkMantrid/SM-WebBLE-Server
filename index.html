@@ -160,7 +160,6 @@
         timestampContainer.textContent = `Last reading: ${getDateTime()}`;
     }
 
-
     function writeOnCharacteristic(value){
         if (bleServer && bleServer.connected) {
             bleServiceFound.getCharacteristic(ledCharacteristic)
