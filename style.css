@@ -57,11 +57,7 @@ body {
 .content2 {
     padding-bottom: 20px;
     padding-top: 1px;
-    text-align: center; /* Center align text within the card */
-}
-
-.content2 .card {
-    text-align: left; /* Left-align text in relation to each other */
+    text-align: left;
 }
 
 .card-grid {
