@@ -67,13 +67,13 @@ body {
     margin: 10px;
 }
 
-.card #statusContainer {
-    /* Ensure left alignment for individual lines */
-    text-align: left;
-    max-width: 80%; /* Adjust width as needed */
-    margin: 0 auto; /* Center the content horizontally */
-    font-size: 1rem; /* Adjust the font size */
-    display: none;
+.status-card {
+    background-color: white;
+    box-shadow: 2px 2px 12px 1px rgba(140, 140, 140, 0.5);
+    border-radius: 15px;
+    padding: 15px;
+    margin: 10px;
+    display: none; /* Initially hidden */
 }
 
 button {
@@ -99,7 +99,7 @@ button {
 }
 
 .reading {
-    font-size: 1.8rem;
+    font-size: 1rem;
 }
 
 /* For mobile devices, ensure content is centered */
