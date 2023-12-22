@@ -151,9 +151,6 @@
             ERROR code: '${errorCode}'
         `;
 
-        const dateTime = getDateTime();
-        timestampContainer.textContent = `Last reading: ${dateTime}`;
-
         const statusCard = document.querySelector('.status-card');
         if (statusCard) {
             statusCard.style.display = 'block';
