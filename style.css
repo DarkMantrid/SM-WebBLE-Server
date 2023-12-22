@@ -54,6 +54,12 @@ body {
     padding-bottom: 20px;
 }
 
+.content2 {
+    padding: 50px;
+    padding-bottom: 20px;
+    padding-top: none;
+}
+
 .card-grid {
     max-width: 800px;
     margin: 0 auto;
