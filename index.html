@@ -1,3 +1,5 @@
+<!-- index. html -->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -49,7 +51,8 @@
     // Define BLE Device Specs
     var deviceName ='IDx';
     var bleService = '08fed9e7-90be-44b5-b02c-91393f6e8988';
-    var sensorCharacteristic= '601d23b8-72c2-4965-90d1-2d8bab04f73a';
+    var sensorCharacteristic = '601d23b8-72c2-4965-90d1-2d8bab04f73a';
+    var statusCharacteristic = '33ebbbaa-9683-45d1-86a3-1ab32dbcdd8a';
 
     // Global Variables to Handle Bluetooth
     var bleServer;
@@ -138,11 +141,28 @@
         connectToDevice();
     }
 
-    function handleCharacteristicChange(event){
+    function handleCharacteristicChange(event) {
         const newValueReceived = new TextDecoder().decode(event.target.value);
         console.log("Characteristic value changed: ", newValueReceived);
-        retrievedValue.innerHTML = newValueReceived;
-        timestampContainer.innerHTML = getDateTime();
+
+        const statusValues = newValueReceived.split(';');
+        const nodeStatus = statusValues[0] || 'N/A';
+        const ioStatus = statusValues[1] || 'N/A';
+        const errorCode = statusValues[2] || 'N/A';
+
+        statusContainer.innerHTML = `
+            Node status: '${nodeStatus}'<br>
+            I/O status: '${ioStatus}'<br>
+            ERROR code: '${errorCode}'
+        `;
+
+        const dateTime = getDateTime();
+        timestampContainer.textContent = `Last reading: ${dateTime}`;
+
+        const statusCard = document.querySelector('.status-card');
+        if (statusCard) {
+            statusCard.style.display = 'block';
+        }
     }
 
     function writeOnCharacteristic(value){
