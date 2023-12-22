@@ -151,14 +151,15 @@
             ERROR code: '${errorCode}'
         `;
 
-        // Update the timestamp here
-        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
-
         const statusCard = document.querySelector('.status-card');
         if (statusCard) {
             statusCard.style.display = 'block';
         }
+
+        // Update the timestamp here
+        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
     }
+
 
     function writeOnCharacteristic(value){
         if (bleServer && bleServer.connected) {
