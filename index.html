@@ -145,10 +145,12 @@
         const ioStatus = statusValues[1] || 'N/A';
         const errorCode = statusValues[2] || 'N/A';
 
+        // Display received values including the hardcoded "test"
         statusContainer.innerHTML = `
             Node status: '${nodeStatus}'<br>
             I/O status: '${ioStatus}'<br>
-            ERROR code: '${errorCode}'
+            ERROR code: '${errorCode}'<br>
+            Test value: 'test'
         `;
 
         const statusCard = document.querySelector('.status-card');
@@ -159,7 +161,6 @@
         // Update the timestamp here
         timestampContainer.textContent = `Last reading: ${getDateTime()}`;
     }
-
 
     function writeOnCharacteristic(value){
     }
