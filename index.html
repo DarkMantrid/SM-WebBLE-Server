@@ -133,11 +133,6 @@
         bleStateContainer.innerHTML = "Device disconnected";
         bleStateContainer.style.color = "#d13a30";
 
-        const statusCard = document.querySelector('.status-card');
-        if (statusCard) {
-                statusCard.style.display = 'none';
-            }
-
         connectToDevice();
     }
 
@@ -182,6 +177,11 @@
                         console.log("Device Disconnected");
                         bleStateContainer.innerHTML = "Device Disconnected";
                         bleStateContainer.style.color = "#d13a30";
+
+                        const statusCard = document.querySelector('.status-card');
+                        if (statusCard) {
+                            statusCard.style.display = 'none';
+                        }
                     })
                     .catch(error => {
                         console.log("An error occurred:", error);
