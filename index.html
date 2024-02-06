@@ -116,30 +116,6 @@
             console.log("Decoded value: ", decodedValue);
             // Show content of 'Status'
             statusContainer.innerHTML = `<span>${decodedValue}</span>`;
-            
-            const newValueReceived = new TextDecoder().decode(event.target.value);
-            console.log("Characteristic value changed: ", newValueReceived);
-
-            const statusValues = newValueReceived.split(';');
-            const nodeStatus = statusValues[0] || 'N/A';
-            const ioStatus = statusValues[1] || 'N/A';
-            const errorCode = statusValues[2] || 'N/A';
-
-            // Display received values including the hardcoded "test"
-            statusContainer.innerHTML = `
-                Node status: '${nodeStatus}'<br>
-                I/O status: '${ioStatus}'<br>
-                ERROR code: '${errorCode}'<br>
-                Test value: 'test'
-            `;
-            // Display the status card
-            const statusCard = document.querySelector('.status-card');
-            if (statusCard) {
-                statusCard.style.display = 'block';
-            }
-
-        // Update the timestamp here
-        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
         })
         .catch(error => {
             console.error('Error: ', error);
@@ -156,7 +132,29 @@
     }
 
     function handleCharacteristicChange(event) {
+        const newValueReceived = new TextDecoder().decode(event.target.value);
+        console.log("Characteristic value changed: ", newValueReceived);
 
+        const statusValues = newValueReceived.split(';');
+        const nodeStatus = statusValues[0] || 'N/A';
+        const ioStatus = statusValues[1] || 'N/A';
+        const errorCode = statusValues[2] || 'N/A';
+
+        // Display received values including the hardcoded "test"
+        statusContainer.innerHTML = `
+            Node status: '${nodeStatus}'<br>
+            I/O status: '${ioStatus}'<br>
+            ERROR code: '${errorCode}'<br>
+            Test value: 'test'
+        `;
+        // Display the status card
+        const statusCard = document.querySelector('.status-card');
+        if (statusCard) {
+            statusCard.style.display = 'block';
+        }
+
+        // Update the timestamp here
+        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
     }
 
 
