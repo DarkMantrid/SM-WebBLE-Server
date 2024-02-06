@@ -48,6 +48,7 @@
     const timestampContainer = document.getElementById('timestamp');
     const statusContainer = document.getElementById('statusContainer');
 
+
     // Define BLE Device Specs
     var deviceName ='IDx';
     var bleService = '08fed9e7-90be-44b5-b02c-91393f6e8988';
@@ -159,6 +160,28 @@
 
         // Update the timestamp here
         timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+    }
+
+
+    function writeOnCharacteristic(value){
+        if (bleServer && bleServer.connected) {
+            bleServiceFound.getCharacteristic(statusCharacteristic)
+            .then(characteristic => {
+                console.log("Found the Status characteristic: ", characteristic.uuid);
+                const data = new Uint8Array([value]);
+                return characteristic.writeValue(data);
+            })
+            .then(() => {
+                statusContainer.innerHTML = value;
+                console.log("Value written to Status characteristic:", value);
+            })
+            .catch(error => {
+                console.error("Error writing to the LED characteristic: ", error);
+            });
+        } else {
+            console.error ("Bluetooth is not connected. Cannot write to characteristic.")
+            window.alert("Bluetooth is not connected. Cannot write to characteristic. \n Connect to BLE first!")
+        }
     }
 
 
