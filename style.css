@@ -86,6 +86,10 @@ body {
     display: none;
 }
 
+.statusReading {
+    font-size: 1rem;
+}
+
 button {
     color: white;
     padding: 14px 20px;
