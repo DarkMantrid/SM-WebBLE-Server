@@ -29,7 +29,6 @@
     </div>
     <div class="content2">
         <div class="card-grid">
-            <!-- Add the status-card class to the status card -->
             <div class="card status-card" style="display: none;">
                 <h2>Status</h2>
                 <p class="reading"><span id="statusContainer"></span></p>
@@ -113,6 +112,7 @@
             const decodedValue = new TextDecoder().decode(value);
             console.log("Decoded value: ", decodedValue);
             // Show content of 'Status'
+            statusContainer.style.whiteSpace = "pre-line";
             statusContainer.innerHTML = `<span>${decodedValue}</span>`;
         })
         .catch(error => {
