@@ -83,14 +83,16 @@ body {
     border-radius: 15px;
     padding: 15px;
     margin: 10px;
-    display: flex; /* Use flexbox */
-    justify-content: center; /* Center content horizontally */
-    align-items: flex-start; /* Align items to the start (left-aligned) */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column; /* Stack items vertically */
 }
 
 .statusReading {
     font-size: 1rem;
-    text-align: left; /* Left align text within the statusReading */
+    text-align: center; /* Center text within .statusReading */
+    margin-top: 10px; /* Add some space between .statusReading and other text */
 }
 
 button {
