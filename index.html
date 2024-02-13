@@ -129,6 +129,8 @@
         connectToDevice();
     }
 
+    let intervalId; // Variable to hold the interval ID
+
     function handleCharacteristicChange(event) {
         const newValueReceived = new TextDecoder().decode(event.target.value);
         console.log("Characteristic value changed: ", newValueReceived);
@@ -139,12 +141,26 @@
             statusCard.style.display = 'block';
         }
 
-        // Append the new value to the existing content of the status container
+        // Update the status container with the new value
         statusContainer.style.whiteSpace = "pre-line";
-        statusContainer.innerHTML += `<span>${newValueReceived}</span>\n`;
+        statusContainer.innerHTML = `<span>${newValueReceived}</span>\n`;
 
         // Update the timestamp here
         timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+
+        // Clear the previous interval if it exists
+        if (intervalId) {
+            clearInterval(intervalId);
+        }
+
+        // Set up a new interval to update the status container and timestamp every second
+        intervalId = setInterval(() => {
+            // Append the new value to the existing content of the status container
+            statusContainer.innerHTML += `<span>${newValueReceived}</span>\n`;
+
+            // Update the timestamp
+            timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+        }, 1000);
     }
 
 
