@@ -139,24 +139,12 @@
             statusCard.style.display = 'block';
         }
 
-        // Update the status container with the new value
+        // Append the new value to the existing content of the status container
         statusContainer.style.whiteSpace = "pre-line";
-        statusContainer.innerHTML = `<span>${newValueReceived}</span>`;
+        statusContainer.innerHTML += `<span>${newValueReceived}</span>\n`;
 
         // Update the timestamp here
         timestampContainer.textContent = `Last reading: ${getDateTime()}`;
-
-        // Update I/O Status and other 'test' values each second
-        setInterval(() => {
-            // Construct updated value string
-            const updatedValue = `I/O Status: '${newValueReceived}'\nNode Status: '${newValueReceived}'\nERROR CODE: '${newValueReceived}'`;
-
-            // Update the status container with the updated value
-            statusContainer.innerHTML = `<span>${updatedValue}</span>`;
-
-            // Update the timestamp
-            timestampContainer.textContent = `Last reading: ${getDateTime()}`;
-        }, 1000);
     }
 
 
