@@ -139,6 +139,10 @@
             statusCard.style.display = 'block';
         }
 
+        // Update the status container with the new value
+        statusContainer.style.whiteSpace = "pre-line";
+        statusContainer.innerHTML = `<span>${newValueReceived}</span>`;
+
         // Update the timestamp here
         timestampContainer.textContent = `Last reading: ${getDateTime()}`;
     }
