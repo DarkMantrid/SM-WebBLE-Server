@@ -145,6 +145,18 @@
 
         // Update the timestamp here
         timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+
+        // Update I/O Status and other 'test' values each second
+        setInterval(() => {
+            // Construct updated value string
+            const updatedValue = `I/O Status: '${newValueReceived}'\nNode Status: '${newValueReceived}'\nERROR CODE: '${newValueReceived}'`;
+
+            // Update the status container with the updated value
+            statusContainer.innerHTML = `<span>${updatedValue}</span>`;
+
+            // Update the timestamp
+            timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+        }, 1000);
     }
 
 
