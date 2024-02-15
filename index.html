@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Status of IDx</h1>
+        <h1 id="statusHeader">Status</h1>
         <div class="logo">
             <img src="sspn-logo-b.png" alt="Logo" class="logo-img">
         </div>
@@ -29,7 +29,7 @@
     <div class="content2">
         <div class="card-grid">
             <div class="card status-card" style="display: none;">
-                <h2>Status</h2>
+                <h2 id="statusCardHeader">Status</h2>
                 <p class="statusReading"><span id="statusContainer"></span></p>
                 <p class="gray-label"><span id="timestamp"></span></p>
             </div>
@@ -43,16 +43,16 @@
     const bleStateContainer = document.getElementById('bleState');
     const timestampContainer = document.getElementById('timestamp');
     const statusContainer = document.getElementById('statusContainer');
-
+    const statusHeader = document.getElementById('statusHeader');
 
     // Define BLE Device Specs
-    var deviceName ='IDx';
     var bleService = '08fed9e7-90be-44b5-b02c-91393f6e8988';
     var statusCharacteristic = '601d23b8-72c2-4965-90d1-2d8bab04f73a';
 
     // Global Variables to Handle Bluetooth
     var bleServer;
     var statusCharacteristicFound;
+    var deviceName = ''; // Device name
 
     // Connect Button (search for BLE Devices only if BLE is available)
     connectButton.addEventListener('click', (event) => {
@@ -86,6 +86,8 @@
             console.log('Device Selected:', device.name);
             bleStateContainer.innerHTML = 'Connected to device ' + device.name;
             bleStateContainer.style.color = "#24af37";
+            deviceName = device.name; // Update device name
+            statusHeader.textContent = "Status of " + deviceName; // Update header with device name
             device.addEventListener('gattservicedisconnected', onDisconnected);
             return device.gatt.connect();
         })
@@ -106,7 +108,7 @@
             console.log("Notifications Started.");
 
             // Start updating values and timestamp every second
-            intervalId = setInterval(updateValuesAndTimestamp, 1000);
+            setInterval(updateValuesAndTimestamp, 1000);
         
             return characteristic.readValue();
         })
@@ -135,9 +137,8 @@
         console.log('Device Disconnected:', event.target.device.name);
         bleStateContainer.innerHTML = "Device disconnected";
         bleStateContainer.style.color = "#d13a30";
-
-        // Clear the interval for updating values and timestamp
-        clearInterval(intervalId);
+        deviceName = ''; // Reset device name
+        statusHeader.textContent = "Status"; // Reset header text
 
         // Hide the status card upon disconnection
         const statusCard = document.querySelector('.status-card');
@@ -153,6 +154,19 @@
     function updateValuesAndTimestamp() {
         // Update the timestamp
         timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+
+        // Update the values every second
+        statusCharacteristicFound.readValue()
+            .then(value => {
+                const decodedValue = new TextDecoder().decode(value);
+                console.log("Decoded value: ", decodedValue);
+                // Show content of 'Status'
+                statusContainer.style.whiteSpace = "pre-line";
+                statusContainer.innerHTML = `<span>${decodedValue}</span>`;
+            })
+            .catch(error => {
+                console.error('Error reading value: ', error);
+            });
     }
 
     // Function to handle characteristic change
@@ -196,25 +210,6 @@
             console.error("Bluetooth is not connected.");
             window.alert("Bluetooth is not connected.")
         }
-    }
-
-        // Function to update values and timestamp every second
-    function updateValuesAndTimestamp() {
-        // Update the timestamp
-        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
-
-        // Update the values every second
-        statusCharacteristicFound.readValue()
-            .then(value => {
-                const decodedValue = new TextDecoder().decode(value);
-                console.log("Decoded value: ", decodedValue);
-                // Show content of 'Status'
-                statusContainer.style.whiteSpace = "pre-line";
-                statusContainer.innerHTML = `<span>${decodedValue}</span>`;
-            })
-            .catch(error => {
-                console.error('Error reading value: ', error);
-            });
     }
 
     function getDateTime() {
