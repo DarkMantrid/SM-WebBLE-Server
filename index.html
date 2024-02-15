@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="header">
-        <h1 id="statusHeader">Status</h1>
+        <h1>Status of IDx</h1>
         <div class="logo">
             <img src="sspn-logo-b.png" alt="Logo" class="logo-img">
         </div>
@@ -29,7 +29,7 @@
     <div class="content2">
         <div class="card-grid">
             <div class="card status-card" style="display: none;">
-                <h2 id="statusCardHeader">Status</h2>
+                <h2>Status</h2>
                 <p class="statusReading"><span id="statusContainer"></span></p>
                 <p class="gray-label"><span id="timestamp"></span></p>
             </div>
@@ -43,17 +43,16 @@
     const bleStateContainer = document.getElementById('bleState');
     const timestampContainer = document.getElementById('timestamp');
     const statusContainer = document.getElementById('statusContainer');
-    const statusCardHeader = document.getElementById('statusCardHeader');
-    const statusHeader = document.getElementById('statusHeader');
+
 
     // Define BLE Device Specs
+    var deviceName ='IDx';
     var bleService = '08fed9e7-90be-44b5-b02c-91393f6e8988';
     var statusCharacteristic = '601d23b8-72c2-4965-90d1-2d8bab04f73a';
 
     // Global Variables to Handle Bluetooth
     var bleServer;
     var statusCharacteristicFound;
-    var intervalId; // Interval ID for updating values and timestamp
 
     // Connect Button (search for BLE Devices only if BLE is available)
     connectButton.addEventListener('click', (event) => {
@@ -87,7 +86,6 @@
             console.log('Device Selected:', device.name);
             bleStateContainer.innerHTML = 'Connected to device ' + device.name;
             bleStateContainer.style.color = "#24af37";
-            statusHeader.textContent = "Status of " + device.name; // Update header with device name
             device.addEventListener('gattservicedisconnected', onDisconnected);
             return device.gatt.connect();
         })
@@ -106,6 +104,10 @@
             characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
             characteristic.startNotifications();
             console.log("Notifications Started.");
+
+            // Start updating values and timestamp every second
+            intervalId = setInterval(updateValuesAndTimestamp, 1000);
+        
             return characteristic.readValue();
         })
         .then(value => {
@@ -115,13 +117,12 @@
             // Show content of 'Status'
             statusContainer.style.whiteSpace = "pre-line";
             statusContainer.innerHTML = `<span>${decodedValue}</span>`;
+
             // Display the status card after successfully connecting
             const statusCard = document.querySelector('.status-card');
             if (statusCard) {
                 statusCard.style.display = 'block';
             }
-            // Start updating values and timestamp every second
-            intervalId = setInterval(updateValuesAndTimestamp, 1000);
         })
         .catch(error => {
             console.error('Error: ', error);
@@ -129,24 +130,39 @@
         });
     }
 
+    // Handle disconnection event
     function onDisconnected(event){
         console.log('Device Disconnected:', event.target.device.name);
         bleStateContainer.innerHTML = "Device disconnected";
         bleStateContainer.style.color = "#d13a30";
-        statusHeader.textContent = "Status"; // Reset header text
-        clearInterval(intervalId); // Stop updating values and timestamp
+
+        // Clear the interval for updating values and timestamp
+        clearInterval(intervalId);
+
+        // Hide the status card upon disconnection
+        const statusCard = document.querySelector('.status-card');
+        if (statusCard) {
+            statusCard.style.display = 'none';
+        }
+
+        // Reconnect to the device
         connectToDevice();
+    }
+
+    // Function to update values and timestamp every second
+    function updateValuesAndTimestamp() {
+        // Update the timestamp
+        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
     }
 
     // Function to handle characteristic change
     function handleCharacteristicChange(event) {
         const newValueReceived = new TextDecoder().decode(event.target.value);
         console.log("Characteristic value changed: ", newValueReceived);
+
         // Update the status container with the new value
         statusContainer.style.whiteSpace = "pre-line";
         statusContainer.textContent = newValueReceived;
-        // Update the timestamp here
-        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
     }
 
     function disconnectDevice() {
@@ -162,6 +178,8 @@
                         console.log("Device Disconnected");
                         bleStateContainer.innerHTML = "Device Disconnected";
                         bleStateContainer.style.color = "#d13a30";
+
+                        // Hide the status card upon disconnection
                         const statusCard = document.querySelector('.status-card');
                         if (statusCard) {
                             statusCard.style.display = 'none';
@@ -180,6 +198,25 @@
         }
     }
 
+        // Function to update values and timestamp every second
+    function updateValuesAndTimestamp() {
+        // Update the timestamp
+        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+
+        // Update the values every second
+        statusCharacteristicFound.readValue()
+            .then(value => {
+                const decodedValue = new TextDecoder().decode(value);
+                console.log("Decoded value: ", decodedValue);
+                // Show content of 'Status'
+                statusContainer.style.whiteSpace = "pre-line";
+                statusContainer.innerHTML = `<span>${decodedValue}</span>`;
+            })
+            .catch(error => {
+                console.error('Error reading value: ', error);
+            });
+    }
+
     function getDateTime() {
         var currentdate = new Date();
         var day = ("00" + currentdate.getDate()).slice(-2); // Convert day to string and slice
@@ -188,6 +225,7 @@
         var hours = ("00" + currentdate.getHours()).slice(-2);
         var minutes = ("00" + currentdate.getMinutes()).slice(-2);
         var seconds = ("00" + currentdate.getSeconds()).slice(-2);
+
         var datetime = day + "/" + month + "/" + year + " at " + hours + ":" + minutes + ":" + seconds;
         return datetime;
     }
