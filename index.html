@@ -135,40 +135,13 @@
         const newValueReceived = new TextDecoder().decode(event.target.value);
         console.log("Characteristic value changed: ", newValueReceived);
 
-        // Display the status card
-        const statusCard = document.querySelector('.status-card');
-        if (statusCard) {
-            statusCard.style.display = 'block';
-        }
-
-        // Clear the previous content of the status container
-        statusContainer.innerHTML = '';
-
         // Update the status container with the new value
         statusContainer.style.whiteSpace = "pre-line";
-        statusContainer.innerHTML = `<span>${newValueReceived}</span>\n`;
+        statusContainer.textContent = newValueReceived;
 
         // Update the timestamp here
         timestampContainer.textContent = `Last reading: ${getDateTime()}`;
-
-        // Clear the previous interval if it exists
-        if (intervalId) {
-            clearInterval(intervalId);
-        }
-
-        // Set up a new interval to update the status container and timestamp every second
-        intervalId = setInterval(() => {
-            // Clear the previous content of the status container
-            statusContainer.innerHTML = '';
-
-            // Append the new value to the status container
-            statusContainer.innerHTML = `<span>${newValueReceived}</span>\n`;
-
-            // Update the timestamp
-            timestampContainer.textContent = `Last reading: ${getDateTime()}`;
-        }, 1000);
     }
-
 
     function disconnectDevice() {
         console.log("Disconnect Device.");
