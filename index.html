@@ -10,11 +10,11 @@
 </head>
 <body>
     <div class="header">
-        <h1>Status of IDx</h1>
+        <h1>Status of <span id="deviceName">IDx</span></h1>
         <div class="logo">
             <img src="sspn-logo-b.png" alt="Logo" class="logo-img">
         </div>
-    </div>       
+    </div>    
     <div class="content">
         <div class="card-grid">
             <div class="card">
@@ -84,7 +84,15 @@
         })
         .then(device => {
             console.log('Device Selected:', device.name);
-            bleStateContainer.innerHTML = 'Connected to device ' + device.name;
+        
+            // Update the device name in the header
+            const deviceNameSpan = document.getElementById('deviceName');
+            if (deviceNameSpan) {
+                deviceNameSpan.textContent = device.name;
+            }
+
+            // Continue with the connection process
+            bleStateContainer.innerHTML = 'Connecting to device ' + device.name;
             bleStateContainer.style.color = "#24af37";
             device.addEventListener('gattservicedisconnected', onDisconnected);
             return device.gatt.connect();
@@ -107,7 +115,7 @@
 
             // Start updating values and timestamp every second
             intervalId = setInterval(updateValuesAndTimestamp, 1000);
-        
+    
             return characteristic.readValue();
         })
         .then(value => {
