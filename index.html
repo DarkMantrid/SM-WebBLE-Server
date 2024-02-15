@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="header">
-        <h1 id="statusHeader">Status</h1>
+        <h1>Status</h1>
         <div class="logo">
             <img src="sspn-logo-b.png" alt="Logo" class="logo-img">
         </div>
@@ -29,7 +29,7 @@
     <div class="content2">
         <div class="card-grid">
             <div class="card status-card" style="display: none;">
-                <h2 id="statusCardHeader">Status</h2>
+                <h2>Status</h2>
                 <p class="statusReading"><span id="statusContainer"></span></p>
                 <p class="gray-label"><span id="timestamp"></span></p>
             </div>
@@ -53,26 +53,27 @@
     // Global Variables to Handle Bluetooth
     var bleServer;
     var statusCharacteristicFound;
+    var intervalId;
 
-    // Handle disconnection event
-    function onDisconnected(event){
-        console.log('Device Disconnected:', event.target.device.name);
-        bleStateContainer.innerHTML = "Device disconnected";
-        bleStateContainer.style.color = "#d13a30";
-        deviceName = ''; // Reset device name
-        statusHeader.textContent = "Status"; // Update header text
-
-        // Clear the interval for updating values and timestamp
-        clearInterval(intervalId);
-
-        // Hide the status card upon disconnection
-        const statusCard = document.querySelector('.status-card');
-        if (statusCard) {
-            statusCard.style.display = 'none';
+    // Connect Button (search for BLE Devices only if BLE is available)
+    connectButton.addEventListener('click', (event) => {
+        if (isWebBluetoothEnabled()){
+            connectToDevice();
         }
+    });
 
-        // Reconnect to the device
-        connectToDevice();
+    // Disconnect Button
+    disconnectButton.addEventListener('click', disconnectDevice);
+
+    // Check if BLE is available in your Browser
+    function isWebBluetoothEnabled() {
+        if (!navigator.bluetooth) {
+            console.log('Web Bluetooth API is not available in this browser!');
+            bleStateContainer.innerHTML = "Web Bluetooth API is not available in this browser/device!";
+            return false
+        }
+        console.log('Web Bluetooth API supported in this browser.');
+        return true
     }
 
     // Connect to BLE Device and Enable Notifications
@@ -109,7 +110,7 @@
 
             // Start updating values and timestamp every second
             intervalId = setInterval(updateValuesAndTimestamp, 1000);
-    
+        
             return characteristic.readValue();
         })
         .then(value => {
@@ -140,6 +141,9 @@
         deviceName = ''; // Reset device name
         statusHeader.textContent = "Status"; // Update header text
 
+        // Clear the interval for updating values and timestamp
+        clearInterval(intervalId);
+
         // Hide the status card upon disconnection
         const statusCard = document.querySelector('.status-card');
         if (statusCard) {
@@ -167,16 +171,6 @@
             .catch(error => {
                 console.error('Error reading value: ', error);
             });
-    }
-
-    // Function to handle characteristic change
-    function handleCharacteristicChange(event) {
-        const newValueReceived = new TextDecoder().decode(event.target.value);
-        console.log("Characteristic value changed: ", newValueReceived);
-
-        // Update the status container with the new value
-        statusContainer.style.whiteSpace = "pre-line";
-        statusContainer.textContent = newValueReceived;
     }
 
     function disconnectDevice() {
