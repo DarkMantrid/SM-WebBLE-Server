@@ -179,7 +179,11 @@
                         bleStateContainer.innerHTML = "Device Disconnected";
                         bleStateContainer.style.color = "#d13a30";
 
-                        // The status card is now hidden by default, no need to hide it here
+                        // Hide the status card upon disconnection
+                        const statusCard = document.querySelector('.status-card');
+                        if (statusCard) {
+                            statusCard.style.display = 'none';
+                        }
                     })
                     .catch(error => {
                         console.log("An error occurred:", error);
@@ -192,6 +196,25 @@
             console.error("Bluetooth is not connected.");
             window.alert("Bluetooth is not connected.")
         }
+    }
+
+        // Function to update values and timestamp every second
+    function updateValuesAndTimestamp() {
+        // Update the timestamp
+        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+
+        // Update the values every second
+        statusCharacteristicFound.readValue()
+            .then(value => {
+                const decodedValue = new TextDecoder().decode(value);
+                console.log("Decoded value: ", decodedValue);
+                // Show content of 'Status'
+                statusContainer.style.whiteSpace = "pre-line";
+                statusContainer.innerHTML = `<span>${decodedValue}</span>`;
+            })
+            .catch(error => {
+                console.error('Error reading value: ', error);
+            });
     }
 
     function getDateTime() {
