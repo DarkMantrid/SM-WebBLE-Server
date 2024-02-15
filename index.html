@@ -143,15 +143,10 @@
 
         // Update the status container with the new value
         statusContainer.style.whiteSpace = "pre-line";
-        statusContainer.innerHTML = `<span>${newValueReceived}</span>\n`;
+
 
         // Update the timestamp here
         timestampContainer.textContent = `Last reading: ${getDateTime()}`;
-
-        // Clear the previous interval if it exists
-        if (intervalId) {
-            clearInterval(intervalId);
-        }
 
         // Set up a new interval to update the status container and timestamp every second
         intervalId = setInterval(() => {
@@ -161,6 +156,13 @@
             // Update the timestamp
             timestampContainer.textContent = `Last reading: ${getDateTime()}`;
         }, 1000);
+
+        // Clear the previous interval if it exists
+        if (intervalId) {
+            clearInterval(intervalId);
+        }
+
+        
     }
 
 
