@@ -1,5 +1,4 @@
 <!-- index.html -->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -157,10 +156,7 @@
                         bleStateContainer.innerHTML = "Device Disconnected";
                         bleStateContainer.style.color = "#d13a30";
 
-                        const statusCard = document.querySelector('.status-card');
-                        if (statusCard) {
-                            statusCard.style.display = 'none';
-                        }
+                        // The status card is now hidden by default, no need to hide it here
                     })
                     .catch(error => {
                         console.log("An error occurred:", error);
@@ -187,6 +183,5 @@
         var datetime = day + "/" + month + "/" + year + " at " + hours + ":" + minutes + ":" + seconds;
         return datetime;
     }
-
 </script>
 </html>
