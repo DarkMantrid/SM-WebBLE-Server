@@ -104,6 +104,10 @@
             characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
             characteristic.startNotifications();
             console.log("Notifications Started.");
+
+            // Start updating values and timestamp every second
+            intervalId = setInterval(updateValuesAndTimestamp, 1000);
+        
             return characteristic.readValue();
         })
         .then(value => {
@@ -117,7 +121,7 @@
             // Display the status card after successfully connecting
             const statusCard = document.querySelector('.status-card');
             if (statusCard) {
-            statusCard.style.display = 'block';
+                statusCard.style.display = 'block';
             }
         })
         .catch(error => {
@@ -126,17 +130,32 @@
         });
     }
 
-
+    // Handle disconnection event
     function onDisconnected(event){
         console.log('Device Disconnected:', event.target.device.name);
         bleStateContainer.innerHTML = "Device disconnected";
         bleStateContainer.style.color = "#d13a30";
 
+        // Clear the interval for updating values and timestamp
+        clearInterval(intervalId);
+
+        // Hide the status card upon disconnection
+        const statusCard = document.querySelector('.status-card');
+        if (statusCard) {
+            statusCard.style.display = 'none';
+        }
+
+        // Reconnect to the device
         connectToDevice();
     }
 
-    let intervalId; // Variable to hold the interval ID
+    // Function to update values and timestamp every second
+    function updateValuesAndTimestamp() {
+        // Update the timestamp
+        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+    }
 
+    // Function to handle characteristic change
     function handleCharacteristicChange(event) {
         const newValueReceived = new TextDecoder().decode(event.target.value);
         console.log("Characteristic value changed: ", newValueReceived);
@@ -144,9 +163,6 @@
         // Update the status container with the new value
         statusContainer.style.whiteSpace = "pre-line";
         statusContainer.textContent = newValueReceived;
-
-        // Update the timestamp here
-        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
     }
 
     function disconnectDevice() {
