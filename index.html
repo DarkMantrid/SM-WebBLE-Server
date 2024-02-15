@@ -119,6 +119,8 @@
             if (statusCard) {
                 statusCard.style.display = 'block';
             }
+            // Start updating values and timestamp every second
+            intervalId = setInterval(updateValuesAndTimestamp, 1000);
         })
         .catch(error => {
             console.error('Error: ', error);
@@ -131,6 +133,7 @@
         bleStateContainer.innerHTML = "Device disconnected";
         bleStateContainer.style.color = "#d13a30";
         statusHeader.textContent = "Status"; // Reset header text
+        clearInterval(intervalId); // Stop updating values and timestamp
         connectToDevice();
     }
 
@@ -184,7 +187,6 @@
         var hours = ("00" + currentdate.getHours()).slice(-2);
         var minutes = ("00" + currentdate.getMinutes()).slice(-2);
         var seconds = ("00" + currentdate.getSeconds()).slice(-2);
-
         var datetime = day + "/" + month + "/" + year + " at " + hours + ":" + minutes + ":" + seconds;
         return datetime;
     }
