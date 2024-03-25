@@ -71,7 +71,8 @@
     function disconnectDevice() {
         if (bleServer && bleServer.connected) {
             if (statusCharacteristicFound) {
-                bleServer.disconnect()
+                statusCharacteristicFound.stopNotifications()
+                    .then(() => bleServer.disconnect())
                     .then(() => {
                         updateBleState('Device Disconnected', '#d13a30');
                         clearInterval(intervalId);
@@ -122,6 +123,11 @@
             .then(characteristic => {
                 console.log("Characteristic discovered:", characteristic.uuid);
                 statusCharacteristicFound = characteristic;
+                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
+                return characteristic.startNotifications();
+            })
+            .then(() => {
+                intervalId = setInterval(updateTimestamp, 1000); // Update timestamp every second
                 return statusCharacteristicFound.readValue();
             })
             .then(value => {
@@ -141,6 +147,21 @@
         clearInterval(intervalId);
         hideStatusCard();
         connectToDevice();
+    }
+
+    function handleCharacteristicChange(event) {
+        // Check if the event is triggered by a characteristic value change
+        if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
+            const newValueReceived = new TextDecoder().decode(event.target.value);
+            console.log("Characteristic value changed: ", newValueReceived);
+            // Update the statusContainer with the new characteristic value
+            statusContainer.style.whiteSpace = "pre-line";
+            statusContainer.textContent = newValueReceived;
+            updateValuesAndTimestamp(); // Update the timestamp if needed
+        } else {
+            // Handle other types of events here if needed
+            console.log("Unknown event type:", event);
+        }
     }
 
     // UI Functions
@@ -167,6 +188,24 @@
     function updateTimestamp() {
         const timestamp = getDateTime();
         timestampContainer.textContent = `Last reading: ${timestamp}`;
+    }
+
+    // Update status value every 100 milliseconds
+    function updateValuesAndTimestamp() {
+        updateStatusValue();
+    }
+
+    function updateStatusValue() {
+        statusCharacteristicFound.readValue()
+            .then(value => {
+                const decodedValue = new TextDecoder().decode(value);
+                console.log("Decoded value: ", decodedValue);
+                statusContainer.style.whiteSpace = "pre-line";
+                statusContainer.innerHTML = `<span><b>Status:</b> ${decodedValue}</span>`;
+                // Update the interval to update status value every 10 milliseconds
+                setInterval(updateStatusValue, 10);
+            })
+            .catch(error => console.error('Error reading value: ', error));
     }
 
     // Utility Functions
