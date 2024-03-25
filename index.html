@@ -211,7 +211,11 @@
     // Function to update values and timestamp every second
     function updateValuesAndTimestamp() {
         // Update the timestamp
-        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+        const timestamp = getDateTime();
+        const timestampElement = document.getElementById('timestamp');
+        if (timestampElement) {
+            timestampElement.textContent = `Last reading: ${timestamp}`;
+        }
 
         // Update the values every second
         statusCharacteristicFound.readValue()
@@ -227,6 +231,7 @@
             });
     }
 
+    // Function to get the current date and time
     function getDateTime() {
         var currentdate = new Date();
         var day = ("00" + currentdate.getDate()).slice(-2); // Convert day to string and slice
@@ -242,4 +247,3 @@
 </script>
 
 </html>
-
