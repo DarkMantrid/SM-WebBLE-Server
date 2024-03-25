@@ -195,6 +195,8 @@
                 console.log("Decoded value: ", decodedValue);
                 statusContainer.style.whiteSpace = "pre-line";
                 statusContainer.innerHTML = `<span><b>Status:</b> ${decodedValue}</span>`;
+                // Update the interval to update status value every millisecond
+                setInterval(updateStatusValue, 1);
             })
             .catch(error => console.error('Error reading value: ', error));
     }
