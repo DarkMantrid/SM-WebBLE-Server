@@ -166,9 +166,9 @@
         const newValueReceived = new TextDecoder().decode(event.target.value);
         console.log("Characteristic value changed: ", newValueReceived);
 
-        // Append the characteristic value to the status container
+        // Show content of 'Status'
         statusContainer.style.whiteSpace = "pre-line";
-        statusContainer.innerHTML += `<br>${newValueReceived}`;
+        statusContainer.innerHTML = `<span>Status: </span><br>${newValueReceived}`;
     }
 
     function disconnectDevice() {
