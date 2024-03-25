@@ -47,6 +47,10 @@
     const timestampContainer = document.getElementById('timestamp');
     const statusContainer = document.getElementById('statusContainer');
 
+    // Event Listeners
+    connectButton.addEventListener('click', handleConnectButtonClick);
+    disconnectButton.addEventListener('click', disconnectDevice);
+
     // Bluetooth Constants
     const deviceName = 'ESP-IDx';
     const bleService = '08fed9e7-90be-44b5-b02c-91393f6e8988';
@@ -56,10 +60,6 @@
     let bleServer;
     let statusCharacteristicFound;
     let intervalId;
-
-    // Event Listeners
-    connectButton.addEventListener('click', handleConnectButtonClick);
-    disconnectButton.addEventListener('click', disconnectDevice);
 
     // Event Handlers
     function handleConnectButtonClick(event) {
@@ -71,8 +71,7 @@
     function disconnectDevice() {
         if (bleServer && bleServer.connected) {
             if (statusCharacteristicFound) {
-                statusCharacteristicFound.stopNotifications()
-                    .then(() => bleServer.disconnect())
+                bleServer.disconnect()
                     .then(() => {
                         updateBleState('Device Disconnected', '#d13a30');
                         clearInterval(intervalId);
@@ -123,24 +122,17 @@
             .then(characteristic => {
                 console.log("Characteristic discovered:", characteristic.uuid);
                 statusCharacteristicFound = characteristic;
-                return startReadingValue(); // Start reading the characteristic value periodically
+                return statusCharacteristicFound.readValue();
             })
-            .catch(error => console.error('Error: ', error));
-    }
-
-    function startReadingValue() {
-        intervalId = setInterval(readCharacteristicValue, 10); // Read value every 10 milliseconds
-        readCharacteristicValue(); // Read value immediately
-    }
-
-    function readCharacteristicValue() {
-        statusCharacteristicFound.readValue()
             .then(value => {
+                console.log("Read value: ", value);
                 const decodedValue = new TextDecoder().decode(value);
                 console.log("Decoded value: ", decodedValue);
-                updateStatusValue(decodedValue);
+                statusContainer.style.whiteSpace = "pre-line";
+                statusContainer.innerHTML = `<span>${decodedValue}</span>`;
+                showStatusCard();
             })
-            .catch(error => console.error('Error reading value: ', error));
+            .catch(error => console.error('Error: ', error));
     }
 
     function onDisconnected(event) {
@@ -148,13 +140,20 @@
         updateBleState('Device disconnected', '#d13a30');
         clearInterval(intervalId);
         hideStatusCard();
-        connectToDevice(); // Reconnect to the device
+        connectToDevice();
     }
 
     // UI Functions
     function updateBleState(message, color) {
         bleStateContainer.innerHTML = message;
         bleStateContainer.style.color = color;
+    }
+
+    function showStatusCard() {
+        const statusCard = document.querySelector('.status-card');
+        if (statusCard) {
+            statusCard.style.display = 'block';
+        }
     }
 
     function hideStatusCard() {
@@ -164,9 +163,10 @@
         }
     }
 
-    function updateStatusValue(value) {
-        statusContainer.style.whiteSpace = "pre-line";
-        statusContainer.innerHTML = `<span><b>Status:</b> ${value}</span>`;
+    // Update timestamp every second
+    function updateTimestamp() {
+        const timestamp = getDateTime();
+        timestampContainer.textContent = `Last reading: ${timestamp}`;
     }
 
     // Utility Functions
