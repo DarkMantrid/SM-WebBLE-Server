@@ -44,6 +44,7 @@
     const connectButton = document.getElementById('connectBleButton');
     const disconnectButton = document.getElementById('disconnectBleButton');
     const bleStateContainer = document.getElementById('bleState');
+    const timestampContainer = document.getElementById('timestamp');
     const statusContainer = document.getElementById('statusContainer');
 
 
@@ -160,11 +161,7 @@
     // Function to update values and timestamp every second
     function updateValuesAndTimestamp() {
         // Update the timestamp
-        const timestamp = getDateTime();
-        const timestampElement = document.getElementById('timestamp');
-        if (timestampElement) {
-            timestampElement.textContent = `Last reading: ${timestamp}`;
-        }
+        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
     }
 
     // Function to handle characteristic change
@@ -210,14 +207,11 @@
             window.alert("Bluetooth is not connected.")
         }
     }
+
     // Function to update values and timestamp every second
     function updateValuesAndTimestamp() {
         // Update the timestamp
-        const timestamp = getDateTime();
-        const timestampElement = document.getElementById('timestamp');
-        if (timestampElement) {
-            timestampElement.textContent = `Last reading: ${timestamp}`;
-        }
+        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
 
         // Update the values every second
         statusCharacteristicFound.readValue()
@@ -248,3 +242,4 @@
 </script>
 
 </html>
+
