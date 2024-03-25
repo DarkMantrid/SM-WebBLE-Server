@@ -127,7 +127,7 @@
                 return characteristic.startNotifications();
             })
             .then(() => {
-                intervalId = setInterval(updateValuesAndTimestamp, 1000);
+                intervalId = setInterval(updateTimestamp, 1000); // Update timestamp every second
                 return statusCharacteristicFound.readValue();
             })
             .then(value => {
@@ -177,15 +177,15 @@
         }
     }
 
-    // Update Functions
-    function updateValuesAndTimestamp() {
-        updateTimestamp();
-        updateStatusValue();
-    }
-
+    // Update timestamp every second
     function updateTimestamp() {
         const timestamp = getDateTime();
         timestampContainer.textContent = `Last reading: ${timestamp}`;
+    }
+
+    // Update status value every 100 milliseconds
+    function updateValuesAndTimestamp() {
+        updateStatusValue();
     }
 
     function updateStatusValue() {
