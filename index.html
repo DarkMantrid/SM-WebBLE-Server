@@ -28,7 +28,7 @@
     </div>
     <div class="content2">
         <div class="card-grid">
-            <div class="card status-card" style="display: block;">
+            <div class="card status-card" style="display: none;">
                 <h2>Status</h2>
                 <p class="statusReading"><span id="statusContainer"></span></p>
                 <p class="gray-label"><span id="timestamp"></span></p>
@@ -139,10 +139,10 @@
         // Clear the interval for updating values and timestamp
         clearInterval(intervalId);
 
-        // Hide the status card upon disconnection
+        // Hide the status card upon disconnection #WIP
         const statusCard = document.querySelector('.status-card');
         if (statusCard) {
-            statusCard.style.display = 'block';
+            statusCard.style.display = 'none';
         }
 
         // Reconnect to the device
