@@ -194,7 +194,7 @@
                 const decodedValue = new TextDecoder().decode(value);
                 console.log("Decoded value: ", decodedValue);
                 statusContainer.style.whiteSpace = "pre-line";
-                statusContainer.innerHTML = `<span>Status: ${decodedValue}</span>`;
+                statusContainer.innerHTML = `<span><b>Status:</b> ${decodedValue}</span>`;
             })
             .catch(error => console.error('Error reading value: ', error));
     }
