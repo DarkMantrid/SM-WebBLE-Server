@@ -83,7 +83,7 @@ body {
     border-radius: 15px;
     padding: 15px;
     margin: 10px;
-    display: block;
+    display: none;
 }
 
 .statusReading {
