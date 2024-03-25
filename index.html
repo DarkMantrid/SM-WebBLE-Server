@@ -124,6 +124,11 @@
                 // Show content of 'Status'
                 statusContainer.style.whiteSpace = "pre-line";
                 statusContainer.innerHTML = `<span>${decodedValue}</span>`;
+                // Display the status card after successfully connecting
+                const statusCard = document.querySelector('.status-card');
+                if (statusCard) {
+                    statusCard.style.display = 'block';
+                }
             })
             .catch(error => {
                 console.error('Error: ', error);
