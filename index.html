@@ -1,6 +1,7 @@
 <!-- index.html -->
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Simplifier Manager Web tool</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,13 +9,14 @@
     <link rel="stylesheet" type="text/css" href="style.css">
     <meta charset="UTF-8">
 </head>
+
 <body>
     <div class="header">
         <h1>Status of IDx</h1>
         <div class="logo">
             <img src="sspn-logo-b.png" alt="Logo" class="logo-img">
         </div>
-    </div>       
+    </div>
     <div class="content">
         <div class="card-grid">
             <div class="card">
@@ -22,7 +24,8 @@
                     <button id="connectBleButton" class="connectButton"> Connect to BLE Device</button>
                     <button id="disconnectBleButton" class="disconnectButton"> Disconnect BLE Device</button>
                 </p>
-                <p class="gray-label">BLE state: <strong><span id="bleState" style="color:#d13a30;">Disconnected</span></strong></p>
+                <p class="gray-label">BLE state: <strong><span id="bleState"
+                            style="color:#d13a30;">Disconnected</span></strong></p>
             </div>
         </div>
     </div>
@@ -31,7 +34,7 @@
             <div class="card status-card" style="display: none;">
                 <h2>Status</h2>
                 <p class="statusReading"><span id="statusContainer"></span></p>
-                <p class="gray-label"><span id="timestamp"></span></p>
+                <p class="gray-label" id="timestamp"></p>
             </div>
         </div>
     </div>
@@ -41,12 +44,11 @@
     const connectButton = document.getElementById('connectBleButton');
     const disconnectButton = document.getElementById('disconnectBleButton');
     const bleStateContainer = document.getElementById('bleState');
-    const timestampContainer = document.getElementById('timestamp');
     const statusContainer = document.getElementById('statusContainer');
 
 
     // Define BLE Device Specs
-    var deviceName ='ESP-IDx';
+    var deviceName = 'ESP-IDx';
     var bleService = '08fed9e7-90be-44b5-b02c-91393f6e8988';
     var statusCharacteristic = '601d23b8-72c2-4965-90d1-2d8bab04f73a';
 
@@ -56,7 +58,7 @@
 
     // Connect Button (search for BLE Devices only if BLE is available)
     connectButton.addEventListener('click', (event) => {
-        if (isWebBluetoothEnabled()){
+        if (isWebBluetoothEnabled()) {
             connectToDevice();
         }
     });
@@ -76,68 +78,68 @@
     }
 
     // Connect to BLE Device and Enable Notifications
-    function connectToDevice(){
+    function connectToDevice() {
         console.log('Initializing Bluetooth...');
         navigator.bluetooth.requestDevice({
             acceptAllDevices: true,
             optionalServices: [bleService]
         })
-        .then(device => {
-            console.log('Device Selected:', device.name);
-            bleStateContainer.innerHTML = 'Connected to device ' + device.name;
-            bleStateContainer.style.color = "#24af37";
-            device.addEventListener('gattservicedisconnected', onDisconnected);
-            return device.gatt.connect();
-        })
-        .then(gattServer =>{
-            bleServer = gattServer;
-            console.log("Connected to GATT Server");
-            return bleServer.getPrimaryService(bleService);
-        })
-        .then(service => {
-            console.log("Service discovered:", service.uuid);
-            return service.getCharacteristic(statusCharacteristic);
-        })
-        .then(characteristic => {
-            console.log("Characteristic discovered:", characteristic.uuid);
-            statusCharacteristicFound = characteristic;
-            // Subscribe to notifications
-            return characteristic.startNotifications()
-                .then(() => {
-                    console.log("Notifications Started.");
-                    // Add event listener for characteristic value changes
-                    characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
-                });
+            .then(device => {
+                console.log('Device Selected:', device.name);
+                bleStateContainer.innerHTML = 'Connected to device ' + device.name;
+                bleStateContainer.style.color = "#24af37";
+                device.addEventListener('gattservicedisconnected', onDisconnected);
+                return device.gatt.connect();
+            })
+            .then(gattServer => {
+                bleServer = gattServer;
+                console.log("Connected to GATT Server");
+                return bleServer.getPrimaryService(bleService);
+            })
+            .then(service => {
+                console.log("Service discovered:", service.uuid);
+                return service.getCharacteristic(statusCharacteristic);
+            })
+            .then(characteristic => {
+                console.log("Characteristic discovered:", characteristic.uuid);
+                statusCharacteristicFound = characteristic;
+                // Subscribe to notifications
+                return characteristic.startNotifications()
+                    .then(() => {
+                        console.log("Notifications Started.");
+                        // Add event listener for characteristic value changes
+                        characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
+                    });
 
-            // Start updating values and timestamp every second
-            intervalId = setInterval(updateValuesAndTimestamp, 1000);
-        })
-        .then(() => {
-            // Read the characteristic value once
-            return statusCharacteristicFound.readValue();
-        })
-        .then(value => {
-            console.log("Read value: ", value);
-            const decodedValue = new TextDecoder().decode(value);
-            console.log("Decoded value: ", decodedValue);
-            // Show content of 'Status'
-            statusContainer.style.whiteSpace = "pre-line";
-            statusContainer.innerHTML = `<span>${decodedValue}</span>`;
+                // Start updating values and timestamp every second
+                intervalId = setInterval(updateValuesAndTimestamp, 1000);
+            })
+            .then(() => {
+                // Read the characteristic value once
+                return statusCharacteristicFound.readValue();
+            })
+            .then(value => {
+                console.log("Read value: ", value);
+                const decodedValue = new TextDecoder().decode(value);
+                console.log("Decoded value: ", decodedValue);
+                // Show content of 'Status'
+                statusContainer.style.whiteSpace = "pre-line";
+                statusContainer.innerHTML = `<span>${decodedValue}</span>`;
 
-            // Display the status card after successfully connecting
-            const statusCard = document.querySelector('.status-card');
-            if (statusCard) {
-                statusCard.style.display = 'block';
-            }
-        })
-        .catch(error => {
-            console.error('Error: ', error);
-            // Ensure there's no error in the process flow
-        });
+                // Display the status card after successfully connecting
+                const statusCard = document.querySelector('.status-card');
+                if (statusCard) {
+                    statusCard.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error: ', error);
+                // Ensure there's no error in the process flow
+            });
     }
 
     // Handle disconnection event
-    function onDisconnected(event){
+    function onDisconnected(event) {
         console.log('Device Disconnected:', event.target.device.name);
         bleStateContainer.innerHTML = "Device disconnected";
         bleStateContainer.style.color = "#d13a30";
@@ -158,7 +160,11 @@
     // Function to update values and timestamp every second
     function updateValuesAndTimestamp() {
         // Update the timestamp
-        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+        const timestamp = getDateTime();
+        const timestampElement = document.getElementById('timestamp');
+        if (timestampElement) {
+            timestampElement.textContent = `Last reading: ${timestamp}`;
+        }
     }
 
     // Function to handle characteristic change
@@ -194,7 +200,8 @@
                     .catch(error => {
                         console.log("An error occurred:", error);
                     });
-            } else {
+            }
+            else {
                 console.log("No characteristic found to disconnect.");
             }
         } else {
@@ -203,11 +210,14 @@
             window.alert("Bluetooth is not connected.")
         }
     }
-
-        // Function to update values and timestamp every second
+    // Function to update values and timestamp every second
     function updateValuesAndTimestamp() {
         // Update the timestamp
-        timestampContainer.textContent = `Last reading: ${getDateTime()}`;
+        const timestamp = getDateTime();
+        const timestampElement = document.getElementById('timestamp');
+        if (timestampElement) {
+            timestampElement.textContent = `Last reading: ${timestamp}`;
+        }
 
         // Update the values every second
         statusCharacteristicFound.readValue()
@@ -236,4 +246,5 @@
         return datetime;
     }
 </script>
+
 </html>
