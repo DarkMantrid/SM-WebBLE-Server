@@ -40,142 +40,162 @@
     </div>
 </body>
 <script>
-    // Event Handlers
-    function handleConnectButtonClick(event) {
-        if (isWebBluetoothEnabled()) {
-            connectToDevice();
-        }
-    }
+// DOM Elements
+const connectButton = document.getElementById('connectBleButton');
+const disconnectButton = document.getElementById('disconnectBleButton');
+const bleStateContainer = document.getElementById('bleState');
+const timestampContainer = document.getElementById('timestamp');
+const statusContainer = document.getElementById('statusContainer');
 
-    function disconnectDevice() {
-        if (bleServer && bleServer.connected) {
-            if (statusCharacteristicFound) {
-                statusCharacteristicFound.stopNotifications()
-                    .then(() => bleServer.disconnect())
-                    .then(() => {
-                        updateBleState('Device Disconnected', '#d13a30');
-                        clearInterval(intervalId);
-                        hideStatusCard();
-                    })
-                    .catch(error => console.error('An error occurred:', error));
-            } else {
-                console.log("No characteristic found to disconnect.");
-            }
+// Bluetooth Constants
+const bleService = '08fed9e7-90be-44b5-b02c-91393f6e8988';
+const statusCharacteristic = '601d23b8-72c2-4965-90d1-2d8bab04f73a';
+
+// Bluetooth Variables
+let bleServer;
+let statusCharacteristicFound;
+let intervalId;
+
+// Event Listeners
+connectButton.addEventListener('click', handleConnectButtonClick);
+disconnectButton.addEventListener('click', disconnectDevice);
+
+// Event Handlers
+function handleConnectButtonClick(event) {
+    if (isWebBluetoothEnabled()) {
+        connectToDevice();
+    }
+}
+
+function disconnectDevice() {
+    if (bleServer && bleServer.connected) {
+        if (statusCharacteristicFound) {
+            statusCharacteristicFound.stopNotifications()
+                .then(() => bleServer.disconnect())
+                .then(() => {
+                    updateBleState('Device Disconnected', '#d13a30');
+                    clearInterval(intervalId);
+                    hideStatusCard();
+                })
+                .catch(error => console.error('An error occurred:', error));
         } else {
-            console.error("Bluetooth is not connected.");
-            window.alert("Bluetooth is not connected.")
+            console.log("No characteristic found to disconnect.");
         }
+    } else {
+        console.error("Bluetooth is not connected.");
+        window.alert("Bluetooth is not connected.")
     }
+}
 
-    // Bluetooth Functions
-    function isWebBluetoothEnabled() {
-        if (!navigator.bluetooth) {
-            console.log('Web Bluetooth API is not available in this browser!');
-            updateBleState('Web Bluetooth API is not available', '#d13a30');
-            return false;
-        }
-        console.log('Web Bluetooth API supported in this browser.');
-        return true;
+// Bluetooth Functions
+function isWebBluetoothEnabled() {
+    if (!navigator.bluetooth) {
+        console.log('Web Bluetooth API is not available in this browser!');
+        updateBleState('Web Bluetooth API is not available', '#d13a30');
+        return false;
     }
+    console.log('Web Bluetooth API supported in this browser.');
+    return true;
+}
 
-    function connectToDevice() {
-        console.log('Initializing Bluetooth...');
-        navigator.bluetooth.requestDevice({
-            acceptAllDevices: true,
-            optionalServices: [bleService]
+function connectToDevice() {
+    console.log('Initializing Bluetooth...');
+    navigator.bluetooth.requestDevice({
+        acceptAllDevices: true,
+        optionalServices: [bleService]
+    })
+        .then(device => {
+            console.log('Device Selected:', device.name);
+            updateBleState('Connected to device ' + device.name, '#24af37');
+            device.addEventListener('gattservicedisconnected', onDisconnected);
+            return device.gatt.connect();
         })
-            .then(device => {
-                console.log('Device Selected:', device.name);
-                updateBleState('Connected to device ' + device.name, '#24af37');
-                device.addEventListener('gattservicedisconnected', onDisconnected);
-                return device.gatt.connect();
-            })
-            .then(gattServer => {
-                bleServer = gattServer;
-                console.log("Connected to GATT Server");
-                return bleServer.getPrimaryService(bleService);
-            })
-            .then(service => {
-                console.log("Service discovered:", service.uuid);
-                return service.getCharacteristic(statusCharacteristic);
-            })
-            .then(characteristic => {
-                console.log("Characteristic discovered:", characteristic.uuid);
-                statusCharacteristicFound = characteristic;
-                // Subscribe to notifications without updating the UI
-                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
-                return characteristic.startNotifications();
-            })
-            .then(() => {
-                // Start interval for updating timestamp
-                intervalId = setInterval(updateTimestamp, 1000);
-            })
-            .catch(error => console.error('Error: ', error));
-    }
+        .then(gattServer => {
+            bleServer = gattServer;
+            console.log("Connected to GATT Server");
+            return bleServer.getPrimaryService(bleService);
+        })
+        .then(service => {
+            console.log("Service discovered:", service.uuid);
+            return service.getCharacteristic(statusCharacteristic);
+        })
+        .then(characteristic => {
+            console.log("Characteristic discovered:", characteristic.uuid);
+            statusCharacteristicFound = characteristic;
+            // Subscribe to notifications without updating the UI
+            characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
+            return characteristic.startNotifications();
+        })
+        .then(() => {
+            // Start interval for updating timestamp
+            intervalId = setInterval(updateTimestamp, 1000);
+        })
+        .catch(error => console.error('Error: ', error));
+}
 
-    function onDisconnected(event) {
-        console.log('Device Disconnected:', event.target.device.name);
-        updateBleState('Device disconnected', '#d13a30');
-        clearInterval(intervalId);
-        hideStatusCard();
-    }
+function onDisconnected(event) {
+    console.log('Device Disconnected:', event.target.device.name);
+    updateBleState('Device disconnected', '#d13a30');
+    clearInterval(intervalId);
+    hideStatusCard();
+}
 
-    function handleCharacteristicChange(event) {
-        // Check if the event is triggered by a characteristic value change
-        if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
-            // No need to update UI, just log the received value
-            const newValueReceived = new TextDecoder().decode(event.target.value);
-            console.log("Characteristic value changed: ", newValueReceived);
-            // Update the statusContainer with the new characteristic value
-            statusContainer.style.whiteSpace = "pre-line";
-            statusContainer.textContent = newValueReceived;
-            // Show the status card if it's hidden
-            showStatusCard();
-            // Update the timestamp
-            updateTimestamp();
-        } else {
-            // Handle other types of events here if needed
-            console.log("Unknown event type:", event);
-        }
+function handleCharacteristicChange(event) {
+    // Check if the event is triggered by a characteristic value change
+    if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
+        // Get the characteristic value
+        const newValueReceived = new TextDecoder().decode(event.target.value);
+        console.log("Characteristic value changed: ", newValueReceived);
+        // Update the statusContainer with the new characteristic value
+        statusContainer.style.whiteSpace = "pre-line";
+        statusContainer.textContent = newValueReceived;
+        // Update the timestamp
+        updateTimestamp();
+        // Show the status card
+        showStatusCard();
+    } else {
+        // Handle other types of events here if needed
+        console.log("Unknown event type:", event);
     }
+}
 
-    // UI Functions
-    function updateBleState(message, color) {
-        bleStateContainer.innerHTML = message;
-        bleStateContainer.style.color = color;
-    }
+// UI Functions
+function updateBleState(message, color) {
+    bleStateContainer.innerHTML = message;
+    bleStateContainer.style.color = color;
+}
 
-    function showStatusCard() {
-        const statusCard = document.querySelector('.status-card');
-        if (statusCard) {
-            statusCard.style.display = 'block';
-        }
+function showStatusCard() {
+    const statusCard = document.querySelector('.status-card');
+    if (statusCard) {
+        statusCard.style.display = 'block';
     }
+}
 
-    function hideStatusCard() {
-        const statusCard = document.querySelector('.status-card');
-        if (statusCard) {
-            statusCard.style.display = 'none';
-        }
+function hideStatusCard() {
+    const statusCard = document.querySelector('.status-card');
+    if (statusCard) {
+        statusCard.style.display = 'none';
     }
+}
 
-    // Update timestamp every second
-    function updateTimestamp() {
-        const timestamp = getDateTime();
-        timestampContainer.textContent = `Last reading: ${timestamp}`;
-    }
+// Update timestamp every second
+function updateTimestamp() {
+    const timestamp = getDateTime();
+    timestampContainer.textContent = `Last reading: ${timestamp}`;
+}
 
-    // Utility Functions
-    function getDateTime() {
-        const currentdate = new Date();
-        const day = ("00" + currentdate.getDate()).slice(-2);
-        const month = ("00" + (currentdate.getMonth() + 1)).slice(-2);
-        const year = currentdate.getFullYear();
-        const hours = ("00" + currentdate.getHours()).slice(-2);
-        const minutes = ("00" + currentdate.getMinutes()).slice(-2);
-        const seconds = ("00" + currentdate.getSeconds()).slice(-2);
-        return `${day}/${month}/${year} at ${hours}:${minutes}:${seconds}`;
-    }
+// Utility Functions
+function getDateTime() {
+    const currentdate = new Date();
+    const day = ("00" + currentdate.getDate()).slice(-2);
+    const month = ("00" + (currentdate.getMonth() + 1)).slice(-2);
+    const year = currentdate.getFullYear();
+    const hours = ("00" + currentdate.getHours()).slice(-2);
+    const minutes = ("00" + currentdate.getMinutes()).slice(-2);
+    const seconds = ("00" + currentdate.getSeconds()).slice(-2);
+    return `${day}/${month}/${year} at ${hours}:${minutes}:${seconds}`;
+}
 
 
 </script>
