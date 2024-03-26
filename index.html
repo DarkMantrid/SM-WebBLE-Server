@@ -201,7 +201,7 @@
                 const decodedValue = new TextDecoder().decode(value);
                 console.log("Decoded value: ", decodedValue);
                 statusContainer.style.whiteSpace = "pre-line";
-                statusContainer.innerHTML = `<span><b>Status:</b> ${decodedValue}</span>`;
+                statusContainer.innerHTML = `<span>${decodedValue}</span>`;
                 // Update the interval to update status value every 10 milliseconds
                 setInterval(updateStatusValue, 10);
             })
