@@ -46,9 +46,13 @@
     const bleStateContainer = document.getElementById('bleState');
     const timestampContainer = document.getElementById('timestamp');
     const statusContainer = document.getElementById('statusContainer');
-    const statusCard = document.querySelector('.status-card');
+
+    // Event Listeners
+    connectButton.addEventListener('click', handleConnectButtonClick);
+    disconnectButton.addEventListener('click', disconnectDevice);
 
     // Bluetooth Constants
+    const deviceName = 'ESP-IDx';
     const bleService = '08fed9e7-90be-44b5-b02c-91393f6e8988';
     const statusCharacteristic = '601d23b8-72c2-4965-90d1-2d8bab04f73a';
 
@@ -56,10 +60,6 @@
     let bleServer;
     let statusCharacteristicFound;
     let intervalId;
-
-    // Event Listeners
-    connectButton.addEventListener('click', handleConnectButtonClick);
-    disconnectButton.addEventListener('click', disconnectDevice);
 
     // Event Handlers
     function handleConnectButtonClick(event) {
@@ -123,12 +123,20 @@
             .then(characteristic => {
                 console.log("Characteristic discovered:", characteristic.uuid);
                 statusCharacteristicFound = characteristic;
-                // Subscribe to notifications without updating the UI
+                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
                 return characteristic.startNotifications();
             })
             .then(() => {
-                // Start interval for updating timestamp
-                intervalId = setInterval(updateTimestamp, 1000);
+                intervalId = setInterval(updateTimestamp, 1000); // Update timestamp every second
+                return statusCharacteristicFound.readValue();
+            })
+            .then(value => {
+                console.log("Read value: ", value);
+                const decodedValue = new TextDecoder().decode(value);
+                console.log("Decoded value: ", decodedValue);
+                statusContainer.style.whiteSpace = "pre-line";
+                statusContainer.innerHTML = `<span>${decodedValue}</span>`;
+                showStatusCard();
             })
             .catch(error => console.error('Error: ', error));
     }
@@ -138,6 +146,22 @@
         updateBleState('Device disconnected', '#d13a30');
         clearInterval(intervalId);
         hideStatusCard();
+        connectToDevice();
+    }
+
+    function handleCharacteristicChange(event) {
+        // Check if the event is triggered by a characteristic value change
+        if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
+            const newValueReceived = new TextDecoder().decode(event.target.value);
+            console.log("Characteristic value changed: ", newValueReceived);
+            // Update the statusContainer with the new characteristic value
+            statusContainer.style.whiteSpace = "pre-line";
+            statusContainer.textContent = newValueReceived;
+            updateValuesAndTimestamp(); // Update the timestamp if needed
+        } else {
+            // Handle other types of events here if needed
+            console.log("Unknown event type:", event);
+        }
     }
 
     // UI Functions
@@ -146,7 +170,15 @@
         bleStateContainer.style.color = color;
     }
 
+    function showStatusCard() {
+        const statusCard = document.querySelector('.status-card');
+        if (statusCard) {
+            statusCard.style.display = 'block';
+        }
+    }
+
     function hideStatusCard() {
+        const statusCard = document.querySelector('.status-card');
         if (statusCard) {
             statusCard.style.display = 'none';
         }
@@ -156,6 +188,24 @@
     function updateTimestamp() {
         const timestamp = getDateTime();
         timestampContainer.textContent = `Last reading: ${timestamp}`;
+    }
+
+    // Update status value every 100 milliseconds
+    function updateValuesAndTimestamp() {
+        updateStatusValue();
+    }
+
+    function updateStatusValue() {
+        statusCharacteristicFound.readValue()
+            .then(value => {
+                const decodedValue = new TextDecoder().decode(value);
+                console.log("Decoded value: ", decodedValue);
+                statusContainer.style.whiteSpace = "pre-line";
+                statusContainer.innerHTML = `<span><b>Status:</b> ${decodedValue}</span>`;
+                // Update the interval to update status value every 10 milliseconds
+                setInterval(updateStatusValue, 10);
+            })
+            .catch(error => console.error('Error reading value: ', error));
     }
 
     // Utility Functions
@@ -169,6 +219,7 @@
         const seconds = ("00" + currentdate.getSeconds()).slice(-2);
         return `${day}/${month}/${year} at ${hours}:${minutes}:${seconds}`;
     }
+
 </script>
 
 </html>
