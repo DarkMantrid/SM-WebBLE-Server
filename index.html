@@ -138,7 +138,7 @@
                 statusContainer.innerHTML = `<span>${decodedValue}</span>`;
                 showStatusCard();
             })
-            .catch(error => console.error('Err: ', error));
+            .catch(error => console.error('Error: ', error));
     }
 
     function onDisconnected(event) {
@@ -146,7 +146,12 @@
         updateBleState('Device disconnected', '#d13a30');
         clearInterval(intervalId);
         hideStatusCard();
-        connectToDevice();
+
+        // Check if the device is disconnected before attempting to reconnect
+        if (!bleServer || !bleServer.connected) {
+            // Attempt to reconnect
+            connectToDevice();
+        }
     }
 
     function handleCharacteristicChange(event) {
@@ -190,7 +195,7 @@
         timestampContainer.textContent = `Last reading: ${timestamp}`;
     }
 
-    
+
     function updateValuesAndTimestamp() {
         updateStatusValue();
     }
