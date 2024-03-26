@@ -138,7 +138,15 @@
                 statusContainer.innerHTML = `<span>${decodedValue}</span>`;
                 showStatusCard();
             })
-            .catch(error => console.error('Error: ', error));
+            .catch(error => {
+                // Check if the error is due to GATT operation already in progress
+                if (error.message && error.message.includes('GATT operation already in progress')) {
+                    console.log('GATT operation already in progress. Retrying...');
+                    setTimeout(connectToDevice, 1000); // Retry after 1 second
+                } else {
+                    console.error('Error: ', error);
+                }
+            });
     }
 
     function onDisconnected(event) {
