@@ -127,7 +127,7 @@
                 return characteristic.startNotifications();
             })
             .then(() => {
-                intervalId = setInterval(updateTimestamp, 1000); // Update timestamp every second
+                intervalId = setInterval(updateTimestamp, 1000);
                 return statusCharacteristicFound.readValue();
             })
             .then(value => {
@@ -203,7 +203,7 @@
                 statusContainer.style.whiteSpace = "pre-line";
                 statusContainer.innerHTML = `<span>${decodedValue}</span>`;
                 // Update the interval to update status value every 1 milliseconds
-                setInterval(updateStatusValue, 1);
+                // setInterval(updateStatusValue, 1);
             })
             .catch(error => console.error('Error reading value: ', error));
     }
