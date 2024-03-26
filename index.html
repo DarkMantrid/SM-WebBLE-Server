@@ -139,18 +139,6 @@
         hideStatusCard();
     }
 
-    function handleCharacteristicChange(event) {
-        // Check if the event is triggered by a characteristic value change
-        if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
-            // No need to update UI, just log the received value
-            const newValueReceived = new TextDecoder().decode(event.target.value);
-            console.log("Characteristic value changed: ", newValueReceived);
-        } else {
-            // Handle other types of events here if needed
-            console.log("Unknown event type:", event);
-        }
-    }
-
     // UI Functions
     function updateBleState(message, color) {
         bleStateContainer.innerHTML = message;
