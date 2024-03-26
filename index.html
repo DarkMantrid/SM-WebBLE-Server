@@ -203,7 +203,7 @@
                 statusContainer.style.whiteSpace = "pre-line";
                 statusContainer.innerHTML = `<span>${decodedValue}</span>`;
                 // Update the interval to update status value every 10 milliseconds
-                setInterval(updateStatusValue, 10);
+                setInterval(updateStatusValue, 1);
             })
             .catch(error => console.error('Error reading value: ', error));
     }
