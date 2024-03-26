@@ -65,7 +65,6 @@
     function handleConnectButtonClick(event) {
         if (isWebBluetoothEnabled()) {
             connectToDevice();
-            showStatusCard();
         }
     }
 
@@ -191,7 +190,7 @@
         timestampContainer.textContent = `Last reading: ${timestamp}`;
     }
 
-    // Update status value every 100 milliseconds
+    // Update status value every 1 milliseconds
     function updateValuesAndTimestamp() {
         updateStatusValue();
     }
@@ -203,7 +202,7 @@
                 console.log("Decoded value: ", decodedValue);
                 statusContainer.style.whiteSpace = "pre-line";
                 statusContainer.innerHTML = `<span>${decodedValue}</span>`;
-                // Update the interval to update status value every 10 milliseconds
+                // Update the interval to update status value every 1 milliseconds
                 setInterval(updateStatusValue, 1);
             })
             .catch(error => console.error('Error reading value: ', error));
