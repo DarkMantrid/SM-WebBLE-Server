@@ -138,7 +138,7 @@
                 statusContainer.innerHTML = `<span>${decodedValue}</span>`;
                 showStatusCard();
             })
-            .catch(error => console.error('Error: ', error));
+            .catch(error => console.error('Err: ', error));
     }
 
     function onDisconnected(event) {
@@ -190,7 +190,7 @@
         timestampContainer.textContent = `Last reading: ${timestamp}`;
     }
 
-    // Update status value every 1 milliseconds
+    
     function updateValuesAndTimestamp() {
         updateStatusValue();
     }
@@ -202,8 +202,6 @@
                 console.log("Decoded value: ", decodedValue);
                 statusContainer.style.whiteSpace = "pre-line";
                 statusContainer.innerHTML = `<span>${decodedValue}</span>`;
-                // Update the interval to update status value every 1 milliseconds
-                // setInterval(updateStatusValue, 1);
             })
             .catch(error => console.error('Error reading value: ', error));
     }
