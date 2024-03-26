@@ -12,7 +12,7 @@
 
 <body>
     <div class="header">
-        <h1>ID: "067442"</h1>
+        <h1>ID: x</h1>
         <div class="logo">
             <img src="sspn-logo-b.png" alt="Logo" class="logo-img">
         </div>
@@ -60,6 +60,7 @@
     let bleServer;
     let statusCharacteristicFound;
     let intervalId;
+    let retrying = false;
 
     // Event Handlers
     function handleConnectButtonClick(event) {
@@ -141,8 +142,14 @@
             .catch(error => {
                 // Check if the error is due to GATT operation already in progress
                 if (error.message && error.message.includes('GATT operation already in progress')) {
-                    console.log('GATT operation already in progress. Retrying...');
-                    setTimeout(connectToDevice, 1000); // Retry after 1 second
+                    if (!retrying) {
+                        console.log('GATT operation already in progress. Retrying...');
+                        retrying = true;
+                        setTimeout(() => {
+                            retrying = false;
+                            connectToDevice();
+                        }, 1000); // Retry after 1 second
+                    }
                 } else {
                     console.error('Error: ', error);
                 }
