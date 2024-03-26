@@ -124,7 +124,6 @@
                 console.log("Characteristic discovered:", characteristic.uuid);
                 statusCharacteristicFound = characteristic;
                 // Subscribe to notifications without updating the UI
-                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
                 return characteristic.startNotifications();
             })
             .then(() => {
@@ -141,35 +140,10 @@
         hideStatusCard();
     }
 
-    function handleCharacteristicChange(event) {
-        // Check if the event is triggered by a characteristic value change
-        if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
-            // Get the characteristic value
-            const newValueReceived = new TextDecoder().decode(event.target.value);
-            console.log("Characteristic value changed: ", newValueReceived);
-            // Update the statusContainer with the new characteristic value
-            statusContainer.style.whiteSpace = "pre-line";
-            statusContainer.textContent = newValueReceived;
-            // Update the timestamp
-            updateTimestamp();
-            // Show the status card
-            showStatusCard();
-        } else {
-            // Handle other types of events here if needed
-            console.log("Unknown event type:", event);
-        }
-    }
-
     // UI Functions
     function updateBleState(message, color) {
         bleStateContainer.innerHTML = message;
         bleStateContainer.style.color = color;
-    }
-
-    function showStatusCard() {
-        if (statusCard) {
-            statusCard.style.display = 'block';
-        }
     }
 
     function hideStatusCard() {
@@ -195,7 +169,6 @@
         const seconds = ("00" + currentdate.getSeconds()).slice(-2);
         return `${day}/${month}/${year} at ${hours}:${minutes}:${seconds}`;
     }
-
 </script>
 
 </html>
