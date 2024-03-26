@@ -40,26 +40,6 @@
     </div>
 </body>
 <script>
-    // DOM Elements
-    const connectButton = document.getElementById('connectBleButton');
-    const disconnectButton = document.getElementById('disconnectBleButton');
-    const bleStateContainer = document.getElementById('bleState');
-    const timestampContainer = document.getElementById('timestamp');
-    const statusContainer = document.getElementById('statusContainer');
-
-    // Bluetooth Constants
-    const bleService = '08fed9e7-90be-44b5-b02c-91393f6e8988';
-    const statusCharacteristic = '601d23b8-72c2-4965-90d1-2d8bab04f73a';
-
-    // Bluetooth Variables
-    let bleServer;
-    let statusCharacteristicFound;
-    let intervalId;
-
-    // Event Listeners
-    connectButton.addEventListener('click', handleConnectButtonClick);
-    disconnectButton.addEventListener('click', disconnectDevice);
-
     // Event Handlers
     function handleConnectButtonClick(event) {
         if (isWebBluetoothEnabled()) {
@@ -123,6 +103,7 @@
                 console.log("Characteristic discovered:", characteristic.uuid);
                 statusCharacteristicFound = characteristic;
                 // Subscribe to notifications without updating the UI
+                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
                 return characteristic.startNotifications();
             })
             .then(() => {
@@ -139,10 +120,36 @@
         hideStatusCard();
     }
 
+    function handleCharacteristicChange(event) {
+        // Check if the event is triggered by a characteristic value change
+        if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
+            // No need to update UI, just log the received value
+            const newValueReceived = new TextDecoder().decode(event.target.value);
+            console.log("Characteristic value changed: ", newValueReceived);
+            // Update the statusContainer with the new characteristic value
+            statusContainer.style.whiteSpace = "pre-line";
+            statusContainer.textContent = newValueReceived;
+            // Show the status card if it's hidden
+            showStatusCard();
+            // Update the timestamp
+            updateTimestamp();
+        } else {
+            // Handle other types of events here if needed
+            console.log("Unknown event type:", event);
+        }
+    }
+
     // UI Functions
     function updateBleState(message, color) {
         bleStateContainer.innerHTML = message;
         bleStateContainer.style.color = color;
+    }
+
+    function showStatusCard() {
+        const statusCard = document.querySelector('.status-card');
+        if (statusCard) {
+            statusCard.style.display = 'block';
+        }
     }
 
     function hideStatusCard() {
@@ -169,6 +176,7 @@
         const seconds = ("00" + currentdate.getSeconds()).slice(-2);
         return `${day}/${month}/${year} at ${hours}:${minutes}:${seconds}`;
     }
+
 
 </script>
 
