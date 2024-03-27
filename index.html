@@ -129,11 +129,30 @@
             })
             .then(() => {
                 intervalId = setInterval(updateTimestamp, 1000);
-                console.log("Connected and notifications enabled.");
+                return statusCharacteristicFound.readValue();
+            })
+            .then(value => {
+                console.log("Read value: ", value);
+                const decodedValue = new TextDecoder().decode(value);
+                console.log("Decoded value: ", decodedValue);
+                statusContainer.style.whiteSpace = "pre-line";
+                statusContainer.innerHTML = `<span>${decodedValue}</span>`;
                 showStatusCard();
             })
             .catch(error => {
-                console.error('Error: ', error);
+                // Check if the error is due to GATT operation already in progress
+                if (error.message && error.message.includes('GATT operation already in progress')) {
+                    if (!retrying) {
+                        console.log('GATT operation already in progress. Retrying...');
+                        retrying = true;
+                        setTimeout(() => {
+                            retrying = false;
+                            connectToDevice();
+                        }, 1000); // Retry after 1 second
+                    }
+                } else {
+                    console.error('Error: ', error);
+                }
             });
     }
 
@@ -191,6 +210,7 @@
         timestampContainer.textContent = `Last reading: ${timestamp}`;
     }
 
+
     function updateValues() {
         updateStatusValue();
     }
@@ -219,5 +239,4 @@
     }
 
 </script>
-
 </html>
