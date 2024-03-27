@@ -133,19 +133,7 @@
                 showStatusCard();
             })
             .catch(error => {
-                // Check if the error is due to GATT operation already in progress
-                if (error.message && error.message.includes('GATT operation already in progress')) {
-                    if (!retrying) {
-                        console.log('GATT operation already in progress. Retrying...');
-                        retrying = true;
-                        setTimeout(() => {
-                            retrying = false;
-                            connectToDevice();
-                        }, 1000); // Retry after 1 second
-                    }
-                } else {
-                    console.error('Error: ', error);
-                }
+                console.error('Error: ', error);
             });
     }
 
