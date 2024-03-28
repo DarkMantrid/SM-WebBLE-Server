@@ -132,11 +132,11 @@
                 return statusCharacteristicFound.readValue();
             })
             .then(value => {
-                console.log("Read value: ", value);
-                const decodedValue = new TextDecoder().decode(value);
-                console.log("Decoded value: ", decodedValue);
-                statusContainer.style.whiteSpace = "pre-line";
-                statusContainer.innerHTML = `<span>${decodedValue}</span>`;
+                // console.log("Read value: ", value);
+                // const decodedValue = new TextDecoder().decode(value);
+                // console.log("Decoded value: ", decodedValue);
+                // statusContainer.style.whiteSpace = "pre-line";
+                // statusContainer.innerHTML = `<span>${decodedValue}</span>`;
                 showStatusCard();
             })
             .catch(error => {
