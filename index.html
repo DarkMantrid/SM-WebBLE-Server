@@ -170,7 +170,6 @@
             // Update the statusContainer with the new characteristic value
             statusContainer.style.whiteSpace = "pre-line";
             statusContainer.textContent = newValueReceived;
-            // updateValues();
         } else {
             // Handle other types of events here if needed
             console.log("Unknown event type:", event);
@@ -207,17 +206,6 @@
     function updateValues() {
         updateStatusValue();
     }
-
-    // function updateStatusValue() {
-    //     statusCharacteristicFound.readValue()
-    //         .then(value => {
-    //             const decodedValue = new TextDecoder().decode(value);
-    //             console.log("Decoded value: ", decodedValue);
-    //             statusContainer.style.whiteSpace = "pre-line";
-    //             statusContainer.innerHTML = `<span>${decodedValue}</span>`;
-    //         })
-    //         .catch(error => console.error('Error reading value: ', error));
-    // }
 
     // Utility Functions
     function getDateTime() {
