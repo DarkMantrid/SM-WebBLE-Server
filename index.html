@@ -188,10 +188,8 @@
         // Check if the event is triggered by a characteristic value change
         if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
             const newValueReceived = new TextDecoder().decode(event.target.value);
-            const obj = JSON.parse(newValueReceived);
             if (event.target.uuid === statusCharacteristic || event.target.uuid === infoCharacteristic) {
-                // Remove the first and last character of the JSON string
-                const trimmedValue = newValueReceived.slice(1, -1);
+                const obj = JSON.parse(newValueReceived);
                 // Update the corresponding container with the new characteristic value
                 if (event.target.uuid === statusCharacteristic) {
                     statusContainer.style.whiteSpace = "pre-line";
@@ -204,7 +202,7 @@
                 console.log("Unknown characteristic:", event.target.uuid);
             }
             console.log("Characteristic value changed: ", newValueReceived);
-            console.log(obj);
+            
         } else {
             // Handle other types of events here if needed
             console.log("Unknown event type:", event);
