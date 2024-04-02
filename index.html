@@ -130,13 +130,22 @@
             })
             .then(service => {
                 console.log("Service discovered:", service.uuid);
-                return service.getCharacteristic(statusCharacteristic);
-            })
-            .then(characteristic => {
-                console.log("Characteristic discovered:", characteristic.uuid);
-                statusCharacteristicFound = characteristic;
-                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
-                return characteristic.startNotifications();
+                // Find and set up notifications for statusCharacteristic
+                return Promise.all([
+                    service.getCharacteristic(statusCharacteristic).then(characteristic => {
+                        console.log("Status Characteristic discovered:", characteristic.uuid);
+                        statusCharacteristicFound = characteristic;
+                        characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
+                        return characteristic.startNotifications();
+                    }),
+                    // Find and set up notifications for infoCharacteristic
+                    service.getCharacteristic(infoCharacteristic).then(characteristic => {
+                        console.log("Info Characteristic discovered:", characteristic.uuid);
+                        infoCharacteristicFound = characteristic;
+                        characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
+                        return characteristic.startNotifications();
+                    })
+                ]);
             })
             .then(() => {
                 intervalId = setInterval(updateTimestamp, 1000);
@@ -180,7 +189,7 @@
         if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
             const newValueReceived = new TextDecoder().decode(event.target.value);
             const obj = JSON.parse(newValueReceived);
-            if(obj.connected != 0) {
+            if (obj.connected != 0) {
 
             }
             console.log("Characteristic value changed: ", newValueReceived);
@@ -250,4 +259,5 @@
     }
 
 </script>
+
 </html>
