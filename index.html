@@ -189,14 +189,17 @@
         if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
             const newValueReceived = new TextDecoder().decode(event.target.value);
             const obj = JSON.parse(newValueReceived);
-            if (event.target.uuid === statusCharacteristic) {
-                // Update the statusContainer with the new characteristic value
-                statusContainer.style.whiteSpace = "pre-line";
-                statusContainer.textContent = newValueReceived;
-            } else if (event.target.uuid === infoCharacteristic) {
-                // Update the infoContainer with the new characteristic value
-                infoContainer.style.whiteSpace = "pre-line";
-                infoContainer.textContent = newValueReceived;
+            if (event.target.uuid === statusCharacteristic || event.target.uuid === infoCharacteristic) {
+                // Remove the first and last character of the JSON string
+                const trimmedValue = newValueReceived.slice(1, -1);
+                // Update the corresponding container with the new characteristic value
+                if (event.target.uuid === statusCharacteristic) {
+                    statusContainer.style.whiteSpace = "pre-line";
+                    statusContainer.textContent = trimmedValue;
+                } else if (event.target.uuid === infoCharacteristic) {
+                    infoContainer.style.whiteSpace = "pre-line";
+                    infoContainer.textContent = trimmedValue;
+                }
             } else {
                 console.log("Unknown characteristic:", event.target.uuid);
             }
