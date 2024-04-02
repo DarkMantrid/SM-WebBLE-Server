@@ -110,8 +110,8 @@ button {
 /* For mobile devices, ensure content is centered */
 @media (max-width: 767px) {
     .card-table {
-        flex-direction: column; /* Change flex direction to column for vertical stacking */
-        align-items: stretch; /* Stretch items to fill the container width */
+        display: grid; /* Change display property to grid for row-based layout */
+        grid-template-columns: 1fr; /* Set a single column layout for smaller screens */
     }
 }
 
