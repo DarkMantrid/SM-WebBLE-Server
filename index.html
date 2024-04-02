@@ -166,7 +166,9 @@
         // Check if the event is triggered by a characteristic value change
         if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
             const newValueReceived = new TextDecoder().decode(event.target.value);
+            const obj = JSON.parse(newValueReceived);
             console.log("Characteristic value changed: ", newValueReceived);
+            console.log(obj);
             // Update the statusContainer with the new characteristic value
             statusContainer.style.whiteSpace = "pre-line";
             statusContainer.textContent = newValueReceived;
