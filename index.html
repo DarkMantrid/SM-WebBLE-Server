@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html>
 
@@ -8,23 +7,6 @@
     <link rel="icon" type="image/png" href="favicon.ico">
     <link rel="stylesheet" type="text/css" href="style.css">
     <meta charset="UTF-8">
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th,
-        td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
 </head>
 
 <body>
@@ -35,59 +17,39 @@
         </div>
     </div>
     <div class="content1">
-        <div class="card-grid">
-            <div class="card">
-                <p>
-                    <button id="connectBleButton" class="connectButton"> Connect to BLE Device</button>
-                    <button id="disconnectBleButton" class="disconnectButton"> Disconnect BLE Device</button>
-                </p>
-                <p class="gray-label">BLE state: <strong><span id="bleState"
-                            style="color:#d13a30;">Disconnected</span></strong></p>
-            </div>
-        </div>
+        <table class="card-grid">
+            <tr>
+                <td class="card">
+                    <p>
+                        <button id="connectBleButton" class="connectButton"> Connect to BLE Device</button>
+                        <button id="disconnectBleButton" class="disconnectButton"> Disconnect BLE Device</button>
+                    </p>
+                    <p class="gray-label">BLE state: <strong><span id="bleState"
+                                style="color:#d13a30;">Disconnected</span></strong></p>
+                </td>
+            </tr>
+        </table>
     </div>
     <div class="content2">
-        <div class="card-grid">
-            <div class="card info-card" style="display: none;">
-                <h2>General information</h2>
-                <table>
-                    <tr>
-                        <th>ID Code</th>
-                        <td><span id="idCode"></span></td>
-                    </tr>
-                    <tr>
-                        <th>CPU1</th>
-                        <td><span id="cpu1"></span></td>
-                    </tr>
-                    <tr>
-                        <th>CPU2</th>
-                        <td><span id="cpu2"></span></td>
-                    </tr>
-                    <tr>
-                        <th>Config ID</th>
-                        <td><span id="configId"></span></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
+        <table class="card-grid">
+            <tr>
+                <td class="card info-card" style="display: none;">
+                    <h2>General information</h2>
+                    <p class="infoReading"><span id="infoContainer"></span></p>
+                </td>
+            </tr>
+        </table>
     </div>
     <div class="content3">
-        <div class="card-grid">
-            <div class="card status-card" style="display: none;">
-                <h2>Status</h2>
-                <table>
-                    <tr>
-                        <th>Connected</th>
-                        <td><span id="connected"></span></td>
-                    </tr>
-                    <tr>
-                        <th>Number of Packets</th>
-                        <td><span id="numPackets"></span></td>
-                    </tr>
-                </table>
-                <p class="gray-label" id="timestamp"></p>
-            </div>
-        </div>
+        <table class="card-grid">
+            <tr>
+                <td class="card status-card" style="display: none;">
+                    <h2>Status</h2>
+                    <p class="statusReading"><span id="statusContainer"></span></p>
+                    <p class="gray-label" id="timestamp"></p>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 <script>
@@ -96,12 +58,8 @@
     const disconnectButton = document.getElementById('disconnectBleButton');
     const bleStateContainer = document.getElementById('bleState');
     const timestampContainer = document.getElementById('timestamp');
-    const idCodeContainer = document.getElementById('idCode');
-    const cpu1Container = document.getElementById('cpu1');
-    const cpu2Container = document.getElementById('cpu2');
-    const configIdContainer = document.getElementById('configId');
-    const connectedContainer = document.getElementById('connected');
-    const numPacketsContainer = document.getElementById('numPackets');
+    const statusContainer = document.getElementById('statusContainer');
+    const infoContainer = document.getElementById('infoContainer');
 
     // Event Listeners
     connectButton.addEventListener('click', handleConnectButtonClick);
@@ -240,20 +198,16 @@
                 // Update the corresponding container with the new characteristic value
                 if (event.target.uuid === statusCharacteristic) {
                     statusContainer.style.whiteSpace = "pre-line";
-                    connectedContainer.textContent = obj.connected;
-                    numPacketsContainer.textContent = obj.num_packets;
+                    statusContainer.textContent = `Connected: ${obj.connected}\nNumber of packets recieved: ${obj.num_packets}`;
                 } else if (event.target.uuid === infoCharacteristic) {
                     infoContainer.style.whiteSpace = "pre-line";
-                    idCodeContainer.textContent = obj.id_code;
-                    cpu1Container.textContent = obj.firmware_cpu1;
-                    cpu2Container.textContent = obj.firmware_cpu2;
-                    configIdContainer.textContent = obj.config_id;
+                    infoContainer.textContent = `ID code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nConfig id: ${obj.config_id}`;
                 }
             } else {
                 console.log("Unknown characteristic:", event.target.uuid);
             }
             console.log("Characteristic value changed: ", newValueReceived);
-
+            
         } else {
             // Handle other types of events here if needed
             console.log("Unknown event type:", event);
