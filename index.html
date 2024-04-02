@@ -16,8 +16,8 @@
             <img src="sspn-logo-b.png" alt="Logo" class="logo-img">
         </div>
     </div>
-    <div class="content1">
-        <table class="card-grid">
+    <div class="content">
+        <table class="card-table">
             <tr>
                 <td class="card">
                     <p>
@@ -27,22 +27,10 @@
                     <p class="gray-label">BLE state: <strong><span id="bleState"
                                 style="color:#d13a30;">Disconnected</span></strong></p>
                 </td>
-            </tr>
-        </table>
-    </div>
-    <div class="content2">
-        <table class="card-grid">
-            <tr>
                 <td class="card info-card" style="display: none;">
                     <h2>General information</h2>
                     <p class="infoReading"><span id="infoContainer"></span></p>
                 </td>
-            </tr>
-        </table>
-    </div>
-    <div class="content3">
-        <table class="card-grid">
-            <tr>
                 <td class="card status-card" style="display: none;">
                     <h2>Status</h2>
                     <p class="statusReading"><span id="statusContainer"></span></p>
@@ -52,6 +40,8 @@
         </table>
     </div>
 </body>
+
+
 <script>
     // DOM Elements
     const connectButton = document.getElementById('connectBleButton');
