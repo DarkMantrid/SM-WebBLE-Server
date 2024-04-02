@@ -191,7 +191,7 @@
                     statusContainer.textContent = `Connected: ${obj.connected}\nNumber of packets recieved: ${obj.num_packets}`;
                 } else if (event.target.uuid === infoCharacteristic) {
                     infoContainer.style.whiteSpace = "pre-line";
-                    infoContainer.textContent = `ID code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nConfig id: ${obj.config_id}`;
+                    infoContainer.textContent = `<b>ID code:</b> ${obj.id_code}\n<b>CPU1:</b> ${obj.firmware_cpu1}\n<b>CPU2:</b> ${obj.firmware_cpu2}\n<b>Hardware version:</b> ${obj.hardware_version}\n<b>Config id:</b> ${obj.config_id}`;
                 }
             } else {
                 console.log("Unknown characteristic:", event.target.uuid);
