@@ -110,7 +110,7 @@ button {
 /* For mobile devices, ensure content is centered */
 @media (max-width: 767px) {
     .card-table {
-        display: grid; /* Change display property to grid for row-based layout */
+        display: table-row; /* Change display property to grid for row-based layout */
         grid-template-columns: 1fr; /* Set a single column layout for smaller screens */
     }
 }
