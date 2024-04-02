@@ -196,7 +196,7 @@
                     // statusContainer.textContent = trimmedValue;
                 } else if (event.target.uuid === infoCharacteristic) {
                     infoContainer.style.whiteSpace = "pre-line";
-                    infoContainer.textContent = `id_code: ${obj.id_code}`;
+                    infoContainer.textContent = `id_code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}`;
                 }
             } else {
                 console.log("Unknown characteristic:", event.target.uuid);
