@@ -17,7 +17,7 @@
             <img src="sspn-logo-b.png" alt="Logo" class="logo-img">
         </div>
     </div>
-    <div class="content">
+    <div class="content1">
         <div class="card-grid">
             <div class="card">
                 <p>
@@ -30,6 +30,14 @@
         </div>
     </div>
     <div class="content2">
+        <div class="card-grid">
+            <div class="card info-card" style="display: none;">
+                <h2>General information</h2>
+                <p class="infoReading"><span id="infoContainer"></span></p>
+            </div>
+        </div>
+    </div>
+    <div class="content3">
         <div class="card-grid">
             <div class="card status-card" style="display: none;">
                 <h2>Status</h2>
@@ -46,6 +54,7 @@
     const bleStateContainer = document.getElementById('bleState');
     const timestampContainer = document.getElementById('timestamp');
     const statusContainer = document.getElementById('statusContainer');
+    const infoContainer = document.getElementById('infoContainer');
 
     // Event Listeners
     connectButton.addEventListener('click', handleConnectButtonClick);
@@ -77,6 +86,7 @@
                     .then(() => {
                         updateBleState('Device Disconnected', '#d13a30');
                         clearInterval(intervalId);
+                        hideInfoCard();
                         hideStatusCard();
                     })
                     .catch(error => console.error('An error occurred:', error));
@@ -129,6 +139,7 @@
             })
             .then(() => {
                 intervalId = setInterval(updateTimestamp, 1000);
+                showInfoCard();
                 showStatusCard();
                 return statusCharacteristicFound.readValue();
             })
@@ -153,6 +164,7 @@
         console.log('Device Disconnected:', event.target.device.name);
         updateBleState('Device disconnected', '#d13a30');
         clearInterval(intervalId);
+        hideInfoCard();
         hideStatusCard();
 
         // Check if the device is disconnected before attempting to reconnect
@@ -167,8 +179,14 @@
         if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
             const newValueReceived = new TextDecoder().decode(event.target.value);
             const obj = JSON.parse(newValueReceived);
+            if(obj.connected != 0) {
+
+            }
             console.log("Characteristic value changed: ", newValueReceived);
             console.log(obj);
+            // Update the infoContainer with the new characteristic value
+            infoContainer.style.whiteSpace = "pre-line";
+            infoContainer.textContent = newValueReceived;
             // Update the statusContainer with the new characteristic value
             statusContainer.style.whiteSpace = "pre-line";
             statusContainer.textContent = newValueReceived;
@@ -182,6 +200,20 @@
     function updateBleState(message, color) {
         bleStateContainer.innerHTML = message;
         bleStateContainer.style.color = color;
+    }
+
+    function showInfoCard() {
+        const statusCard = document.querySelector('.info-card');
+        if (statusCard) {
+            statusCard.style.display = 'block';
+        }
+    }
+
+    function hideInfoCard() {
+        const statusCard = document.querySelector('.info-card');
+        if (statusCard) {
+            statusCard.style.display = 'none';
+        }
     }
 
     function showStatusCard() {
