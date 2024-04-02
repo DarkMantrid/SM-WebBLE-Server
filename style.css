@@ -68,11 +68,12 @@ body {
 
 .card-grid {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 0 auto; /* This centers the entire grid horizontally */
     margin-bottom: 30px;
     display: grid;
     grid-gap: 2rem;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    justify-content: center; /* This centers the items inside the grid horizontally */
 }
 
 .card {
