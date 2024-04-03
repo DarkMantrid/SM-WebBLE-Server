@@ -108,7 +108,7 @@ button {
 
 
 /* For mobile devices, ensure content is centered */
-@media (max-width: 767px) {
+@media (max-width: 1000px) {
     .card-table {
         display: flex; /* Change display property to grid for row-based layout */
         justify-content: space-around;
