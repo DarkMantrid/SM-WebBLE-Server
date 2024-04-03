@@ -70,7 +70,9 @@
             // Event Handlers
             function handleConnectButtonClick(event) {
                 if (!bleServer) {
-                    isWebBluetoothEnabled();
+                    if (isWebBluetoothEnabled()) {
+                        connectToDevice(); // Call connectToDevice here
+                    }
                 }
             }
 
