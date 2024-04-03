@@ -102,16 +102,31 @@
                             clearInterval(intervalId);
                             hideInfoCard();
                             hideStatusCard();
-                            connectToDeviceWithRetry();
+                            // Reset application state
+                            resetAppState();
                         })
                         .catch(error => console.error('An error occurred:', error));
                 } else {
                     console.log("No characteristic found to disconnect.");
+                    // Reset application state
+                    resetAppState();
                 }
             } else {
                 console.error("Bluetooth is not connected.");
                 window.alert("Bluetooth is not connected.");
+                // Reset application state
+                resetAppState();
             }
+        }
+
+        // Function to reset the application state
+        function resetAppState() {
+            bleServer = null;
+            statusCharacteristicFound = null;
+            isConnecting = false;
+            connectRetryCount = 0;
+            retrying = false;
+            // You can add additional state resetting logic here if needed
         }
 
         // Bluetooth Functions
