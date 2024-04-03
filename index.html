@@ -66,12 +66,22 @@
     let statusCharacteristicFound;
     let intervalId;
     let retrying = false;
+    let connectRetryCount = 0;
+    const maxConnectRetries = 3;
+    const retryDelay = 500;
 
     // Event Handlers
     function handleConnectButtonClick(event) {
         if (isWebBluetoothEnabled()) {
-            connectToDevice();
+            connectToDeviceWithRetry();
         }
+    }
+
+    // Bluetooth Functions
+    function connectToDeviceWithRetry() {
+        console.log('Initializing Bluetooth...');
+        connectRetryCount = 0;
+        connectToDevice();
     }
 
     function disconnectDevice() {
@@ -107,7 +117,7 @@
     }
 
     function connectToDevice() {
-        console.log('Initializing Bluetooth...');
+        console.log('Attempting to connect (attempt ' + (connectRetryCount + 1) + ')...');
         navigator.bluetooth.requestDevice({
             acceptAllDevices: true,
             optionalServices: [bleService]
@@ -151,13 +161,16 @@
             .catch(error => {
                 // Check if the error is due to GATT operation already in progress
                 if (error.message && error.message.includes('GATT operation already in progress')) {
-                    if (!retrying) {
+                    if (!retrying && connectRetryCount < maxConnectRetries) {
                         console.log('GATT operation already in progress. Retrying...');
                         retrying = true;
+                        connectRetryCount++;
                         setTimeout(() => {
                             retrying = false;
                             connectToDevice();
-                        }, 1000); // Retry after 1 second
+                        }, retryDelay); // Retry after specified delay
+                    } else {
+                        console.error('Maximum connection retries reached or GATT operation already in progress. Giving up.');
                     }
                 } else {
                     console.error('Error: ', error);
@@ -197,7 +210,7 @@
                 console.log("Unknown characteristic:", event.target.uuid);
             }
             console.log("Characteristic value changed: ", newValueReceived);
-            
+
         } else {
             // Handle other types of events here if needed
             console.log("Unknown event type:", event);
