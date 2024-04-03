@@ -106,6 +106,16 @@
     }
 
     // Bluetooth Functions
+    function isWebBluetoothEnabled() {
+        if (!navigator.bluetooth) {
+            console.log('Web Bluetooth API is not available in this browser!');
+            updateBleState('Web Bluetooth API is not available', '#d13a30');
+            return false;
+        }
+        console.log('Web Bluetooth API supported in this browser.');
+        return true;
+    }
+
     function connectToDevice() {
         console.log('Attempting to connect (attempt ' + (connectRetryCount + 1) + ')...');
         navigator.bluetooth.requestDevice({
@@ -167,7 +177,7 @@
                 }
             });
     }
-
+    
     function onDisconnected(event) {
         console.log('Device Disconnected:', event.target.device.name);
         updateBleState('Device disconnected', '#d13a30');
