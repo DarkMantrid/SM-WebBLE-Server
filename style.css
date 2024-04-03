@@ -108,7 +108,7 @@ button {
 
 
 /* For mobile devices, ensure content is centered */
-@media (max-width: 800px) {
+@media (max-width: 767px) {
     .card-table {
         display: flex; /* Change display property to grid for row-based layout */
         justify-content: space-around;
@@ -124,7 +124,7 @@ button {
 /* For mobile devices, ensure content is centered */
 @media (max-width: 500px) {
     .connectButton {
-        background-color: blue;
+        background-color: #24a437;
     }
 }
 
