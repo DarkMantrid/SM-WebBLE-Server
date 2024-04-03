@@ -66,23 +66,12 @@
     let statusCharacteristicFound;
     let intervalId;
     let retrying = false;
-    let connectRetryCount = 0;
-    const maxConnectRetries = 3;
-    const retryDelay = 1000; // 1 second delay between retry attempts
 
     // Event Handlers
     function handleConnectButtonClick(event) {
         if (isWebBluetoothEnabled()) {
-            connectToDeviceWithRetry();
+            connectToDevice();
         }
-    }
-
-    // Bluetooth Functions
-    function connectToDeviceWithRetry() {
-        console.log('Initializing Bluetooth...');
-        connectRetryCount = 0;
-        connectToDevice();
-        setTimeout(connectToDevice, 100);
     }
 
     function disconnectDevice() {
@@ -118,7 +107,7 @@
     }
 
     function connectToDevice() {
-        console.log('Attempting to connect (attempt ' + (connectRetryCount + 1) + ')...');
+        console.log('Initializing Bluetooth...');
         navigator.bluetooth.requestDevice({
             acceptAllDevices: true,
             optionalServices: [bleService]
@@ -155,23 +144,20 @@
             })
             .then(() => {
                 intervalId = setInterval(updateTimestamp, 1000);
-                showInfoCard(); // Display info card only after successful connection and service discovery
-                showStatusCard(); // Display status card only after successful connection and service discovery
+                showInfoCard();
+                showStatusCard();
                 return statusCharacteristicFound.readValue();
             })
             .catch(error => {
                 // Check if the error is due to GATT operation already in progress
                 if (error.message && error.message.includes('GATT operation already in progress')) {
-                    if (!retrying && connectRetryCount < maxConnectRetries) {
+                    if (!retrying) {
                         console.log('GATT operation already in progress. Retrying...');
                         retrying = true;
-                        connectRetryCount++;
                         setTimeout(() => {
                             retrying = false;
                             connectToDevice();
-                        }, retryDelay); // Retry after specified delay
-                    } else {
-                        console.error('Maximum connection retries reached or GATT operation already in progress. Giving up.');
+                        }, 1000); // Retry after 1 second
                     }
                 } else {
                     console.error('Error: ', error);
@@ -211,7 +197,7 @@
                 console.log("Unknown characteristic:", event.target.uuid);
             }
             console.log("Characteristic value changed: ", newValueReceived);
-
+            
         } else {
             // Handle other types of events here if needed
             console.log("Unknown event type:", event);
