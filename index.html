@@ -74,6 +74,7 @@
     function handleConnectButtonClick(event) {
         if (isWebBluetoothEnabled()) {
             connectToDeviceWithRetry();
+            setTimeout(connectToDevice, 1000);
         }
     }
 
@@ -177,7 +178,7 @@
                 }
             });
     }
-    
+
     function onDisconnected(event) {
         console.log('Device Disconnected:', event.target.device.name);
         updateBleState('Device disconnected', '#d13a30');
