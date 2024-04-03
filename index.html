@@ -154,6 +154,7 @@
                             setTimeout(connectToDevice, 3000); // Retry after 3 seconds
                         } else {
                             console.error('Maximum retry attempts reached.');
+                            retryAttempts = 0;
                         }
                     });
             }
@@ -164,7 +165,6 @@
                 clearInterval(intervalId);
                 hideInfoCard();
                 hideStatusCard();
-                retryAttempts = 0;
             }
 
             function handleCharacteristicChange(event) {
