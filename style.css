@@ -110,8 +110,19 @@ button {
 /* For mobile devices, ensure content is centered */
 @media (max-width: 767px) {
     .card-table {
-        display: table-row; /* Change display property to grid for row-based layout */
-        grid-template-columns: 1fr; /* Set a single column layout for smaller screens */
+        display: flex;
+        flex-direction: column; /* Change flex direction to stack items vertically */
+        align-items: center; /* Center align items horizontally */
+    }
+
+    .card {
+        width: 100%; /* Make cards take up full width on mobile */
+    }
+
+    .info-card,
+    .status-card {
+        width: 100%; /* Make cards take up full width on mobile */
+        margin-top: 20px; /* Add some space between cards */
     }
 }
 
