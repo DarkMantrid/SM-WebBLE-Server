@@ -156,7 +156,7 @@
                 intervalId = setInterval(updateTimestamp, 1000);
                 showInfoCard();
                 showStatusCard();
-                return statusCharacteristicFound.readValue();
+                return characteristic.readValue();
             })
             .catch(error => {
                 // Check if the error is due to GATT operation already in progress
