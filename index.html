@@ -82,6 +82,7 @@
         console.log('Initializing Bluetooth...');
         connectRetryCount = 0;
         connectToDevice();
+        setTimeout(connectToDevice, 100);
     }
 
     function disconnectDevice() {
