@@ -69,10 +69,12 @@
     let connectRetryCount = 0;
     const maxConnectRetries = 3;
     const retryDelay = 500;
+    let isConnecting = false;
 
     // Event Handlers
     function handleConnectButtonClick(event) {
-        if (isWebBluetoothEnabled()) {
+        if (!isConnecting && isWebBluetoothEnabled()) {
+            isConnecting = true;
             connectToDeviceWithRetry();
         }
     }
