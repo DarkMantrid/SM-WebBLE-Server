@@ -158,6 +158,12 @@
                 showStatusCard();
                 return statusCharacteristicFound.readValue();
             })
+            .then(() => {
+                intervalId = setInterval(updateTimestamp, 1000);
+                showInfoCard();
+                showStatusCard();
+                return statusCharacteristicFound.readValue();
+            })
             .catch(error => {
                 // Check if the error is due to GATT operation already in progress
                 if (error.message && error.message.includes('GATT operation already in progress')) {
