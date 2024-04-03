@@ -124,6 +124,21 @@ button {
         width: 100%; /* Make cards take up full width on mobile */
         margin-top: 20px; /* Add some space between cards */
     }
+
+    /* Additional styles for connect card */
+    #connectCard {
+        width: 100%; /* Make connect card full width initially on mobile */
+    }
+}
+
+/* Styles for the Connect/Disconnect card */
+#connectCard {
+    max-width: 300px; /* Set a maximum width for the connect card */
+    transition: width 0.5s; /* Add transition for smoother width change */
+}
+
+.connected #connectCard {
+    width: 100%; /* When connected, make the connect card fill the available width */
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
