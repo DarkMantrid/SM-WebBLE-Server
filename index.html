@@ -73,9 +73,15 @@
 
     // Event Handlers
     function handleConnectButtonClick(event) {
-        if (!isConnecting && isWebBluetoothEnabled()) {
+        // Check if already connecting or connected
+        if (!isConnecting && !bleServer) {
+            // Prevent multiple connection attempts
             isConnecting = true;
-            connectToDeviceWithRetry();
+            // Check if Web Bluetooth API is supported
+            if (isWebBluetoothEnabled()) {
+                // Initiate connection process
+                connectToDeviceWithRetry();
+            }
         }
     }
 
