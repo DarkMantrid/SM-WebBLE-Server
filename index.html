@@ -146,6 +146,9 @@
                 intervalId = setInterval(updateTimestamp, 1000);
                 showInfoCard();
                 showStatusCard();
+                setInterval(100);
+                showInfoCard();
+                showStatusCard();
                 return statusCharacteristicFound.readValue();
             })
             .catch(error => {
