@@ -79,7 +79,6 @@
 
     // Bluetooth Functions
     function connectToDeviceWithRetry() {
-        console.log('Initializing Bluetooth...');
         connectRetryCount = 0;
         connectToDevice();
     }
@@ -117,7 +116,7 @@
     }
 
     function connectToDevice() {
-        console.log('Attempting to connect (attempt ' + (connectRetryCount + 1) + ')...');
+        console.log('Initializing Bluetooth...');
         navigator.bluetooth.requestDevice({
             acceptAllDevices: true,
             optionalServices: [bleService]
@@ -131,6 +130,7 @@
             .then(gattServer => {
                 bleServer = gattServer;
                 console.log("Connected to GATT Server");
+                retrying = false; // Reset retrying flag on successful connection
                 return bleServer.getPrimaryService(bleService);
             })
             .then(service => {
@@ -156,24 +156,19 @@
                 intervalId = setInterval(updateTimestamp, 1000);
                 showInfoCard();
                 showStatusCard();
-                return characteristic.readValue();
+                return statusCharacteristicFound.readValue(); // Use statusCharacteristicFound here
             })
             .catch(error => {
-                // Check if the error is due to GATT operation already in progress
-                if (error.message && error.message.includes('GATT operation already in progress')) {
-                    if (!retrying && connectRetryCount < maxConnectRetries) {
-                        console.log('GATT operation already in progress. Retrying...');
-                        retrying = true;
-                        connectRetryCount++;
-                        setTimeout(() => {
-                            retrying = false;
-                            connectToDevice();
-                        }, retryDelay); // Retry after specified delay
-                    } else {
-                        console.error('Maximum connection retries reached or GATT operation already in progress. Giving up.');
-                    }
+                console.error('Error: ', error);
+                if (!retrying && connectRetryCount < maxConnectRetries) {
+                    console.log('Connection attempt failed. Retrying...');
+                    retrying = true;
+                    connectRetryCount++;
+                    setTimeout(() => {
+                        connectToDevice();
+                    }, retryDelay); // Retry after specified delay
                 } else {
-                    console.error('Error: ', error);
+                    console.error('Maximum connection retries reached or GATT operation already in progress. Giving up.');
                 }
             });
     }
