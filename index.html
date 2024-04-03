@@ -54,6 +54,8 @@
             let bleServer;
             let statusCharacteristicFound;
             let intervalId;
+            let retryAttempts = 0;
+            const maxRetryAttempts = 3; // Maximum number of retry attempts
 
             // Event Listeners
             connectButton.addEventListener('click', handleConnectButtonClick);
@@ -113,7 +115,7 @@
                 })
                     .then(device => {
                         console.log('Device Selected:', device.name);
-                        updateBleState('Connected to device ' + device.name, '#24af37');
+                        updateBleState('Connected to ' + device.name, '#24af37');
                         device.addEventListener('gattservicedisconnected', onDisconnected);
                         return device.gatt.connect();
                     })
@@ -146,6 +148,13 @@
                     })
                     .catch(error => {
                         console.error('Error: ', error);
+                        if (retryAttempts < maxRetryAttempts) {
+                            console.log('Retrying...');
+                            retryAttempts++;
+                            setTimeout(connectToDevice, 3000); // Retry after 3 seconds
+                        } else {
+                            console.error('Maximum retry attempts reached.');
+                        }
                     });
             }
 
