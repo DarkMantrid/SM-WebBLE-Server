@@ -98,14 +98,21 @@
 
         function openInChrome() {
             var url = 'https://darkmantrid.github.io/SM-WebBLE-Server/';
-
+        
             // Check if the browser is Firefox
             if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
                 // Check if Chrome is installed
-                window.location.href = 'googlechrome://navigate?url=' + encodeURIComponent(url);
-
+                var openChrome = confirm('Do you want to open this website in Chrome?');
+        
+                if (openChrome) {
+                    // Try to open the URL in Chrome
+                    window.location.href = 'googlechrome://navigate?url=' + encodeURIComponent(url);
+                } else {
+                    // User chose not to open in Chrome
+                    alert('To open this website in Chrome, please download Chrome from the Play Store.');
+                }
             } else {
-                // Display a message to download Chrome
+                // Display a message to download Chrome if the browser is not Firefox
                 alert('To open this website in Chrome, please download Chrome from the Play Store.');
             }
         }
