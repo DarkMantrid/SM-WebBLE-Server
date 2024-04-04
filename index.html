@@ -32,6 +32,17 @@
                 <li>Toggle the "dom.bluetooth.enabled" preference to true by tapping on it.</li>
             </ol>
         </div>
+        <div class="additional-instructions" style="display: none;">
+            <p><b>If you don't get the prompt to accept the risk when accessing "about:config", follow these additional
+                    steps:</b></p>
+            <ol>
+                <li>Open the Settings app on your Android device.</li>
+                <li>Navigate to Settings > Apps > Firefox > Permissions > Modify system settings.</li>
+                <li>Check the app's permissions and ensure that it has permission to modify system settings.</li>
+                <li>If the permission is not granted, enable it.</li>
+                <li>Restart Firefox and try accessing "about:config" again.</li>
+            </ol>
+        </div>
         <table class="card-table">
             <tr>
                 <td class="card">
@@ -53,16 +64,6 @@
                 </td>
             </tr>
         </table>
-        <div class="additional-instructions" style="display: none;">
-            <p><b>If you don't get the prompt to accept the risk when accessing "about:config", follow these additional steps:</b></p>
-            <ol>
-                <li>Open the Settings app on your Android device.</li>
-                <li>Navigate to Settings > Apps > Firefox > Permissions > Modify system settings.</li>
-                <li>Check the app's permissions and ensure that it has permission to modify system settings.</li>
-                <li>If the permission is not granted, enable it.</li>
-                <li>Restart Firefox and try accessing "about:config" again.</li>
-            </ol>
-        </div>
     </div>
 
     <script>
@@ -93,7 +94,7 @@
                 console.log('Firefox does not have permission to modify system settings.');
             }
         }
-        
+
 
         function openInChrome() {
             // Replace the URL with the desired URL to open in Chrome
