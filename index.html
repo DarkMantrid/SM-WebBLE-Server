@@ -16,18 +16,28 @@
             <img src="sspn-logo-b.png" alt="Logo" class="logo-img">
         </div>
     </div>
-    <div class="content" id="bluetoothInstructions" style="display: none;">
-        <p>To use the Web Bluetooth feature, please follow these steps or switch to Google Chrome:</p>
-        <ol>
-            <li>Open Firefox on your Android device.</li>
-            <li>Type "about:config" in the address bar and press Enter.</li>
-            <li>Accept the risk and continue.</li>
-            <li>In the search bar, type "dom.bluetooth.enabled".</li>
-            <li>Toggle the "dom.bluetooth.enabled" preference to true by tapping on it.</li>
-        </ol>
-    </div>
-
     <div class="content">
+        <div class="bluetooth-instructions" style="display: none;">
+            <p>To use the Web Bluetooth feature in Firefox on your Android device, please follow these steps:</p>
+            <ol>
+                <li>Open Firefox on your Android device.</li>
+                <li>Type "about:config" in the address bar and press Enter.</li>
+                <li>Accept the risk and continue. If you don't get the prompt, see the additional instructions below.
+                </li>
+                <li>In the search bar, type "dom.bluetooth.enabled".</li>
+                <li>Toggle the "dom.bluetooth.enabled" preference to true by tapping on it.</li>
+            </ol>
+            <p>If you don't get the prompt to accept the risk when accessing "about:config", follow these additional
+                steps:</p>
+            <ol>
+                <li>Open the Settings app on your Android device.</li>
+                <li>Navigate to Apps or Application Manager.</li>
+                <li>Find and select Firefox from the list of installed apps.</li>
+                <li>Check the app's permissions and ensure that it has permission to modify system settings.</li>
+                <li>If the permission is not granted, enable it.</li>
+                <li>Restart Firefox and try accessing "about:config" again.</li>
+            </ol>
+        </div>
         <table class="card-table">
             <tr>
                 <td class="card">
@@ -55,7 +65,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
             if (isFirefox) {
-                document.getElementById('bluetoothInstructions').style.display = 'block';
+                document.querySelector('.bluetooth-instructions').style.display = 'block';
             }
         });
     </script>
