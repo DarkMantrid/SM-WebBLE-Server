@@ -97,16 +97,30 @@
 
 
         function openInChrome() {
-            // Replace the URL with the desired URL to open in Chrome
             var url = 'https://darkmantrid.github.io/SM-WebBLE-Server/';
-            
-            // Open the URL in Chrome
-            var newWindow = window.open(url, '_blank');
-            
-            // Check if the browser was able to open the URL
-            if (newWindow === null) {
-                // Display a message prompting the user to download Chrome from the Play Store
-                alert('For a better experience, please download Chrome from the Play Store.');
+        
+            // Check if the browser is Firefox
+            if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+                // Create an anchor element
+                var anchor = document.createElement('a');
+                
+                // Set the href attribute to the desired URL
+                anchor.href = url;
+        
+                // Set the target attribute to '_blank' to open in a new tab
+                anchor.target = '_blank';
+        
+                // Append the anchor element to the document body
+                document.body.appendChild(anchor);
+        
+                // Simulate a click on the anchor element
+                anchor.click();
+        
+                // Remove the anchor element from the document body
+                document.body.removeChild(anchor);
+            } else {
+                // Open the URL in a new window
+                window.open(url, '_blank');
             }
         }
     </script>
