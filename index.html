@@ -55,7 +55,9 @@
             let statusCharacteristicFound;
             let intervalId;
             let retryAttempts = 0;
+            let connectionFailed = false; // Flag to track connection failure
             const maxRetryAttempts = 3; // Maximum number of retry attempts
+            let selectedDevice = null; // To store the selected device
 
             // Event Listeners
             connectButton.addEventListener('click', handleConnectButtonClick);
@@ -71,7 +73,7 @@
             function handleConnectButtonClick(event) {
                 if (!bleServer) {
                     if (isWebBluetoothEnabled()) {
-                        connectToDevice(); // Call connectToDevice here
+                        connectToDevice(selectedDevice); // Pass selected device to connectToDevice
                     }
                 }
             }
@@ -88,6 +90,7 @@
                                 hideStatusCard();
                                 bleServer = null;
                                 statusCharacteristicFound = null;
+                                selectedDevice = null; // Clear selected device on disconnect
                             })
                             .catch(error => console.error('An error occurred:', error));
                     }
@@ -105,24 +108,34 @@
                     return false;
                 }
                 console.log('Web Bluetooth API supported in this browser.');
-                connectToDevice();
-                return true;
+                return true; // Remove connectToDevice call from here
             }
 
-            function connectToDevice() {
-                console.log('Initializing Bluetooth...');
-                navigator.bluetooth.requestDevice({
-                    acceptAllDevices: true,
-                    optionalServices: [bleService]
-                })
-                    .then(device => {
-                        console.log('Device Selected:', device.name);
-                        updateBleState('Connected to ' + device.name, '#24af37');
-                        device.addEventListener('gattservicedisconnected', onDisconnected);
-                        return device.gatt.connect();
+            function connectToDevice(device) { // Accept device as argument
+                if (!device) { // Check if device is provided
+                    console.log('Initializing Bluetooth...');
+                    navigator.bluetooth.requestDevice({
+                        acceptAllDevices: true,
+                        optionalServices: [bleService]
                     })
+                        .then(selectedDevice => {
+                            console.log('Device Selected:', selectedDevice.name);
+                            connectToDevice(selectedDevice); // Call connectToDevice with selected device
+                        })
+                        .catch(error => {
+                            console.error('Failed to select device:', error);
+                        });
+                    return; // Exit function if device selection is pending
+                }
+
+                console.log('Connecting to selected device...');
+                selectedDevice = device; // Store the selected device
+
+                selectedDevice.addEventListener('gattservicedisconnected', onDisconnected);
+                selectedDevice.gatt.connect()
                     .then(gattServer => {
                         bleServer = gattServer;
+                        connectionFailed = false; // Reset connectionFailed flag
                         console.log("Connected to GATT Server");
                         return bleServer.getPrimaryService(bleService);
                     })
@@ -150,10 +163,11 @@
                     })
                     .catch(error => {
                         console.error('Error: ', error);
+                        connectionFailed = true; // Set connectionFailed flag
                         if (retryAttempts < maxRetryAttempts) {
                             console.log('Retrying...');
                             retryAttempts++;
-                            setTimeout(connectToDevice, 3000); // Retry after 3 seconds
+                            setTimeout(connectToDevice, 3000, selectedDevice); // Retry after 3 seconds with selected device
                         } else {
                             console.error('Maximum retry attempts reached.');
                             retryAttempts = 0;
@@ -167,6 +181,9 @@
                 clearInterval(intervalId);
                 hideInfoCard();
                 hideStatusCard();
+                bleServer = null;
+                statusCharacteristicFound = null;
+                selectedDevice = null; // Clear selected device on disconnect
             }
 
             function handleCharacteristicChange(event) {
