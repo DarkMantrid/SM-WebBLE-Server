@@ -28,6 +28,10 @@
                 <li>Toggle the "dom.bluetooth.enabled" preference to true by tapping on it.</li>
             </ol>
         </div>
+        <div class="chrome-alternative" style="display: none;">
+            <p>If you are experiencing issues with Firefox, you can try opening this website in Chrome:</p>
+            <button id="openInChromeButton" class="chromeButton">Open in Chrome</button>
+        </div>
         <table class="card-table">
             <tr>
                 <td class="card">
@@ -57,6 +61,8 @@
             if (isFirefox) {
                 document.querySelector('.bluetooth-instructions').style.display = 'block';
                 checkFirefoxPermissions();
+                document.querySelector('.chrome-alternative').style.display = 'block';
+                document.getElementById('openInChromeButton').addEventListener('click', openInChrome);
             }
         });
 
@@ -91,7 +97,14 @@
                     <li>Restart Firefox and try accessing "about:config" again.</li>
                 </ol>
             `;
-            document.body.appendChild(additionalInstructions);
+            document.body.insertBefore(additionalInstructions, document.querySelector('.content'));
+        }
+
+        function openInChrome() {
+            // Replace the URL with the desired URL to open in Chrome
+            var url = window.location.href;
+            // Open the URL in Chrome
+            window.location.href = 'googlechrome://' + url;
         }
     </script>
 
