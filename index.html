@@ -105,9 +105,9 @@
                 var openChrome = confirm('Do you want to open this website in Chrome?');
         
                 if (openChrome) {
-                    // Try to open the URL in Chrome
-                    window.location.href = 'googlechrome://navigate?url=' + encodeURIComponent(url);
-                } 
+                    // Open the URL in Chrome
+                    window.open(url, '_system');
+                }
             } else {
                 // Display a message to download Chrome if the browser is not Firefox
                 alert('To open this website in Chrome, please download Chrome from the Play Store.');
