@@ -99,7 +99,7 @@
         function openInChrome() {
             var url = 'https://darkmantrid.github.io/SM-WebBLE-Server/';
         
-            // Construct the intent URL
+            // Construct the intent URL with proper URL encoding
             var intentUrl = 'intent://open?url=' + encodeURIComponent(url) + '#Intent;scheme=http;package=com.android.chrome;end';
         
             // Try to open the URL using the intent mechanism
