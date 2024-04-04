@@ -27,16 +27,6 @@
                 <li>In the search bar, type "dom.bluetooth.enabled".</li>
                 <li>Toggle the "dom.bluetooth.enabled" preference to true by tapping on it.</li>
             </ol>
-            <p>If you don't get the prompt to accept the risk when accessing "about:config", follow these additional
-                steps:</p>
-            <ol>
-                <li>Open the Settings app on your Android device.</li>
-                <li>Navigate to Apps or Application Manager.</li>
-                <li>Find and select Firefox from the list of installed apps.</li>
-                <li>Check the app's permissions and ensure that it has permission to modify system settings.</li>
-                <li>If the permission is not granted, enable it.</li>
-                <li>Restart Firefox and try accessing "about:config" again.</li>
-            </ol>
         </div>
         <table class="card-table">
             <tr>
@@ -66,8 +56,43 @@
             var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
             if (isFirefox) {
                 document.querySelector('.bluetooth-instructions').style.display = 'block';
+                checkFirefoxPermissions();
             }
         });
+
+        function checkFirefoxPermissions() {
+            // Check if Firefox has permission to modify system settings
+            // You may need to update this selector based on your device settings UI
+            var firefoxPermission = false;
+            // Example selector, you may need to adjust it based on your device's settings UI
+            var permissionSelector = 'Settings > Apps > Firefox > Permissions > Modify system settings';
+
+            // Check if Firefox has permission
+            // Replace this logic with your actual permission checking mechanism
+            // This is just a placeholder
+            if (firefoxPermission) {
+                console.log('Firefox has permission to modify system settings.');
+            } else {
+                console.log('Firefox does not have permission to modify system settings.');
+                // Display additional instructions
+                displayAdditionalInstructions(permissionSelector);
+            }
+        }
+
+        function displayAdditionalInstructions(permissionSelector) {
+            var additionalInstructions = document.createElement('div');
+            additionalInstructions.innerHTML = `
+                <p>If you don't get the prompt to accept the risk when accessing "about:config", follow these additional steps:</p>
+                <ol>
+                    <li>Open the Settings app on your Android device.</li>
+                    <li>Navigate to ${permissionSelector}.</li>
+                    <li>Check the app's permissions and ensure that it has permission to modify system settings.</li>
+                    <li>If the permission is not granted, enable it.</li>
+                    <li>Restart Firefox and try accessing "about:config" again.</li>
+                </ol>
+            `;
+            document.body.appendChild(additionalInstructions);
+        }
     </script>
 
     <script>
