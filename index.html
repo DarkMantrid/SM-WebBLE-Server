@@ -16,6 +16,17 @@
             <img src="sspn-logo-b.png" alt="Logo" class="logo-img">
         </div>
     </div>
+    <div class="content" id="bluetoothInstructions" style="display: none;">
+        <p>To use the Web Bluetooth feature, please follow these steps:</p>
+        <ol>
+            <li>Open Firefox on your Android device.</li>
+            <li>Type "about:config" in the address bar and press Enter.</li>
+            <li>Accept the risk and continue.</li>
+            <li>In the search bar, type "dom.bluetooth.enabled".</li>
+            <li>Toggle the "dom.bluetooth.enabled" preference to true by tapping on it.</li>
+        </ol>
+    </div>
+
     <div class="content">
         <table class="card-table">
             <tr>
@@ -39,6 +50,15 @@
             </tr>
         </table>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+            if (isFirefox) {
+                document.getElementById('bluetoothInstructions').style.display = 'block';
+            }
+        });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
