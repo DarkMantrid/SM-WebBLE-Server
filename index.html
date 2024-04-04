@@ -17,8 +17,13 @@
         </div>
     </div>
     <div class="content">
+        <div class="chrome-alternative" style="display: none;">
+            <p><b>If you are using Firefox and experiencing issues, you can try opening this website in Chrome:</b></p>
+            <button id="openInChromeButton" class="chromeButton">Open in Chrome</button>
+        </div>
         <div class="bluetooth-instructions" style="display: none;">
-            <p><b>To use the Web Bluetooth feature in Firefox on your Android device, please follow these steps:></b></p>
+            <p><b>To use the Web Bluetooth feature in Firefox on your Android device, please follow these steps:></b>
+            </p>
             <ol>
                 <li>Open Firefox on your Android device.</li>
                 <li>Type "about:config" in the address bar and press Enter.</li>
@@ -28,9 +33,16 @@
                 <li>Toggle the "dom.bluetooth.enabled" preference to true by tapping on it.</li>
             </ol>
         </div>
-        <div class="chrome-alternative" style="display: none;">
-            <p><b>If you are experiencing issues with Firefox, you can try opening this website in Chrome:</b></p>
-            <button id="openInChromeButton" class="chromeButton">Open in Chrome</button>
+        <div class="additional-instructions" style="display: none;">
+            <p><b>If you don't get the prompt to accept the risk when accessing "about:config", follow these additional
+                    steps:</b></p>
+            <ol>
+                <li>Open the Settings app on your Android device.</li>
+                <li>Navigate to Settings > Apps > Firefox > Permissions > Modify system settings.</li>
+                <li>Check the app's permissions and ensure that it has permission to modify system settings.</li>
+                <li>If the permission is not granted, enable it.</li>
+                <li>Restart Firefox and try accessing "about:config" again.</li>
+            </ol>
         </div>
         <table class="card-table">
             <tr>
@@ -61,6 +73,7 @@
             if (isFirefox) {
                 document.querySelector('.bluetooth-instructions').style.display = 'block';
                 checkFirefoxPermissions();
+                document.querySelector('.additional-instructions').style.display = 'block';
                 document.querySelector('.chrome-alternative').style.display = 'block';
                 document.getElementById('openInChromeButton').addEventListener('click', openInChrome);
             }
