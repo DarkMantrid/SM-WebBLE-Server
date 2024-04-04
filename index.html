@@ -99,13 +99,14 @@
         function openInChrome() {
             // Replace the URL with the desired URL to open in Chrome
             var url = 'https://darkmantrid.github.io/SM-WebBLE-Server/';
-
-            // Prompt the user with an option to open the website in Chrome
-            var confirmed = window.confirm('For a better experience, it is recommended to open this website in Chrome. Do you want to open it now?');
-
-            // If the user confirms, open the URL in Chrome
-            if (confirmed) {
-                window.open(url, '_blank');
+            
+            // Open the URL in Chrome
+            var newWindow = window.open(url, '_blank');
+            
+            // Check if the browser was able to open the URL
+            if (newWindow === null) {
+                // Display a message prompting the user to download Chrome from the Play Store
+                alert('For a better experience, please download Chrome from the Play Store.');
             }
         }
     </script>
