@@ -102,18 +102,14 @@
             // Check if the browser is Firefox
             if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
                 // Check if Chrome is installed
-                if (navigator.userAgent.toLowerCase().indexOf('chrome') > -1) {
-                    // Open the URL in Chrome
-                    window.location.href = 'googlechrome://navigate?url=' + encodeURIComponent(url);
-                } else {
-                    // Display a message to download Chrome
-                    alert('To open this website in Chrome, please download Chrome from the Play Store.');
-                }
+                window.location.href = 'googlechrome://navigate?url=' + encodeURIComponent(url);
+
             } else {
-                // Open the URL in a new window
-                window.open(url, '_blank');
+                // Display a message to download Chrome
+                alert('To open this website in Chrome, please download Chrome from the Play Store.');
             }
         }
+        
     </script>
 
     <script>
