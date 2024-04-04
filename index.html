@@ -111,23 +111,33 @@
                 return true; // Remove connectToDevice call from here
             }
 
-            function connectToDevice() {
-                console.log('Initializing Bluetooth...');
-                navigator.bluetooth.requestDevice({
-                    acceptAllDevices: true,
-                    optionalServices: [bleService]
-                })
-                    .then(device => {
-                        selectedDevice = device;
-                        console.log('Device Selected:', selectedDevice.name);
-                        updateBleState('Connected', '#24af37', true, selectedDevice.name); // Update BLE state with device name
-                        selectedDevice.addEventListener('gattservicedisconnected', onDisconnected);
-                        return selectedDevice.gatt.connect();
+            function connectToDevice(device) { // Accept device as argument
+                if (!device) { // Check if device is provided
+                    console.log('Initializing Bluetooth...');
+                    navigator.bluetooth.requestDevice({
+                        acceptAllDevices: true,
+                        optionalServices: [bleService]
                     })
+                        .then(selectedDevice => {
+                            console.log('Device Selected:', selectedDevice.name);
+                            connectToDevice(selectedDevice); // Call connectToDevice with selected device
+                        })
+                        .catch(error => {
+                            console.error('Failed to select device:', error);
+                        });
+                    return; // Exit function if device selection is pending
+                }
+
+                console.log('Connecting to selected device...');
+                selectedDevice = device; // Store the selected device
+
+                selectedDevice.addEventListener('gattservicedisconnected', onDisconnected);
+                selectedDevice.gatt.connect()
                     .then(gattServer => {
                         bleServer = gattServer;
                         connectionFailed = false; // Reset connectionFailed flag
                         console.log("Connected to GATT Server");
+                        updateBleState(`Connected to ${selectedDevice.name}`, '#24af37', true); // Update device connected message
                         return bleServer.getPrimaryService(bleService);
                     })
                     .then(service => {
@@ -154,10 +164,11 @@
                     })
                     .catch(error => {
                         console.error('Error: ', error);
+                        connectionFailed = true; // Set connectionFailed flag
                         if (retryAttempts < maxRetryAttempts) {
                             console.log('Retrying...');
                             retryAttempts++;
-                            setTimeout(connectToDevice, 3000); // Retry after 3 seconds
+                            setTimeout(connectToDevice, 3000, selectedDevice); // Retry after 3 seconds with selected device
                         } else {
                             console.error('Maximum retry attempts reached.');
                             retryAttempts = 0;
