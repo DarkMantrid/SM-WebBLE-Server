@@ -138,6 +138,7 @@
                         connectionFailed = false; // Reset connectionFailed flag
                         console.log("Connected to GATT Server");
                         updateBleState(`Connected to ${selectedDevice.name}`, '#24af37', true, selectedDevice.name); // Update device connected message
+                        retryAttempts = 0; // Reset retryAttempts on successful connection
                         return bleServer.getPrimaryService(bleService);
                     })
                     .then(service => {
@@ -182,6 +183,7 @@
                 clearInterval(intervalId);
                 hideInfoCard();
                 hideStatusCard();
+                retryAttempts = 0;
                 bleServer = null;
                 statusCharacteristicFound = null;
                 selectedDevice = null; // Clear selected device on disconnect
