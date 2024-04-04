@@ -106,7 +106,7 @@
         
                 if (openChrome) {
                     // Open the URL in Chrome
-                    window.open(url, '_system');
+                    window.open('googlechrome://navigate?url=' + encodeURIComponent(url));
                 }
             } else {
                 // Display a message to download Chrome if the browser is not Firefox
