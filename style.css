@@ -101,6 +101,20 @@ button {
     background-color: #d13a30;
 }
 
+.chromeButton {
+    background-color: #0f1c75; 
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
 .gray-label {
     color: #bebebe;
     font-size: 1rem;
