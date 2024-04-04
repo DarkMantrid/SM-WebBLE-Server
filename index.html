@@ -137,7 +137,7 @@
                         bleServer = gattServer;
                         connectionFailed = false; // Reset connectionFailed flag
                         console.log("Connected to GATT Server");
-                        updateBleState(`Connected to ${selectedDevice.name}`, '#24af37', true); // Update device connected message
+                        updateBleState(`Connected to ${selectedDevice.name}`, '#24af37', true, selectedDevice.name); // Update device connected message
                         return bleServer.getPrimaryService(bleService);
                     })
                     .then(service => {
