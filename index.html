@@ -16,6 +16,27 @@
             <img src="sspn-logo-b.png" alt="Logo" class="logo-img">
         </div>
     </div>
+    <table class="card-table">
+        <tr>
+            <td class="card">
+                <p>
+                    <button id="connectBleButton" class="connectButton"> Connect to Device</button>
+                    <button id="disconnectBleButton" class="disconnectButton"> Disconnect Device</button>
+                </p>
+                <p class="gray-label">BLE state: <strong><span id="bleState"
+                            style="color:#d13a30;">Disconnected</span></strong></p>
+            </td>
+            <td class="card info-card" style="display: none;">
+                <h2>General information</h2>
+                <p class="infoReading"><span id="infoContainer"></span></p>
+            </td>
+            <td class="card status-card" style="display: none;">
+                <h2>Status</h2>
+                <p class="statusReading"><span id="statusContainer"></span></p>
+                <p class="gray-label" id="timestamp"></p>
+            </td>
+        </tr>
+    </table>
     <div class="content">
         <div class="chrome-alternative" style="display: none;">
             <p><b>If you are using Firefox and experiencing issues, you can try opening this website in Chrome:</b></p>
@@ -43,27 +64,6 @@
                 <li>Restart Firefox and try accessing "about:config" again.</li>
             </ol>
         </div>
-        <table class="card-table">
-            <tr>
-                <td class="card">
-                    <p>
-                        <button id="connectBleButton" class="connectButton"> Connect to Device</button>
-                        <button id="disconnectBleButton" class="disconnectButton"> Disconnect Device</button>
-                    </p>
-                    <p class="gray-label">BLE state: <strong><span id="bleState"
-                                style="color:#d13a30;">Disconnected</span></strong></p>
-                </td>
-                <td class="card info-card" style="display: none;">
-                    <h2>General information</h2>
-                    <p class="infoReading"><span id="infoContainer"></span></p>
-                </td>
-                <td class="card status-card" style="display: none;">
-                    <h2>Status</h2>
-                    <p class="statusReading"><span id="statusContainer"></span></p>
-                    <p class="gray-label" id="timestamp"></p>
-                </td>
-            </tr>
-        </table>
     </div>
 
     <script>
