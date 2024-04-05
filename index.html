@@ -39,72 +39,22 @@
     </table>
     <div class="content">
         <div class="chrome-alternative" style="display: none;">
-            <p><b>If you are using Firefox and experiencing issues, you can try opening this website in Chrome: </b></p>
-            <p>To open this website in Chrome, please copy the following URL and paste it into the address bar of the
-                Chrome browser: <span id="chromeUrl"
+            <p><b>Web Bluetooth is not supported in Mozilla Firefox. </b></p>
+            <p>To use this service, please click this button to copy the URL: <span id="chromeUrl"
                     style="display:none">https://darkmantrid.github.io/SM-WebBLE-Server/</span><button
                     onclick="copyUrl()" class="copyButton">Copy</button></p>
-            <button id="openInChromeButton" class="chromeButton">Open Chrome</button>
+            <p>Once copied open Google chrome and paste the URL into the search bar</p>
         </div>
-        <div class="bluetooth-instructions instruction-list" style="display: none;">
-            <p><b>To use the Web Bluetooth feature in Firefox on your Android device, please follow these steps:</b></p>
-            <ol style="list-style-type: none;">
-                <li>1. Open Firefox on your Android device.</li>
-                <li>2. Type "about:config" in the address bar and press Enter.</li>
-                <li>3. Accept the risk and continue. If you don't get the prompt, see the additional instructions below.
-                </li>
-                <li>4. In the search bar, type "dom.bluetooth.enabled".</li>
-                <li>5. Toggle the "dom.bluetooth.enabled" preference to true by tapping on it.</li>
-            </ol>
-        </div>
-
-        <div class="additional-instructions instruction-list" style="display: none;">
-            <p><b>If you don't get the prompt to accept the risk when accessing "about:config", follow these additional
-                    steps:</b></p>
-            <ol style="list-style-type: none;">
-                <li>1. Open the Settings app on your Android device.</li>
-                <li>2. Navigate to Settings > Apps > Firefox > Permissions > Modify system settings.</li>
-                <li>3. Check the app's permissions and ensure that it has permission to modify system settings.</li>
-                <li>4. If the permission is not granted, enable it.</li>
-                <li>5. Restart Firefox and try accessing "about:config" again.</li>
-            </ol>
+        <div class="safari-alternative" style="display: none;">
+            <p><b>Web Bluetooth is not supported in Safari. </b></p>
+            <p>To use this service, please click this button to copy the URL: <span id="safariUrl"
+                    style="display:none">https://darkmantrid.github.io/SM-WebBLE-Server/</span><button
+                    onclick="copySafariUrl()" class="copyButton">Copy</button></p>
+            <p>Once copied, open Google Chrome and paste the URL into the address bar</p>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-            var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-            if (isFirefox) {
-                document.querySelector('.bluetooth-instructions').style.display = 'block';
-                document.querySelector('.additional-instructions').style.display = 'block';
-                document.querySelector('.chrome-alternative').style.display = 'block';
-                document.getElementById('openInChromeButton').addEventListener('click', openInChrome);
-            }
-            if (isSafari) {
-                alert("Safari does not support Web Bluetooth. Please try opening this website in Chrome instead.");
-                var copyButton = document.createElement('button');
-                copyButton.innerText = "Copy Link";
-                copyButton.classList.add('copyButton');
-                copyButton.addEventListener('click', copyUrl);
-                document.querySelector('.chrome-alternative').appendChild(copyButton);
-            }
-        });
-
-        function openInChrome() {
-            // Construct the intent URL
-            var intentUrl = 'intent://open#Intent;scheme=http;package=com.android.chrome;end';
-
-            // Try to open the URL using the intent mechanism
-            window.location.href = intentUrl;
-
-            // Timeout to show a message if Chrome is not opened
-            setTimeout(function () {
-                // Display a message to download Chrome
-                alert('To open this website in Chrome, please download Chrome from the Play Store.');
-            }, 2000);
-        }
-
         function copyUrl() {
             var urlSpan = document.getElementById('chromeUrl');
             var tempInput = document.createElement('input');
@@ -115,6 +65,31 @@
             document.body.removeChild(tempInput);
             alert('URL copied to clipboard');
         }
+
+        function copySafariUrl() {
+            var urlSpan = document.getElementById('safariUrl');
+            var tempInput = document.createElement('input');
+            tempInput.value = urlSpan.textContent;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('URL copied to clipboard');
+        }
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+            var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            if (isFirefox) {
+                document.querySelector('.chrome-alternative').style.display = 'block';
+            }
+            if (isSafari) {
+                document.querySelector('.safari-alternative').style.display = 'block';
+            }
+        });
     </script>
 
 
