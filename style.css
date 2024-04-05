@@ -105,56 +105,19 @@ button {
     background-color: #0f1c75; 
     border: none;
     color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
+    padding: 8px 20px;
+    margin: 8px 0;
+    border: none;
     cursor: pointer;
-    border-radius: 10px;
+    border-radius: 4px;
 }
 
-.chromeButton {
-    background-color: #0f1c75; 
-    border: none;
-    color: white;
-    /* padding: 15px 32px; */
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 10px;
-}
 
 .gray-label {
     color: #bebebe;
     font-size: 1rem;
 }
 
-/* Style for instruction lists */
-.instruction-list ol {
-    padding-left: 20px;
-}
-
-.instruction-list li {
-    margin-bottom: 10px;
-}
-
-/* Style for additional instructions */
-.additional-instructions {
-    margin-top: 20px;
-}
-
-.additional-instructions ol {
-    padding-left: 20px;
-}
-
-.additional-instructions li {
-    margin-bottom: 10px;
-}
 
 /* For mobile devices, ensure content is centered */
 @media (max-width: 1076px) {
