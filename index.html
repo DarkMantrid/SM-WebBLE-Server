@@ -74,11 +74,20 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+            var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
             if (isFirefox) {
                 document.querySelector('.bluetooth-instructions').style.display = 'block';
                 document.querySelector('.additional-instructions').style.display = 'block';
                 document.querySelector('.chrome-alternative').style.display = 'block';
                 document.getElementById('openInChromeButton').addEventListener('click', openInChrome);
+            }
+            if (isSafari) {
+                alert("Safari does not support Web Bluetooth. Please try opening this website in Chrome instead.");
+                var copyButton = document.createElement('button');
+                copyButton.innerText = "Copy Link";
+                copyButton.classList.add('copyButton');
+                copyButton.addEventListener('click', copyUrl);
+                document.querySelector('.chrome-alternative').appendChild(copyButton);
             }
         });
 
