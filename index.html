@@ -79,13 +79,17 @@
         });
 
         function openInChrome() {
-            var url = 'https://darkmantrid.github.io/SM-WebBLE-Server/';
-            // Check if Chrome is installed
-            if (typeof window.chrome !== "undefined" && typeof window.chrome.webstore !== "undefined") {
-                window.location.href = url; // Open in Chrome
-            } else {
+            // Construct the intent URL
+            var intentUrl = 'intent://open#Intent;scheme=http;package=com.android.chrome;end';
+        
+            // Try to open the URL using the intent mechanism
+            window.location.href = intentUrl;
+        
+            // Timeout to show a message if Chrome is not opened
+            setTimeout(function() {
+                // Display a message to download Chrome
                 alert('To open this website in Chrome, please download Chrome from the Play Store.');
-            }
+            }, 2000);
         }
         
         function copyUrl() {
