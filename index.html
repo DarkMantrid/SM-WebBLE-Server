@@ -81,20 +81,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            var isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-            var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-            if (isFirefox) {
-                document.querySelector('.chrome-alternative').style.display = 'block';
-            }
-            if (isSafari) {
-                document.querySelector('.safari-alternative').style.display = 'block';
-            }
-        });
-    </script>
-
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
             // DOM Elements
             const connectButton = document.getElementById('connectBleButton');
             const disconnectButton = document.getElementById('disconnectBleButton');
@@ -106,6 +92,7 @@
             // Bluetooth Variables
             let bleServer;
             let statusCharacteristicFound;
+            let infoCharacteristicFound; // Add infoCharacteristicFound variable
             let intervalId;
             let retryAttempts = 0;
             let connectionFailed = false; // Flag to track connection failure
@@ -135,7 +122,12 @@
                 if (bleServer && bleServer.connected) {
                     if (statusCharacteristicFound) {
                         statusCharacteristicFound.stopNotifications()
-                            .then(() => bleServer.disconnect())
+                            .then(() => {
+                                if (infoCharacteristicFound) {
+                                    infoCharacteristicFound.stopNotifications(); // Stop notifications for infoCharacteristic
+                                }
+                                return bleServer.disconnect();
+                            })
                             .then(() => {
                                 updateBleState('Device Disconnected', '#d13a30');
                                 clearInterval(intervalId);
@@ -143,6 +135,7 @@
                                 hideStatusCard();
                                 bleServer = null;
                                 statusCharacteristicFound = null;
+                                infoCharacteristicFound = null; // Clear infoCharacteristicFound on disconnect
                                 selectedDevice = null; // Clear selected device on disconnect
                             })
                             .catch(error => console.error('An error occurred:', error));
@@ -205,6 +198,7 @@
                             }),
                             service.getCharacteristic(infoCharacteristic).then(characteristic => {
                                 console.log("Info Characteristic discovered:", characteristic.uuid);
+                                infoCharacteristicFound = characteristic; // Store infoCharacteristicFound
                                 characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
                                 return characteristic.startNotifications();
                             })
@@ -225,7 +219,7 @@
                         if (retryAttempts < maxRetryAttempts) {
                             console.log('Retrying...');
                             retryAttempts++;
-                            setTimeout(connectToDevice, 3000, selectedDevice); // Retry after 3 seconds with selected device
+                            setTimeout(connectToDevice, 1000, selectedDevice); // Retry after 3 seconds with selected device
                         } else {
                             console.error('Maximum retry attempts reached.');
                             retryAttempts = 0;
@@ -242,19 +236,26 @@
                 retryAttempts = 0;
                 bleServer = null;
                 statusCharacteristicFound = null;
+                infoCharacteristicFound = null; // Clear infoCharacteristicFound on disconnect
                 selectedDevice = null; // Clear selected device on disconnect
             }
 
             function handleCharacteristicChange(event) {
                 if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
                     const newValueReceived = new TextDecoder().decode(event.target.value);
-                    const obj = JSON.parse(newValueReceived);
-                    if (event.target.uuid === statusCharacteristic) {
-                        statusContainer.style.whiteSpace = "pre-line";
-                        statusContainer.textContent = `Connected: ${obj.connected}\nNumber of packets received: ${obj.num_packets}\nVoltage mV: ${obj.voltage_mv}`;
-                    } else if (event.target.uuid === infoCharacteristic) {
-                        infoContainer.style.whiteSpace = "pre-line";
-                        infoContainer.textContent = `ID code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nHardware version: ${obj.hardware_version}\nConfig id: ${obj.config_id}`;
+                    try {
+                        const obj = JSON.parse(newValueReceived);
+                        if (event.target.uuid === statusCharacteristic) {
+                            statusContainer.style.whiteSpace = "pre-line";
+                            // Convert string "true" or "false" to boolean value
+                            const connected = obj.connected === "true";
+                            statusContainer.textContent = `Connected: ${connected}\nNumber of packets received: ${obj.num_packets}\nVoltage mV: ${obj.voltage_mv}`;
+                        } else if (event.target.uuid === infoCharacteristic) {
+                            infoContainer.style.whiteSpace = "pre-line";
+                            infoContainer.textContent = `ID code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nHardware version: ${obj.hardware_version}\nConfig id: ${obj.config_id}`;
+                        }
+                    } catch (error) {
+                        console.error("Error parsing or handling characteristic change:", error);
                     }
                 } else {
                     console.log("Unknown event type:", event);
