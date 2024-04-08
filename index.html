@@ -218,6 +218,9 @@
                     })
                     .catch(error => {
                         console.error('Error: ', error);
+                        if (error instanceof DOMException) {
+                            console.error('DOMException:', error.message);
+                        }
                         connectionFailed = true; // Set connectionFailed flag
                         if (retryAttempts < maxRetryAttempts) {
                             console.log('Retrying...');
