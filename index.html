@@ -249,7 +249,8 @@
                             statusContainer.style.whiteSpace = "pre-line";
                             // Convert string "true" or "false" to boolean value
                             const connected = obj.connected === "true";
-                            statusContainer.textContent = `Connected: ${connected}\nNumber of packets received: ${obj.num_packets}\nVoltage mV: ${obj.voltage_mv}`;
+                            const voltageV = obj.voltage_mv / 1000; // Convert millivolts to volts
+                            statusContainer.textContent = `Connected: ${connected}\nNumber of packets received: ${obj.num_packets}\nVoltage: ${voltageV} V`;
                         } else if (event.target.uuid === infoCharacteristic) {
                             infoContainer.style.whiteSpace = "pre-line";
                             infoContainer.textContent = `ID code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nHardware version: ${obj.hardware_version}\nConfig id: ${obj.config_id}`;
