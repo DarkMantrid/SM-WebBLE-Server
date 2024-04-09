@@ -184,7 +184,7 @@
                             service.getCharacteristic(statusCharacteristic).then(characteristic => {
                                 console.log("Status Characteristic discovered:", characteristic.uuid);
                                 statusCharacteristicFound = characteristic;
-                                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
+                                characteristic.addEventListener('characteristicvaluechanged', debouncedHandleCharacteristicChange);
                                 return characteristic.startNotifications();
                             })
                         ]);
@@ -224,6 +224,19 @@
                 selectedDevice = null; // Clear selected device on disconnect
             }
 
+            function debounce(func, delay) {
+                let timeoutId;
+                return function () {
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => {
+                        func.apply(this, arguments);
+                    }, delay);
+                };
+            }
+
+            // Debounce handleCharacteristicChange function with a delay of 200 milliseconds
+            const debouncedHandleCharacteristicChange = debounce(handleCharacteristicChange, 200);
+
             function handleCharacteristicChange(event) {
                 if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
                     const newValueReceived = new TextDecoder().decode(event.target.value);
@@ -235,7 +248,7 @@
                             statusContainer.style.whiteSpace = "pre-line";
                             infoContainer.style.whiteSpace = "pre-line";
                             // Convert string "true" or "false" to boolean value
-                            const connected = obj.connected === "true";
+                            const connected = obj.connected === true;
                             const voltageV = obj.voltage_mv / 1000; // Convert millivolts to volts
                             statusContainer.textContent = `Connected: ${connected}\nNumber of packets received: ${obj.num_packets}\nVoltage: ${voltageV} V`;
                             infoContainer.textContent = `ID code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nHardware version: ${obj.hardware_version}\nConfig id: ${obj.config_id}`;
