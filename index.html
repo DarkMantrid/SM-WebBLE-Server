@@ -98,6 +98,7 @@
             const maxRetryAttempts = 3; // Maximum number of retry attempts
             let selectedDevice = null; // To store the selected device
             let initialConnectionEstablished = false; // Flag to track initial connection
+            let connectButtonDisabled = false; // Flag to track if the connect button is disabled
 
             // Event Listeners
             connectButton.addEventListener('click', handleConnectButtonClick);
@@ -138,6 +139,12 @@
                                 retryAttempts = 0;
                                 connectionFailed = false;
                                 selectedDevice = null;
+
+                                // Disable connect button for 2.5 seconds after disconnecting to prevent bugs.
+                                connectButton.disabled = true;
+                                setTimeout(() => {
+                                    connectButton.disabled = false;
+                                }, 2500);
                             })
                             .catch(error => console.error('An error occurred:', error));
                     }
