@@ -249,7 +249,7 @@
             // Function to debounce characteristic value changes
             function handleCharacteristicChangeDebounced(event) {
                 if (initialConnectionEstablished) {
-                    debounce(handleCharacteristicChange, 300)(event);
+                    debounce(handleCharacteristicChange, 500)(event);
                 } else {
                     handleCharacteristicChange(event);
                 }
