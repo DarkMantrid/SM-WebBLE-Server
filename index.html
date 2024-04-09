@@ -119,13 +119,18 @@
             function disconnectDevice() {
                 if (bleServer && bleServer.connected) {
                     if (statusCharacteristicFound) {
+                        // Stop notifications on the characteristic
                         statusCharacteristicFound.stopNotifications()
                             .then(() => {
+                                // Disconnect from the GATT server
+                                return bleServer.disconnect();
+                            })
+                            .then(() => {
+                                // Update UI and reset variables
                                 updateBleState('Device Disconnected', '#d13a30');
                                 clearInterval(intervalId);
                                 hideInfoCard();
                                 hideStatusCard();
-                                // Reset variables
                                 bleServer = null;
                                 statusCharacteristicFound = null;
                                 intervalId = null;
