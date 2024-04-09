@@ -270,7 +270,7 @@
                     const newValueReceived = new TextDecoder().decode(event.target.value);
 
                     try {
-                        console.log(newValueReceived);
+                        // console.log(newValueReceived);
                         const obj = JSON.parse(newValueReceived);
                         if (event.target.uuid === statusCharacteristic) {
                             statusContainer.style.whiteSpace = "pre-line";
