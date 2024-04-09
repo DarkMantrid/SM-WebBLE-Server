@@ -97,6 +97,7 @@
             let connectionFailed = false; // Flag to track connection failure
             const maxRetryAttempts = 3; // Maximum number of retry attempts
             let selectedDevice = null; // To store the selected device
+            let initialConnectionEstablished = false; // Flag to track initial connection
 
             // Event Listeners
             connectButton.addEventListener('click', handleConnectButtonClick);
@@ -119,18 +120,13 @@
             function disconnectDevice() {
                 if (bleServer && bleServer.connected) {
                     if (statusCharacteristicFound) {
-                        // Stop notifications on the characteristic
                         statusCharacteristicFound.stopNotifications()
                             .then(() => {
-                                // Disconnect from the GATT server
-                                return bleServer.disconnect();
-                            })
-                            .then(() => {
-                                // Update UI and reset variables
                                 updateBleState('Device Disconnected', '#d13a30');
                                 clearInterval(intervalId);
                                 hideInfoCard();
                                 hideStatusCard();
+                                // Reset variables
                                 bleServer = null;
                                 statusCharacteristicFound = null;
                                 intervalId = null;
@@ -187,6 +183,7 @@
                     .then(gattServer => {
                         bleServer = gattServer;
                         connectionFailed = false; // Reset connectionFailed flag
+                        initialConnectionEstablished = true; // Set initial connection flag
                         console.log("Connected to GATT Server");
                         updateBleState(`Connected to ${selectedDevice.name}`, '#24af37', true, selectedDevice.name); // Update device connected message
                         retryAttempts = 0; // Reset retryAttempts on successful connection
@@ -198,7 +195,7 @@
                             service.getCharacteristic(statusCharacteristic).then(characteristic => {
                                 console.log("Status Characteristic discovered:", characteristic.uuid);
                                 statusCharacteristicFound = characteristic;
-                                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
+                                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChangeDebounced);
                                 return characteristic.startNotifications();
                             })
                         ]);
@@ -227,7 +224,11 @@
             }
 
             function onDisconnected(event) {
-                console.log('Device Disconnected:', event.target.device.name);
+                try {
+                    console.log('Device Disconnected:', event.target.device.name);
+                } catch (error) {
+                    console.log('Device Disconnected, Restarting Advertise.');
+                }
                 updateBleState('Device disconnected', '#d13a30');
                 clearInterval(intervalId);
                 hideInfoCard();
@@ -236,6 +237,15 @@
                 bleServer = null;
                 statusCharacteristicFound = null;
                 selectedDevice = null; // Clear selected device on disconnect
+            }
+
+            // Function to debounce characteristic value changes
+            function handleCharacteristicChangeDebounced(event) {
+                if (initialConnectionEstablished) {
+                    debounce(handleCharacteristicChange, 200)(event);
+                } else {
+                    handleCharacteristicChange(event);
+                }
             }
 
             function debounce(func, delay) {
@@ -247,7 +257,6 @@
                     }, delay);
                 };
             }
-
 
             function handleCharacteristicChange(event) {
                 if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
