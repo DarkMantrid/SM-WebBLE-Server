@@ -125,9 +125,14 @@
                                 clearInterval(intervalId);
                                 hideInfoCard();
                                 hideStatusCard();
+                                // Reset variables
                                 bleServer = null;
                                 statusCharacteristicFound = null;
-                                selectedDevice = null; // Clear selected device on disconnect
+                                intervalId = null;
+                                retryAttempts = 0;
+                                connectionFailed = false;
+                                selectedDevice = null;
+                                console.log("Device disconnected.");
                             })
                             .catch(error => console.error('An error occurred:', error));
                     }
@@ -148,9 +153,11 @@
                 return true; // Remove connectToDevice call from here
             }
 
-            function connectToDevice(device) { // Accept device as argument
-                if (!device) { // Check if device is provided
+            function connectToDevice(device) {
+                // Check if the device is provided
+                if (!device) {
                     console.log('Initializing Bluetooth...');
+                    // Request device selection
                     navigator.bluetooth.requestDevice({
                         acceptAllDevices: true,
                         optionalServices: [bleService]
@@ -168,7 +175,10 @@
                 console.log('Connecting to selected device...');
                 selectedDevice = device; // Store the selected device
 
-                selectedDevice.addEventListener('gattservicedisconnected', onDisconnected);
+                // Event listener for disconnection
+                selectedDevice.addEventListener('gattserverdisconnected', onDisconnected);
+
+                // Attempt to connect to the GATT server
                 selectedDevice.gatt.connect()
                     .then(gattServer => {
                         bleServer = gattServer;
