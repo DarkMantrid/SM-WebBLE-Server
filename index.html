@@ -30,7 +30,7 @@
             BLE state:
             <strong
               ><span id="bleState" style="color: #d13a30"
-                >Disconnected</span
+                >Ready to connect</span
               ></strong
             >
           </p>
@@ -148,7 +148,7 @@
                 })
                 .then(() => {
                   // Update UI and reset variables
-                  updateBleState("Device Disconnected", "#d13a30");
+                  updateBleState("Preparing...", "#ff6a00");
                   clearInterval(intervalId);
                   hideInfoCard();
                   hideStatusCard();
@@ -163,6 +163,7 @@
                   connectButton.disabled = true;
                   setTimeout(() => {
                     connectButton.disabled = false;
+                    updateBleState("Ready to connect", "#d13a30");
                   }, 2500);
                 })
                 .catch((error) => console.error("An error occurred:", error));
@@ -279,7 +280,6 @@
           } catch (error) {
             console.log("Device Disconnected, Restarting Advertise.");
           }
-          updateBleState("Device disconnected", "#d13a30");
           clearInterval(intervalId);
           hideInfoCard();
           hideStatusCard();
