@@ -10,7 +10,7 @@
 
   <body>
     <div class="header">
-      <h1>Status 067442</h1>
+      <h2>Safety<br>Simplifier</h2>
       <div class="logo">
         <img src="sspn-logo-b.png" alt="Logo" class="logo-img" />
       </div>
@@ -36,11 +36,11 @@
           </p>
         </td>
         <td class="card info-card" style="display: none">
-          <h2>General information</h2>
+          <h3>General information</h3>
           <p class="infoReading"><span id="infoContainer"></span></p>
         </td>
         <td class="card status-card" style="display: none">
-          <h2>Status</h2>
+          <h4>Status</h4>
           <p class="statusReading"><span id="statusContainer"></span></p>
           <p class="gray-label" id="timestamp"></p>
         </td>
@@ -319,7 +319,7 @@
             );
 
             try {
-              // console.log(newValueReceived);
+              console.log(newValueReceived);
               const obj = JSON.parse(newValueReceived);
               if (event.target.uuid === statusCharacteristic) {
                 statusContainer.style.whiteSpace = "pre-line";
