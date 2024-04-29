@@ -109,7 +109,7 @@
 
         // Bluetooth Variables
         let bleServer;
-        let statusCharacteristicFound;
+        let readCharacteristicFound;
         let intervalId;
         let retryAttempts = 0;
         let connectionFailed = false; // Flag to track connection failure
@@ -125,7 +125,7 @@
         // Bluetooth Constants
         const deviceName = "ESP32-C3";
         const bleService = "08fed9e7-90be-44b5-b02c-91393f6e8988";
-        const statusCharacteristic = "601d23b8-72c2-4965-90d1-2d8bab04f73a";
+        const readCharacteristic = "601d23b8-72c2-4965-90d1-2d8bab04f73a";
 
         // Event Handlers
         function handleConnectButtonClick(event) {
@@ -138,9 +138,9 @@
 
         function disconnectDevice() {
           if (bleServer && bleServer.connected) {
-            if (statusCharacteristicFound) {
+            if (readCharacteristicFound) {
               // Stop notifications on the characteristic
-              statusCharacteristicFound
+              readCharacteristicFound
                 .stopNotifications()
                 .then(() => {
                   // Disconnect from the GATT server
@@ -153,7 +153,7 @@
                   hideInfoCard();
                   hideStatusCard();
                   bleServer = null;
-                  statusCharacteristicFound = null;
+                  readCharacteristicFound = null;
                   intervalId = null;
                   retryAttempts = 0;
                   connectionFailed = false;
@@ -235,13 +235,13 @@
               console.log("Service discovered:", service.uuid);
               return Promise.all([
                 service
-                  .getCharacteristic(statusCharacteristic)
+                  .getCharacteristic(readCharacteristic)
                   .then((characteristic) => {
                     console.log(
-                      "Status Characteristic discovered:",
+                      "Read Characteristic discovered:",
                       characteristic.uuid
                     );
-                    statusCharacteristicFound = characteristic;
+                    readCharacteristicFound = characteristic;
                     characteristic.addEventListener(
                       "characteristicvaluechanged",
                       handleCharacteristicChangeDebounced
@@ -254,7 +254,7 @@
               intervalId = setInterval(updateTimestamp, 1000);
               showInfoCard();
               showStatusCard();
-              return statusCharacteristicFound.readValue(); // Use statusCharacteristicFound here
+              return readCharacteristicFound.readValue(); // Use readCharacteristicFound here
             })
             .catch((error) => {
               console.error("Error: ", error);
@@ -285,7 +285,7 @@
           hideStatusCard();
           retryAttempts = 0;
           bleServer = null;
-          statusCharacteristicFound = null;
+          readCharacteristicFound = null;
           selectedDevice = null; // Clear selected device on disconnect
           initialConnectionEstablished = false; // Reset initial connection flag
           setTimeout(function () {
@@ -321,7 +321,7 @@
             try {
               console.log(newValueReceived);
               const obj = JSON.parse(newValueReceived);
-              if (event.target.uuid === statusCharacteristic) {
+              if (event.target.uuid === readCharacteristic) {
                 statusContainer.style.whiteSpace = "pre-line";
                 infoContainer.style.whiteSpace = "pre-line";
                 // Convert string "true" or "false" to boolean value
