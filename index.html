@@ -124,6 +124,7 @@
         let connectionFailed = false; // Flag to track connection failure
         const maxRetryAttempts = 3; // Maximum number of retry attempts
         let selectedDevice = null; // To store the selected device
+        let deviceToReconnect = null; // To store the device to reconnect
         let initialConnectionEstablished = false; // Flag to track initial connection
         let connectButtonDisabled = false; // Flag to track if the connect button is disabled
 
@@ -217,48 +218,66 @@
           return true; // Remove connectToDevice call from here
         }
 
-        function connectToDevice(device) {
-          // Check if the device is provided
+        function connectToDevice() {
+          console.log("Initializing Bluetooth...");
+          navigator.bluetooth
+            .requestDevice({
+              acceptAllDevices: true,
+              optionalServices: [bleService],
+            })
+            .then((device) => {
+              console.log("Device Selected:", device.name);
+              device.addEventListener("gattserverdisconnected", onDisconnected);
+              selectedDevice = device; // Set selectedDevice here
+              connectGatt(selectedDevice); // Pass the selected device to connectGatt
+            })
+            .catch((error) => {
+              console.error("Failed to select device:", error);
+            });
+        }
+
+        // Define a new function to connect to the GATT server
+        function connectGatt(device) {
+          // Reset selectedDevice
+          selectedDevice = device;
+          // If no device is passed, use the device to reconnect
           if (!device) {
-            console.log("Initializing Bluetooth...");
-            // Request device selection
-            navigator.bluetooth
-              .requestDevice({
-                acceptAllDevices: true,
-                optionalServices: [bleService],
-              })
-              .then((selectedDevice) => {
-                console.log("Device Selected:", selectedDevice.name);
-                connectToDevice(selectedDevice); // Call connectToDevice with selected device
-              })
-              .catch((error) => {
-                console.error("Failed to select device:", error);
-              });
-            return; // Exit function if device selection is pending
+            if (!deviceToReconnect) {
+              console.error("No device selected or to reconnect");
+              return;
+            }
+            device = deviceToReconnect;
           }
-
           console.log("Connecting to selected device...");
-          selectedDevice = device; // Store the selected device
-
-          // Event listener for disconnection
-          selectedDevice.addEventListener(
-            "gattserverdisconnected",
-            onDisconnected
-          );
-
-          // Attempt to connect to the GATT server
-          selectedDevice.gatt
+          device.gatt
             .connect()
             .then((gattServer) => {
+              // Simulate an error after connection
+              // if (retryAttempts < 1) {
+              //   //!!! FOR TESTING PURPOSES ONLY, REMOVE THIS LINE !!!
+              //   retryAttempts++; // Increment retryAttempts
+              //   throw new Error("Simulated connection error");
+              // }
               bleServer = gattServer;
               connectionFailed = false; // Reset connectionFailed flag
               initialConnectionEstablished = true; // Set initial connection flag
               console.log("Connected to GATT Server");
+              intervalId = setInterval(updateTimestamp, 1000);
+              showStatusCard();
+              // Update the timestamp in the status card
+              showInfoCard();
+
+              // Store the name of the device
+              var deviceName = selectedDevice.name;
+
+              // Simulate the error
+              selectedDevice = null;
+
               updateBleState(
-                `Connected to ${selectedDevice.name}`,
+                `Connected to ${deviceName}`,
                 "#24af37",
                 true,
-                selectedDevice.name
+                deviceName
               ); // Update device connected message
               retryAttempts = 0; // Reset retryAttempts on successful connection
               return bleServer.getPrimaryService(bleService);
@@ -280,41 +299,14 @@
                     );
                     return characteristic.startNotifications();
                   }),
-                service
-                  .getCharacteristic(writeCharacteristic)
-                  .then((characteristic) => {
-                    console.log(
-                      "Write Characteristic discovered:",
-                      characteristic.uuid
-                    );
-                    if (characteristic.properties.write) {
-                      console.log("Write Characteristic has write permission");
-                      writeCharacteristicFound = characteristic;
-                    } else {
-                      console.error(
-                        "Write Characteristic does not have write permission"
-                      );
-                    }
-                  }),
               ]);
             })
-            .then(() => {
-              intervalId = setInterval(updateTimestamp, 1000);
-              showInfoCard();
-              showStatusCard();
-              showWriteCard();
-              return readCharacteristicFound.readValue(); // Use readCharacteristicFound here
-            })
             .catch((error) => {
-              console.error("Error: ", error);
-              if (error instanceof DOMException) {
-                console.error("DOMException:", error.message);
-              }
-              connectionFailed = true; // Set connectionFailed flag
+              console.error("Failed to connect to GATT server:", error);
               if (retryAttempts < maxRetryAttempts) {
                 console.log("Retrying...");
                 retryAttempts++;
-                setTimeout(connectToDevice, 1000, selectedDevice); // Retry after 3 seconds with selected device
+                setTimeout(connectGatt, 1000, device); // Retry after 1 second with the same device
               } else {
                 console.error("Maximum retry attempts reached.");
                 retryAttempts = 0;
@@ -324,6 +316,8 @@
 
         function onDisconnected(event) {
           console.log("Device disconnected event triggered.");
+          deviceToReconnect = event.target; // Store the device to reconnect
+          selectedDevice = deviceToReconnect; // Set selectedDevice to the device to reconnect
           try {
             console.log("Device Disconnected:", event.target.device.name);
           } catch (error) {
