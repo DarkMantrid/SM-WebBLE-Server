@@ -127,6 +127,7 @@
         let deviceToReconnect = null; // To store the device to reconnect
         let initialConnectionEstablished = false; // Flag to track initial connection
         let connectButtonDisabled = false; // Flag to track if the connect button is disabled
+        let firstConnectionAttempt = true; // Flag to track the first connection attempt
 
         // Event Listeners
         connectButton.addEventListener("click", handleConnectButtonClick);
@@ -271,6 +272,12 @@
               // Store the name of the device
               var deviceName = selectedDevice.name;
 
+              // Throw an error to simulate a failure
+              // if (firstConnectionAttempt) {
+              //   firstConnectionAttempt = false;
+              //   throw new Error("Simulated connection error");
+              // }
+
               // Simulate the error
               selectedDevice = null;
 
@@ -301,6 +308,16 @@
                     return characteristic.startNotifications();
                   }),
               ]);
+            })
+            .then(() => {
+              // Connection and setup was successful.
+              console.log("Connected and ready.");
+              updateBleState(
+                `Connected and ready to ${deviceName}`,
+                "#24af37",
+                true,
+                deviceName
+              );
             })
             .catch((error) => {
               console.error("Failed to connect to GATT server:", error);
@@ -337,9 +354,11 @@
           // Disable connect button for 2.5 seconds after disconnecting to prevent bugs.
           connectButton.disabled = true;
           setTimeout(() => {
-            connectButton.disabled = false;
-            updateBleState("Ready to connect", "#d13a30");
-            console.log("Ready to connect");
+            if (!selectedDevice || !selectedDevice.gatt.connected) {
+              connectButton.disabled = false;
+              updateBleState("Ready to connect", "#d13a30");
+              console.log("Ready to connect");
+            }
           }, 2500);
         }
 
