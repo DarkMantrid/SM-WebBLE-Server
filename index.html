@@ -287,6 +287,13 @@
                 true,
                 deviceName
               ); // Update device connected message
+
+              // if (retryAttempts < 1) {
+              //   //!!! FOR TESTING PURPOSES ONLY, REMOVE THIS LINE !!!
+              //   retryAttempts++; // Increment retryAttempts
+              //   throw new Error("Simulated connection error");
+              // }
+
               retryAttempts = 0; // Reset retryAttempts on successful connection
               return bleServer.getPrimaryService(bleService);
             })
@@ -309,22 +316,21 @@
                   }),
               ]);
             })
-            .then(() => {
-              // Connection and setup was successful.
-              console.log("Connected and ready.");
-              updateBleState(
-                `Connected and ready to ${deviceName}`,
-                "#24af37",
-                true,
-                deviceName
-              );
-            })
             .catch((error) => {
               console.error("Failed to connect to GATT server:", error);
               if (retryAttempts < maxRetryAttempts) {
                 console.log("Retrying...");
+                // updateBleState("Retrying...", "#ff7a00");
                 retryAttempts++;
                 setTimeout(connectGatt, 1000, device); // Retry after 1 second with the same device
+                if (device.connected) {
+                  updateBleState(
+                    `Connected to ${deviceName}`,
+                    "#24af37",
+                    true,
+                    deviceName
+                  );
+                }
               } else {
                 console.error("Maximum retry attempts reached.");
                 retryAttempts = 0;
