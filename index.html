@@ -128,11 +128,13 @@
         let initialConnectionEstablished = false; // Flag to track initial connection
         let connectButtonDisabled = false; // Flag to track if the connect button is disabled
         let firstConnectionAttempt = true; // Flag to track the first connection attempt
+        let intentionalDisconnect = false; // Flag to track intentional disconnect
 
         // Event Listeners
         connectButton.addEventListener("click", handleConnectButtonClick);
-        disconnectButton.addEventListener("click", disconnectDevice);
+        disconnectButton.addEventListener("click", handleDisconnectButtonClick);
         writeButton.addEventListener("click", handleWriteButtonClick);
+        disconnectButton.addEventListener("click", disconnectDevice);
 
         // Bluetooth Constants
         const deviceName = "ESP32-C3";
@@ -146,6 +148,13 @@
             if (isWebBluetoothEnabled()) {
               connectToDevice(selectedDevice); // Pass selected device to connectToDevice
             }
+          }
+        }
+
+        function handleDisconnectButtonClick() {
+          if (isWebBluetoothEnabled()) {
+            intentionalDisconnect = true; // Set the flag to true when disconnect button is clicked
+            disconnectDevice();
           }
         }
 
@@ -171,6 +180,7 @@
 
         function disconnectDevice() {
           if (bleServer && bleServer.connected) {
+            intentionalDisconnect = true; // Set the flag to true for intentional disconnect
             if (readCharacteristicFound) {
               // Stop notifications on the characteristic
               readCharacteristicFound
@@ -228,8 +238,8 @@
             })
             .then((device) => {
               console.log("Device Selected:", device.name);
-              device.addEventListener("gattserverdisconnected", onDisconnected);
               selectedDevice = device; // Set selectedDevice here
+              device.addEventListener("gattserverdisconnected", onDisconnected);
               connectGatt(selectedDevice); // Pass the selected device to connectGatt
             })
             .catch((error) => {
@@ -239,17 +249,9 @@
 
         // Define a new function to connect to the GATT server
         function connectGatt(device) {
-          // Reset selectedDevice
-          selectedDevice = device;
-          // If no device is passed, use the device to reconnect
-          if (!device) {
-            if (!deviceToReconnect) {
-              console.error("No device selected or to reconnect");
-              return;
-            }
-            device = deviceToReconnect;
-          }
-          console.log("Connecting to selected device...");
+          // Store the name of the device
+          var deviceName = device.name;
+          console.log("Connecting to GATT server...");
           device.gatt
             .connect()
             .then((gattServer) => {
@@ -268,9 +270,6 @@
               // Update the timestamp in the status card
               showInfoCard();
               showWriteCard();
-
-              // Store the name of the device
-              var deviceName = selectedDevice.name;
 
               // Throw an error to simulate a failure
               // if (firstConnectionAttempt) {
@@ -320,17 +319,9 @@
               console.error("Failed to connect to GATT server:", error);
               if (retryAttempts < maxRetryAttempts) {
                 console.log("Retrying...");
-                // updateBleState("Retrying...", "#ff7a00");
                 retryAttempts++;
-                setTimeout(connectGatt, 1000, device); // Retry after 1 second with the same device
-                if (device.connected) {
-                  updateBleState(
-                    `Connected to ${deviceName}`,
-                    "#24af37",
-                    true,
-                    deviceName
-                  );
-                }
+                // Retry the connection with the same device
+                setTimeout(connectGatt, 1000, device);
               } else {
                 console.error("Maximum retry attempts reached.");
                 retryAttempts = 0;
@@ -338,35 +329,19 @@
             });
         }
 
-        function onDisconnected(event) {
-          console.log("Device disconnected event triggered.");
-          deviceToReconnect = event.target; // Store the device to reconnect
-          selectedDevice = deviceToReconnect; // Set selectedDevice to the device to reconnect
-          try {
-            console.log("Device Disconnected:", event.target.device.name);
-          } catch (error) {
-            console.log("Device Disconnected, Restarting Advertise.");
-          }
-          updateBleState("Preparing...", "#ff7a00");
-          clearInterval(intervalId);
-          hideInfoCard();
-          hideStatusCard();
-          hideWriteCard();
-          retryAttempts = 0;
-          bleServer = null;
-          readCharacteristicFound = null;
-          selectedDevice = null; // Clear selected device on disconnect
-          initialConnectionEstablished = false; // Reset initial connection flag
-          // Disable connect button for 2.5 seconds after disconnecting to prevent bugs.
-          connectButton.disabled = true;
-          setTimeout(() => {
-            if (!selectedDevice || !selectedDevice.gatt.connected) {
-              connectButton.disabled = false;
-              updateBleState("Ready to connect", "#d13a30");
-              console.log("Ready to connect");
-            }
-          }, 2500);
+        function disconnectIntentionally() {
+          intentionalDisconnect = true;
+          selectedDevice.gatt.disconnect();
         }
+
+        function onDisconnected(event) {
+          let device = event.target;
+          console.log(`Device ${device.name} is disconnected.`);
+          if (selectedDevice) {
+            connectGatt(selectedDevice);
+          }
+        }
+
 
         // Function to debounce characteristic value changes
         function handleCharacteristicChangeDebounced(event) {
