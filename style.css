@@ -23,6 +23,17 @@ html {
   align-items: center;
 }
 
+/* Logo styles */
+.logo {
+  margin-right: auto; /* Push the logo to the right */
+  text-align: right; /* Align the logo to the right */
+}
+
+.logo-img {
+  max-width: 100px; /* Adjust the maximum width as needed */
+  height: auto;
+}
+
 h2 {
   font-size: 1.5rem;
   color: #000000;
