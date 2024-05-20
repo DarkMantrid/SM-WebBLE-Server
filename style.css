@@ -30,19 +30,8 @@ h2 {
   margin: 0;
   text-align: center; /* Horizontally center align the h1 text */
   flex: 1; /* Allow the h1 to take up available space */
-  margin-left: 100px; /* Add a margin to the left */
 }
 
-/* Logo styles */
-.logo {
-  margin-right: auto; /* Push the logo to the right */
-  text-align: right; /* Align the logo to the right */
-}
-
-.logo-img {
-  max-width: 100px; /* Adjust the maximum width as needed */
-  height: auto;
-}
 
 /* Content styles */
 body {
@@ -64,15 +53,6 @@ body {
   align-items: center; /* Center align items vertically */
 }
 
-/* .card {
-    background-color: white;
-    box-shadow: 2px 2px 12px 1px rgba(140, 140, 140, 0.5);
-    border-radius: 15px;
-    padding: 15px;
-    margin: 10px;
-    width: 15em;
-} */
-
 .card,
 .info-card,
 .status-card {
@@ -87,6 +67,38 @@ body {
   font-size: 1rem;
 }
 
+.write-card {
+  background-color: white;
+  box-shadow: 2px 2px 12px 1px rgba(140, 140, 140, 0.5);
+  border-radius: 15px;
+  padding: 15px;
+  margin: 20px;
+}
+
+#writeValue {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#writeButton {
+  background-color: #4CAF50;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+#writeButton:hover {
+  background-color: #45a049;
+}
+
 button {
   color: white;
   padding: 14px 20px;
@@ -98,22 +110,13 @@ button {
 
 .connectButton {
   background-color: #24af37;
+  cursor: pointer;
 }
 
 .disconnectButton {
   background-color: #d13a30;
 }
 
-.copyButton {
-  background-color: #0f1c75;
-  border: none;
-  color: white;
-  padding: 8px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-}
 
 .gray-label {
   color: #bebebe;
