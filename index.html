@@ -194,9 +194,7 @@
                   // Update UI and reset variables
                   updateBleState("Preparing...", "#ff7a00");
                   clearInterval(intervalId);
-                  hideInfoCard();
-                  hideStatusCard();
-                  hideWriteCard();
+                  hideCards();
                   bleServer = null;
                   readCharacteristicFound = null;
                   intervalId = null;
@@ -256,21 +254,12 @@
           device.gatt
             .connect()
             .then((gattServer) => {
-              // Simulate an error after connection
-              // if (retryAttempts < 1) {
-              //   //!!! FOR TESTING PURPOSES ONLY, REMOVE THIS !!!
-              //   retryAttempts++; // Increment retryAttempts
-              //   throw new Error("Simulated connection error");
-              // }
               bleServer = gattServer;
               connectionFailed = false; // Reset connectionFailed flag
               initialConnectionEstablished = true; // Set initial connection flag
               console.log("Connected to GATT Server");
               intervalId = setInterval(updateTimestamp, 1000);
-              showStatusCard();
-              // Update the timestamp in the status card
-              showInfoCard();
-              showWriteCard();
+              showCards();
 
               selectedDevice = null;
 
@@ -281,11 +270,10 @@
                 deviceName
               ); // Update device connected message
 
-              // if (retryAttempts < 1) {
-              //   //!!! FOR TESTING PURPOSES ONLY, REMOVE THIS !!!
+              // if (retryAttempts < 1) { //!!! FOR TESTING PURPOSES ONLY, REMOVE THIS !!!
               //   retryAttempts++; // Increment retryAttempts
               //   throw new Error("Simulated connection error");
-              // }
+              // } 
 
               retryAttempts = 0; // Reset retryAttempts on successful connection
               return bleServer.getPrimaryService(bleService);
@@ -340,11 +328,21 @@
         function onDisconnected(event) {
           let device = event.target;
           console.log(`Device ${device.name} is disconnected.`);
-          if (selectedDevice) {
-            connectGatt(selectedDevice);
+
+          if (!intentionalDisconnect) {
+            // Reset the BLE state and update the UI
+            console.error("Device disconnected unexpectedly.");
+            updateBleState("Ready to connect", "#d13a30");
+            hideCards();
+
+            selectedDevice = null;
+            connectButton.disabled = false;
+          
+            if (selectedDevice) {
+              connectGatt(selectedDevice);
+            }
           }
         }
-
         // Function to debounce characteristic value changes
         function handleCharacteristicChangeDebounced(event) {
           if (initialConnectionEstablished) {
@@ -404,41 +402,31 @@
           }
         }
 
-        function showInfoCard() {
-          const statusCard = document.querySelector(".info-card");
-          if (statusCard) {
-            statusCard.style.display = "block";
-          }
-        }
-
-        function hideInfoCard() {
-          const statusCard = document.querySelector(".info-card");
-          if (statusCard) {
-            statusCard.style.display = "none";
-          }
-        }
-
-        function showStatusCard() {
+        function showCards() {
           const statusCard = document.querySelector(".status-card");
           if (statusCard) {
             statusCard.style.display = "block";
           }
-        }
-
-        function hideStatusCard() {
-          const statusCard = document.querySelector(".status-card");
-          if (statusCard) {
-            statusCard.style.display = "none";
+          const infoCard = document.querySelector(".info-card");
+          if (infoCard) {
+            infoCard.style.display = "block";
           }
-        }
-
-        function showWriteCard() {
+          const writeCard = document.querySelector(".write-card");
           if (writeCard) {
             writeCard.style.display = "block";
           }
         }
 
-        function hideWriteCard() {
+        function hideCards() {
+          const statusCard = document.querySelector(".status-card");
+          if (statusCard) {
+            statusCard.style.display = "none";
+          }
+          const infoCard = document.querySelector(".info-card");
+          if (infoCard) {
+            infoCard.style.display = "none";
+          }
+          const writeCard = document.querySelector(".write-card");
           if (writeCard) {
             writeCard.style.display = "none";
           }
