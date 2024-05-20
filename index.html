@@ -119,6 +119,7 @@
         // Bluetooth Variables
         let bleServer;
         let readCharacteristicFound;
+        let writeCharacteristicFound;
         let intervalId;
         let retryAttempts = 0;
         let connectionFailed = false; // Flag to track connection failure
@@ -257,7 +258,7 @@
             .then((gattServer) => {
               // Simulate an error after connection
               // if (retryAttempts < 1) {
-              //   //!!! FOR TESTING PURPOSES ONLY, REMOVE THIS LINE !!!
+              //   //!!! FOR TESTING PURPOSES ONLY, REMOVE THIS !!!
               //   retryAttempts++; // Increment retryAttempts
               //   throw new Error("Simulated connection error");
               // }
@@ -271,13 +272,6 @@
               showInfoCard();
               showWriteCard();
 
-              // Throw an error to simulate a failure
-              // if (firstConnectionAttempt) {
-              //   firstConnectionAttempt = false;
-              //   throw new Error("Simulated connection error");
-              // }
-
-              // Simulate the error
               selectedDevice = null;
 
               updateBleState(
@@ -288,7 +282,7 @@
               ); // Update device connected message
 
               // if (retryAttempts < 1) {
-              //   //!!! FOR TESTING PURPOSES ONLY, REMOVE THIS LINE !!!
+              //   //!!! FOR TESTING PURPOSES ONLY, REMOVE THIS !!!
               //   retryAttempts++; // Increment retryAttempts
               //   throw new Error("Simulated connection error");
               // }
@@ -312,6 +306,15 @@
                       handleCharacteristicChangeDebounced
                     );
                     return characteristic.startNotifications();
+                  }),
+                service
+                  .getCharacteristic(writeCharacteristic)
+                  .then((characteristic) => {
+                    console.log(
+                      "Write Characteristic discovered:",
+                      characteristic.uuid
+                    );
+                    writeCharacteristicFound = characteristic;
                   }),
               ]);
             })
@@ -341,7 +344,6 @@
             connectGatt(selectedDevice);
           }
         }
-
 
         // Function to debounce characteristic value changes
         function handleCharacteristicChangeDebounced(event) {
