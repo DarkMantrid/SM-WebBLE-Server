@@ -192,22 +192,7 @@
                 })
                 .then(() => {
                   // Update UI and reset variables
-                  updateBleState("Preparing...", "#ff7a00");
-                  clearInterval(intervalId);
-                  hideCards();
-                  bleServer = null;
-                  readCharacteristicFound = null;
-                  intervalId = null;
-                  retryAttempts = 0;
-                  connectionFailed = false;
-                  selectedDevice = null;
-
-                  // Disable connect button for 2.5 seconds after disconnecting to prevent bugs.
-                  connectButton.disabled = true;
-                  setTimeout(() => {
-                    connectButton.disabled = false;
-                    updateBleState("Ready to connect", "#d13a30");
-                  }, 2500);
+                  resetConnection();
                 })
                 .catch((error) => console.error("An error occurred:", error));
             }
@@ -248,6 +233,8 @@
 
         // Define a new function to connect to the GATT server
         function connectGatt(device) {
+          deviceToReconnect = device; // Store the device object
+          isConnected = true;
           // Store the name of the device
           var deviceName = device.name;
           console.log("Connecting to GATT server...");
@@ -273,7 +260,7 @@
               // if (retryAttempts < 1) { //!!! FOR TESTING PURPOSES ONLY, REMOVE THIS !!!
               //   retryAttempts++; // Increment retryAttempts
               //   throw new Error("Simulated connection error");
-              // } 
+              // }
 
               retryAttempts = 0; // Reset retryAttempts on successful connection
               return bleServer.getPrimaryService(bleService);
@@ -316,33 +303,49 @@
               } else {
                 console.error("Maximum retry attempts reached.");
                 retryAttempts = 0;
+                connectButton.disabled = false; // Re-enable the connectButton
+                connectButton.addEventListener("click", connectToDevice); // Attach connectToDevice to the click event
               }
             });
         }
 
         function disconnectIntentionally() {
           intentionalDisconnect = true;
-          selectedDevice.gatt.disconnect();
+
+          // Stop notifications on the read characteristic
+          if (readCharacteristicFound) {
+            readCharacteristicFound
+              .stopNotifications()
+              .then(() => {
+                console.log("Stopped notifications on the read characteristic");
+                selectedDevice.gatt.disconnect();
+              })
+              .catch((error) =>
+                console.error("Failed to stop notifications:", error)
+              );
+          } else {
+            selectedDevice.gatt.disconnect();
+          }
         }
 
         function onDisconnected(event) {
           let device = event.target;
           console.log(`Device ${device.name} is disconnected.`);
 
-          if (!intentionalDisconnect) {
+          if (intentionalDisconnect === false) {
             // Reset the BLE state and update the UI
             console.error("Device disconnected unexpectedly.");
             updateBleState("Ready to connect", "#d13a30");
             hideCards();
 
-            selectedDevice = null;
             connectButton.disabled = false;
-          
-            if (selectedDevice) {
-              connectGatt(selectedDevice);
+
+            if (deviceToReconnect) {
+              connectGatt(deviceToReconnect);
             }
           }
         }
+
         // Function to debounce characteristic value changes
         function handleCharacteristicChangeDebounced(event) {
           if (initialConnectionEstablished) {
@@ -389,6 +392,28 @@
           } else {
             console.log("Unknown event type:", event);
           }
+        }
+
+        function resetConnection() {
+          // Update UI and reset variables
+          updateBleState("Preparing...", "#ff7a00");
+          clearInterval(intervalId);
+          hideCards();
+          bleServer = null;
+          readCharacteristicFound = null;
+          intervalId = null;
+          retryAttempts = 0;
+          connectionFailed = false;
+          selectedDevice = null;
+
+          // Disable connect button for 2.5 seconds after disconnecting to prevent bugs.
+          connectButton.disabled = true;
+          setTimeout(() => {
+            connectButton.disabled = false;
+            updateBleState("Ready to connect", "#d13a30");
+          }, 2500);
+
+          intentionalDisconnect = false; // Reset the flag after the intentional disconnect is complete
         }
 
         // UI Functions
