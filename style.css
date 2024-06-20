@@ -2,8 +2,7 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"); /* Import Roboto font */
 
-@import url('https://fonts.googleapis.com/css2?family=Recursive:wght@400;500;600;700&display=swap'); /* Import Recursive font */
-
+@import url("https://fonts.googleapis.com/css2?family=Recursive:wght@400;500;600;700&display=swap"); /* Import Recursive font */
 
 /* Reset default margin and padding */
 html,
@@ -216,9 +215,10 @@ button {
   .io-card {
     grid-column: 1;
     grid-row: auto;
-    width: 90%; /* Adjust as needed */
-    padding: 35px; /* Adjust as needed */
-    margin: 15px; /* Adjust as needed */
+    width: 70%; /* Adjust as needed */
+    
+    padding: 5%; /* Adjust as needed */
+    margin-left: 8%; /* Adjust as needed */
   }
 }
 
@@ -233,33 +233,32 @@ button {
   .io-card {
     grid-column: 1;
     grid-row: auto;
-    width: 90%; /* Adjust as needed */
-    padding: 15px; /* Adjust as needed */
-    margin: 15px; /* Adjust as needed */
+    width: 70%; /* Adjust as needed */
+    
+    padding: 5%; /* Adjust as needed */
+    margin-left: 9%; /* Adjust as needed */
   }
 }
 
 /* For very small screens */
 @media (max-width: 500px) {
+  .card-table {
+    grid-template-columns: 1fr;
+  }
+
   .card,
   .info-card,
   .status-card,
   .io-card {
-    padding: 10px; /* Adjust as needed */
-    margin: 10px; /* Adjust as needed */
+    grid-column: 1;
+    grid-row: auto;
+    width: 70%; /* Adjust as needed */
+    
+    padding: 5%; /* Adjust as needed */
+    margin-left: 10%; /* Adjust as needed */
   }
 }
 
-@media (max-width: 768px) {
-  .card-table {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* For mobile devices, ensure content is centered */
-@media (max-width: 500px) {
-  .connectButton {
+.connectButton {
     background-color: #24a437;
-  }
 }
-
