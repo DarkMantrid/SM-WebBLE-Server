@@ -65,15 +65,15 @@ h2 {
 }
 
 /* Logo styles */
-.logo {
-  margin-right: auto; /* Push the logo to the right */
-  text-align: right; /* Align the logo to the right */
+/* .logo {
+  margin-right: auto;
+  text-align: right;
 }
 
 .logo-img {
-  max-width: 35%; /* Adjust the maximum width as needed */
+  max-width: 35%;
   height: auto;
-}
+} */
 
 /* Content styles */
 .content {
