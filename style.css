@@ -102,6 +102,7 @@ h2 {
   margin: 20px;
   width: 70%;
   margin-left: 10%;
+  margin-top: 10%;
 }
 
 .info-card {
@@ -206,14 +207,21 @@ button {
 
   .card,
   .info-card,
-  .status-card,
+  .status-card {
+    grid-column: 1;
+    grid-row: auto;
+    width: 70%; /* Adjust as needed */
+    padding: 5%; /* Adjust as needed */
+    margin-left: 10%; /* Adjust as needed */
+    margin-bottom: 0%;
+    margin-top: 3%;
+  }
+
   .io-card {
     grid-column: 1;
     grid-row: auto;
     width: 70%; /* Adjust as needed */
-    
-    padding: 5%; /* Adjust as needed */
-    margin-left: 8%; /* Adjust as needed */
+    margin-left: 16%; /* Adjust as needed */
   }
 }
 
@@ -224,14 +232,20 @@ button {
 
   .card,
   .info-card,
-  .status-card,
+  .status-card {
+    grid-column: 1;
+    grid-row: auto;
+    width: 70%; /* Adjust as needed */
+    padding: 5%; /* Adjust as needed */
+    margin-left: 10%; /* Adjust as needed */
+    margin-bottom: 0%;
+  }
+
   .io-card {
     grid-column: 1;
     grid-row: auto;
     width: 70%; /* Adjust as needed */
-    
-    padding: 5%; /* Adjust as needed */
-    margin-left: 9%; /* Adjust as needed */
+    margin-left: 16%; /* Adjust as needed */
   }
 }
 
@@ -243,14 +257,21 @@ button {
 
   .card,
   .info-card,
-  .status-card,
+  .status-card {
+    grid-column: 1;
+    grid-row: auto;
+    width: 70%; /* Adjust as needed */
+    padding: 5%; /* Adjust as needed */
+    margin-left: 10%; /* Adjust as needed */
+    margin-bottom: 0px;
+  }
+
   .io-card {
     grid-column: 1;
     grid-row: auto;
     width: 70%; /* Adjust as needed */
-    
-    padding: 5%; /* Adjust as needed */
-    margin-left: 10%; /* Adjust as needed */
+    margin-left: 17%; /* Adjust as needed */
+    margin-top: 0%;
   }
 }
 
