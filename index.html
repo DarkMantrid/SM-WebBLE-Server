@@ -1,107 +1,107 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Simplifier Manager Web tool</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/png" href="favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="style.css" />
-    <meta charset="UTF-8" />
-  </head>
+<head>
+  <title>Simplifier Manager Web tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/png" href="favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <meta charset="UTF-8" />
+</head>
 
-  <body>
-    <div class="header">
-      <h2>Safety<br />Simplifier</h2>
-      <div class="logo">
-        <img src="sspn-logo-b.png" alt="Logo" class="logo-img" />
-      </div>
+<body>
+  <div class="header">
+    <h2>Simplifier Manager</h2>
+    <div class="logo">
+      <img src="sspn-logo-b.png" alt="Logo" class="logo-img" />
     </div>
-    <table class="card-table">
-      <tr>
-        <td class="card">
-          <p>
-            <button id="connectBleButton" class="connectButton">
-              Connect to Device
-            </button>
-            <button id="disconnectBleButton" class="disconnectButton">
-              Disconnect Device
-            </button>
-          </p>
-          <p class="gray-label">
-            BLE state:
-            <strong
-              ><span id="bleState" style="color: #d13a30"
-                >Ready to connect</span
-              ></strong
-            >
-          </p>
-        </td>
-        <td class="card info-card" style="display: none">
-          <h3>General information</h3>
-          <p class="infoReading"><span id="infoContainer"></span></p>
-        </td>
-        <td class="card status-card" style="display: none">
-          <h4>Status</h4>
-          <p class="statusReading"><span id="statusContainer"></span></p>
-          <p class="gray-label" id="timestamp"></p>
-        </td>
-        <td class="card write-card" style="display: none">
-          <h4>Write</h4>
-          <textarea id="writeValue" rows="4" cols="50"></textarea>
-          <button id="writeButton">Write</button>
-          <p class="writeReading"><span id="writeContainer"></span></p>
-        </td>
-      </tr>
-    </table>
-    <div class="content">
-      <div class="chrome-alternative" style="display: none">
-        <p><b>Web Bluetooth is not supported in Mozilla Firefox. </b></p>
-        <p>
-          To use this service, please click this button to copy the URL:
-          <span id="chromeUrl" style="display: none"
-            >https://darkmantrid.github.io/SM-WebBLE-Server/</span
-          ><button onclick="copyUrl()" class="copyButton">Copy</button>
-        </p>
-        <p>
-          Once copied open Google chrome and paste the URL into the search bar
-        </p>
-      </div>
-      <div class="safari-alternative" style="display: none">
-        <p><b>Web Bluetooth is not supported in Safari. </b></p>
-        <p>
-          To use this service, please click this button to copy the URL:
-          <span id="safariUrl" style="display: none"
-            >https://darkmantrid.github.io/SM-WebBLE-Server/</span
-          ><button onclick="copySafariUrl()" class="copyButton">Copy</button>
-        </p>
-        <p>
-          Once copied, open Google Chrome and paste the URL into the address bar
-        </p>
-      </div>
+  </div>
+  <div class="card-table">
+    <div class="card">
+      <p>
+        <button id="connectBleButton" class="connectButton">
+          Connect to Device
+        </button>
+        <button id="disconnectBleButton" class="disconnectButton">
+          Disconnect Device
+        </button>
+      </p>
+      <p class="gray-label">
+        BLE state:
+        <strong>
+          <span id="bleState" style="color: #d13a30">Ready to connect</span>
+        </strong>
+      </p>
     </div>
+    <div class="card info-card">
+      <h3>General information</h3>
+      <p class="infoReading"><span id="infoContainer"></span></p>
+    </div>
+    <div class="card status-card">
+      <h4>Status</h4>
+      <p class="statusReading"><span id="statusContainer"></span></p>
+      <p class="gray-label" id="timestamp"></p>
+    </div>
+    <div class="card write-card" style="display: none">
+      <h4>Write</h4>
+      <textarea id="writeValue" rows="4" cols="50"></textarea>
+      <button id="writeButton">Write</button>
+      <p class="writeReading"><span id="writeContainer"></span></p>
+    </div>
+      <div class="card io-card">
+        <h3>I/O Card</h3>
+        <p>Will be replaced with a LED display</p>
+    </div>
+    <footer class="footer">
+      <p class="footer-text">We simplify safety</p>
+    </footer>
+</body>
+  <div class="content">
+    <div class="chrome-alternative" style="display: none">
+      <p><b>Web Bluetooth is not supported in Mozilla Firefox. </b></p>
+      <p>
+        To use this service, please click this button to copy the URL:
+        <span id="chromeUrl" style="display: none"
+          >https://darkmantrid.github.io/SM-WebBLE-Server/</span
+        ><button onclick="copyUrl()" class="copyButton">Copy</button>
+      </p>
+      <p>
+        Once copied open Google chrome and paste the URL into the search bar
+      </p>
+    </div>
+    <div class="safari-alternative" style="display: none">
+      <p><b>Web Bluetooth is not supported in Safari. </b></p>
+      <p>
+        To use this service, please click this button to copy the URL:
+        <span id="safariUrl" style="display: none"
+          >https://darkmantrid.github.io/SM-WebBLE-Server/</span
+        ><button onclick="copySafariUrl()" class="copyButton">Copy</button>
+      </p>
+      <p>
+        Once copied, open Google Chrome and paste the URL into the address bar
+      </p>
+    </div>
+  </div>
+  <script>
+    function copyUrl() {
+      var urlSpan = document.getElementById("chromeUrl");
+      var tempInput = document.createElement("input");
+      tempInput.value = urlSpan.textContent;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+    }
 
-    <script>
-      function copyUrl() {
-        var urlSpan = document.getElementById("chromeUrl");
-        var tempInput = document.createElement("input");
-        tempInput.value = urlSpan.textContent;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand("copy");
-        document.body.removeChild(tempInput);
-        alert("URL copied to clipboard");
-      }
-
-      function copySafariUrl() {
-        var urlSpan = document.getElementById("safariUrl");
-        var tempInput = document.createElement("input");
-        tempInput.value = urlSpan.textContent;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        document.execCommand("copy");
-        document.body.removeChild(tempInput);
-        alert("URL copied to clipboard");
-      }
-    </script>
+    function copySafariUrl() {
+      var urlSpan = document.getElementById("safariUrl");
+      var tempInput = document.createElement("input");
+      tempInput.value = urlSpan.textContent;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+    }
+  </script>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -115,27 +115,23 @@
         const writeValueTextarea = document.getElementById("writeValue");
         const writeButton = document.getElementById("writeButton");
         const writeCard = document.querySelector(".write-card");
+        const ioCard = document.querySelector(".io-card");
 
         // Bluetooth Variables
         let bleServer;
         let readCharacteristicFound;
-        let writeCharacteristicFound;
         let intervalId;
         let retryAttempts = 0;
         let connectionFailed = false; // Flag to track connection failure
         const maxRetryAttempts = 3; // Maximum number of retry attempts
         let selectedDevice = null; // To store the selected device
-        let deviceToReconnect = null; // To store the device to reconnect
         let initialConnectionEstablished = false; // Flag to track initial connection
         let connectButtonDisabled = false; // Flag to track if the connect button is disabled
-        let firstConnectionAttempt = true; // Flag to track the first connection attempt
-        let intentionalDisconnect = false; // Flag to track intentional disconnect
 
         // Event Listeners
         connectButton.addEventListener("click", handleConnectButtonClick);
-        disconnectButton.addEventListener("click", handleDisconnectButtonClick);
-        writeButton.addEventListener("click", handleWriteButtonClick);
         disconnectButton.addEventListener("click", disconnectDevice);
+        writeButton.addEventListener("click", handleWriteButtonClick);
 
         // Bluetooth Constants
         const deviceName = "ESP32-C3";
@@ -149,13 +145,6 @@
             if (isWebBluetoothEnabled()) {
               connectToDevice(selectedDevice); // Pass selected device to connectToDevice
             }
-          }
-        }
-
-        function handleDisconnectButtonClick() {
-          if (isWebBluetoothEnabled()) {
-            intentionalDisconnect = true; // Set the flag to true when disconnect button is clicked
-            disconnectDevice();
           }
         }
 
@@ -181,7 +170,6 @@
 
         function disconnectDevice() {
           if (bleServer && bleServer.connected) {
-            intentionalDisconnect = true; // Set the flag to true for intentional disconnect
             if (readCharacteristicFound) {
               // Stop notifications on the characteristic
               readCharacteristicFound
@@ -192,7 +180,25 @@
                 })
                 .then(() => {
                   // Update UI and reset variables
-                  resetConnection();
+                  updateBleState("Preparing...", "#ff7a00");
+                  clearInterval(intervalId);
+                  hideInfoCard();
+                  hideStatusCard();
+                  hideWriteCard();
+                  hideIOCard();
+                  bleServer = null;
+                  readCharacteristicFound = null;
+                  intervalId = null;
+                  retryAttempts = 0;
+                  connectionFailed = false;
+                  selectedDevice = null;
+
+                  // Disable connect button for 2.5 seconds after disconnecting to prevent bugs.
+                  connectButton.disabled = true;
+                  setTimeout(() => {
+                    connectButton.disabled = false;
+                    updateBleState("Ready to connect", "#d13a30");
+                  }, 2500);
                 })
                 .catch((error) => console.error("An error occurred:", error));
             }
@@ -213,55 +219,49 @@
           return true; // Remove connectToDevice call from here
         }
 
-        function connectToDevice() {
-          console.log("Initializing Bluetooth...");
-          navigator.bluetooth
-            .requestDevice({
-              acceptAllDevices: true,
-              optionalServices: [bleService],
-            })
-            .then((device) => {
-              console.log("Device Selected:", device.name);
-              selectedDevice = device; // Set selectedDevice here
-              device.addEventListener("gattserverdisconnected", onDisconnected);
-              connectGatt(selectedDevice); // Pass the selected device to connectGatt
-            })
-            .catch((error) => {
-              console.error("Failed to select device:", error);
-            });
-        }
+        function connectToDevice(device) {
+          // Check if the device is provided
+          if (!device) {
+            console.log("Initializing Bluetooth...");
+            // Request device selection
+            navigator.bluetooth
+              .requestDevice({
+                acceptAllDevices: true,
+                optionalServices: [bleService],
+              })
+              .then((selectedDevice) => {
+                console.log("Device Selected:", selectedDevice.name);
+                connectToDevice(selectedDevice); // Call connectToDevice with selected device
+              })
+              .catch((error) => {
+                console.error("Failed to select device:", error);
+              });
+            return; // Exit function if device selection is pending
+          }
 
-        // Define a new function to connect to the GATT server
-        function connectGatt(device) {
-          deviceToReconnect = device; // Store the device object
-          isConnected = true;
-          // Store the name of the device
-          var deviceName = device.name;
-          console.log("Connecting to GATT server...");
-          device.gatt
+          console.log("Connecting to selected device...");
+          selectedDevice = device; // Store the selected device
+
+          // Event listener for disconnection
+          selectedDevice.addEventListener(
+            "gattserverdisconnected",
+            onDisconnected
+          );
+
+          // Attempt to connect to the GATT server
+          selectedDevice.gatt
             .connect()
             .then((gattServer) => {
               bleServer = gattServer;
               connectionFailed = false; // Reset connectionFailed flag
               initialConnectionEstablished = true; // Set initial connection flag
               console.log("Connected to GATT Server");
-              intervalId = setInterval(updateTimestamp, 1000);
-              showCards();
-
-              selectedDevice = null;
-
               updateBleState(
-                `Connected to ${deviceName}`,
+                `Connected to ${selectedDevice.name}`,
                 "#24af37",
                 true,
-                deviceName
+                selectedDevice.name
               ); // Update device connected message
-
-              // if (retryAttempts < 1) { //!!! FOR TESTING PURPOSES ONLY, REMOVE THIS !!!
-              //   retryAttempts++; // Increment retryAttempts
-              //   throw new Error("Simulated connection error");
-              // }
-
               retryAttempts = 0; // Reset retryAttempts on successful connection
               return bleServer.getPrimaryService(bleService);
             })
@@ -289,61 +289,61 @@
                       "Write Characteristic discovered:",
                       characteristic.uuid
                     );
-                    writeCharacteristicFound = characteristic;
+                    if (characteristic.properties.write) {
+                      console.log("Write Characteristic has write permission");
+                      writeCharacteristicFound = characteristic;
+                    } else {
+                      console.error(
+                        "Write Characteristic does not have write permission"
+                      );
+                    }
                   }),
               ]);
             })
+            .then(() => {
+              intervalId = setInterval(updateTimestamp, 1000);
+              showInfoCard();
+              showStatusCard();
+              // showWriteCard();
+              return readCharacteristicFound.readValue(); // Use readCharacteristicFound here
+            })
             .catch((error) => {
-              console.error("Failed to connect to GATT server:", error);
+              console.error("Error: ", error);
+              if (error instanceof DOMException) {
+                console.error("DOMException:", error.message);
+              }
+              connectionFailed = true; // Set connectionFailed flag
               if (retryAttempts < maxRetryAttempts) {
                 console.log("Retrying...");
                 retryAttempts++;
-                // Retry the connection with the same device
-                setTimeout(connectGatt, 1000, device);
+                setTimeout(connectToDevice, 1000, selectedDevice); // Retry after 3 seconds with selected device
               } else {
                 console.error("Maximum retry attempts reached.");
                 retryAttempts = 0;
-                connectButton.disabled = false; // Re-enable the connectButton
-                connectButton.addEventListener("click", connectToDevice); // Attach connectToDevice to the click event
               }
             });
         }
 
-        function disconnectIntentionally() {
-          intentionalDisconnect = true;
-
-          // Stop notifications on the read characteristic
-          if (readCharacteristicFound) {
-            readCharacteristicFound
-              .stopNotifications()
-              .then(() => {
-                console.log("Stopped notifications on the read characteristic");
-                selectedDevice.gatt.disconnect();
-              })
-              .catch((error) =>
-                console.error("Failed to stop notifications:", error)
-              );
-          } else {
-            selectedDevice.gatt.disconnect();
-          }
-        }
-
         function onDisconnected(event) {
-          let device = event.target;
-          console.log(`Device ${device.name} is disconnected.`);
-
-          if (intentionalDisconnect === false) {
-            // Reset the BLE state and update the UI
-            console.error("Device disconnected unexpectedly.");
-            updateBleState("Ready to connect", "#d13a30");
-            hideCards();
-
-            connectButton.disabled = false;
-
-            if (deviceToReconnect) {
-              connectGatt(deviceToReconnect);
-            }
+          console.log("Device disconnected event triggered.");
+          try {
+            console.log("Device Disconnected:", event.target.device.name);
+          } catch (error) {
+            console.log("Device Disconnected, Restarting Advertise.");
           }
+          clearInterval(intervalId);
+          hideInfoCard();
+          hideStatusCard();
+          hideWriteCard();
+          hideIOCard();
+          retryAttempts = 0;
+          bleServer = null;
+          readCharacteristicFound = null;
+          selectedDevice = null; // Clear selected device on disconnect
+          initialConnectionEstablished = false; // Reset initial connection flag
+          setTimeout(function () {
+            console.log("Ready to connect");
+          }, 2500);
         }
 
         // Function to debounce characteristic value changes
@@ -380,7 +380,7 @@
                 // Convert string "true" or "false" to boolean value
                 const connected = obj.connected === "true";
                 const voltageV = obj.voltage_mv / 1000; // Convert millivolts to volts
-                statusContainer.textContent = `Connected: ${connected}\nNumber of packets received: ${obj.num_packets}\nVoltage: ${voltageV} V`;
+                statusContainer.textContent = `Connected: ${connected}\nPackets received: ${obj.num_packets}\nVoltage: ${voltageV} V\nTemperature:`;
                 infoContainer.textContent = `ID code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nHardware version: ${obj.hardware_version}\nConfig id: ${obj.config_id}`;
               }
             } catch (error) {
@@ -394,28 +394,6 @@
           }
         }
 
-        function resetConnection() {
-          // Update UI and reset variables
-          updateBleState("Preparing...", "#ff7a00");
-          clearInterval(intervalId);
-          hideCards();
-          bleServer = null;
-          readCharacteristicFound = null;
-          intervalId = null;
-          retryAttempts = 0;
-          connectionFailed = false;
-          selectedDevice = null;
-
-          // Disable connect button for 2.5 seconds after disconnecting to prevent bugs.
-          connectButton.disabled = true;
-          setTimeout(() => {
-            connectButton.disabled = false;
-            updateBleState("Ready to connect", "#d13a30");
-          }, 2500);
-
-          intentionalDisconnect = false; // Reset the flag after the intentional disconnect is complete
-        }
-
         // UI Functions
         function updateBleState(message, color, connected, deviceName) {
           bleStateContainer.innerHTML = message;
@@ -427,33 +405,57 @@
           }
         }
 
-        function showCards() {
+        function showInfoCard() {
+          const statusCard = document.querySelector(".info-card");
+          if (statusCard) {
+            statusCard.style.display = "block";
+          }
+        }
+
+        function hideInfoCard() {
+          const statusCard = document.querySelector(".info-card");
+          if (statusCard) {
+            statusCard.style.display = "none";
+          }
+        }
+
+        function showStatusCard() {
           const statusCard = document.querySelector(".status-card");
           if (statusCard) {
             statusCard.style.display = "block";
           }
-          const infoCard = document.querySelector(".info-card");
-          if (infoCard) {
-            infoCard.style.display = "block";
+        }
+
+        function hideStatusCard() {
+          const statusCard = document.querySelector(".status-card");
+          if (statusCard) {
+            statusCard.style.display = "none";
           }
-          const writeCard = document.querySelector(".write-card");
+        }
+
+        function showWriteCard() {
           if (writeCard) {
             writeCard.style.display = "block";
           }
         }
 
-        function hideCards() {
-          const statusCard = document.querySelector(".status-card");
-          if (statusCard) {
-            statusCard.style.display = "none";
-          }
-          const infoCard = document.querySelector(".info-card");
-          if (infoCard) {
-            infoCard.style.display = "none";
-          }
-          const writeCard = document.querySelector(".write-card");
+        function hideWriteCard() {
           if (writeCard) {
             writeCard.style.display = "none";
+          }
+        }
+
+        function showIOCard() {
+          const ioCard = document.querySelector(".io-card");
+          if (ioCard) {
+            ioCard.style.display = "block";
+          }
+        }
+
+        function hideIOCard() {
+          const ioCard = document.querySelector(".io-card");
+          if (ioCard) {
+            ioCard.style.display = "none";
           }
         }
 
