@@ -5,13 +5,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Recursive:wght@400;500;600;700&display=swap"); /* Import Recursive font */
 
 /* Reset default margin and padding */
-html,
+html{
+  background-color: rgba(25, 25, 112, 0.05);
+}
+
 body {
   font-family: "Recursive", "Roboto", "Italia", sans-serif;
   margin: 0;
   padding: 0;
-  background-color: rgba(25, 25, 112, 0.05);
-  min-height: 100vh;
+  height: 100%;
 }
 
 /* Set up font */
@@ -101,7 +103,7 @@ h2 {
   padding: 15px;
   margin: 20px;
   width: 70%;
-  margin-left: 10%;
+  margin-left: 11%;
   margin-top: 10%;
 }
 
@@ -129,11 +131,12 @@ h2 {
   margin-left: 20%;
 }
 
-.io-card {
-  grid-column: 2; /* Places the I/O card in the second column */
-  grid-row: 2 / span 3; /* Places the I/O card in the second row and spans three rows */
+.io-card svg {
+  grid-column: 2; 
+  grid-row: 2;
   margin-bottom: 20px;
-  margin-left: 20%;
+  margin-left: 2%;
+  margin-top: 0%;
   width: 20rem;
   height: 40rem;
 }
@@ -141,38 +144,6 @@ h2 {
 .statusReading {
   font-size: 1rem;
 }
-
-/* .write-card {
-  background-color: white;
-  box-shadow: 2px 2px 12px 1px rgba(140, 140, 140, 0.5);
-  border-radius: 15px;
-  padding: 15px;
-  margin: 20px;
-}
-
-#writeValue {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-} */
-
-/* #writeButton {
-  background-color: #4caf50;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-#writeButton:hover {
-  background-color: #45a049;
-} */
 
 button {
   font-family: "Recursive", "Roboto", "Italia", sans-serif;
@@ -217,11 +188,11 @@ button {
     margin-top: 3%;
   }
 
-  .io-card {
+  .io-card svg {
     grid-column: 1;
     grid-row: auto;
     width: 70%; /* Adjust as needed */
-    margin-left: 16%; /* Adjust as needed */
+    margin-left: 5%; /* Adjust as needed */
   }
 }
 
@@ -232,20 +203,20 @@ button {
 
   .card,
   .info-card,
-  .status-card {
+  .status-card{
     grid-column: 1;
     grid-row: auto;
     width: 70%; /* Adjust as needed */
     padding: 5%; /* Adjust as needed */
-    margin-left: 10%; /* Adjust as needed */
+    margin-left: 9%; /* Adjust as needed */
     margin-bottom: 0%;
   }
 
-  .io-card {
+  .io-card svg {
     grid-column: 1;
     grid-row: auto;
     width: 70%; /* Adjust as needed */
-    margin-left: 16%; /* Adjust as needed */
+    margin-left: 4%; /* Adjust as needed */
   }
 }
 
@@ -266,11 +237,11 @@ button {
     margin-bottom: 0px;
   }
 
-  .io-card {
+  .io-card svg {
     grid-column: 1;
     grid-row: auto;
     width: 70%; /* Adjust as needed */
-    margin-left: 17%; /* Adjust as needed */
+    margin-left: 5%; /* Adjust as needed */
     margin-top: 0%;
   }
 }
