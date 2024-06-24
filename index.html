@@ -520,6 +520,7 @@
               if (ledElement) {
                 loadedLeds++;
                 ledElements.push(ledElement);
+                ledElement.style.fill = '#696969';
                 console.log(led.name + ' with id ' + led.id + ' loaded');
               } else {
                 console.error(led.name + ' with id ' + led.id + ' not found');
@@ -546,6 +547,10 @@
                 }, 500);
               } else {
                 clearInterval(blinkInterval);
+                ledElements.forEach(function(ledElement) {
+                  ledElement.style.fill = '#696969';
+                  ledElement.setAttribute('filter', '');
+                });
               }
             });
             
