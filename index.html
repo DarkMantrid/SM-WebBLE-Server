@@ -514,7 +514,7 @@
       
             let loadedLeds = 0;
             let ledElements = [];
-
+            
             leds.forEach(function(led) {
               const ledElement = svgContainer.querySelector('#' + led.id);
               if (ledElement) {
@@ -525,26 +525,35 @@
                 console.error(led.name + ' with id ' + led.id + ' not found');
               }
             });
-          
+            
             if (loadedLeds === 16) {
               console.log('All 16 LEDs have been loaded');
             }
-          
+            
+            let isBlinking = false;
+            let blinkInterval;
+            
+            const button = document.querySelector('#layer3');
+            button.addEventListener('click', function() {
+              isBlinking = !isBlinking;
+              if (isBlinking) {
+                blinkInterval = setInterval(function() {
+                  ledElements.forEach(function(ledElement) {
+                    ledElement.style.fill = isGreen ? 'lightgreen' : 'rgba(255, 105, 97, 1)';
+                    ledElement.setAttribute('filter', 'url(#shiny)');
+                  });
+                  isGreen = !isGreen;
+                }, 1000);
+              } else {
+                clearInterval(blinkInterval);
+              }
+            });
+            
             let isGreen = true;
-            setInterval(function() {
-              ledElements.forEach(function(ledElement) {
-                ledElement.style.fill = isGreen ? 'green' : 'red';
-              });
-              // console.log('LED color set to ' + (isGreen ? 'green' : 'red'));
-              isGreen = !isGreen;
-            }, 1000);
-          })
-          .catch(error => console.error('Error:', error));
-      };
-
-    window.onload = onLoad;
-
-
+            })
+            .catch(error => console.error('Error:', error));
+            }; 
+            window.onload = onLoad;
     </script>
   </body>
 </html>
