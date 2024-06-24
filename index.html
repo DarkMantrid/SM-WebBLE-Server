@@ -302,6 +302,7 @@
               showInfoCard();
               showStatusCard();
               // showWriteCard();
+              showIOCard();
               return readCharacteristicFound.readValue(); // Use readCharacteristicFound here
             })
             .catch((error) => {
@@ -488,6 +489,7 @@
             // Create a container for the SVG
             const svgContainer = document.createElement('div');
             svgContainer.className = 'io-card'; // Assign the class to the container
+            // svgContainer.style.display = 'none'; // Hide the container initially
             svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
       
             // Append the container to the HTML document's body
