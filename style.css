@@ -251,6 +251,39 @@ button {
   }
 }
 
+/* For very very small screens */
+@media (max-width: 400px) {
+  .card-table {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    grid-column: 1;
+    grid-row: auto;
+    width: 70%; /* Adjust as needed */
+    padding: 5%; /* Adjust as needed */
+    margin-left: 10%; /* Adjust as needed */
+    margin-top: 5%;
+  }
+  .info-card,
+  .status-card {
+    grid-column: 1;
+    grid-row: auto;
+    width: 70%; /* Adjust as needed */
+    padding: 5%; /* Adjust as needed */
+    margin-left: 10%; /* Adjust as needed */
+  }
+
+  .io-card svg {
+    grid-column: 1;
+    grid-row: auto;
+    width: 70%; /* Adjust as needed */
+    margin-left: 1%; /* Adjust as needed */
+    margin-top: -45%;
+    margin-bottom: -65%;
+  }
+}
+
 .connectButton {
     background-color: #24a437;
 }
