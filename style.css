@@ -225,14 +225,15 @@ button {
 
   .signal-strength {
     display: flex;
+    flex-direction: row; /* Bars are aligned horizontally */
     justify-content: space-between;
-    width: 70%; /* Adjust as needed */
-    height: 30px; /* Adjust as needed */
+    width: 32%; /* Adjust as needed */
+    height: 80%; /* Adjust as needed, this will be the height of the bars */
     grid-column: 1;
     grid-row: auto;
     padding: 5px; /* Adds some space around the bars */
     margin-top: 5%;
-    margin-left: 15%; /* Adjust as needed */
+    margin-left: 32%; /* Adjust as needed */
   }
 
   .signal-bar {
@@ -242,6 +243,7 @@ button {
     border: 1px solid #333; /* Adds a border */
     border-radius: 10px;
     margin-right: 4px; /* Adjust as needed */
+    margin-top: -5%;
     transition: background 0.3s ease-in-out;
   }
 
@@ -276,14 +278,15 @@ button {
 
   .signal-strength {
     display: flex;
+    flex-direction: row; /* Bars are aligned horizontally */
     justify-content: space-between;
-    width: 70%; /* Adjust as needed */
-    height: 30px; /* Adjust as needed */
+    width: 32%; /* Adjust as needed */
+    height: 80%; /* Adjust as needed, this will be the height of the bars */
     grid-column: 1;
     grid-row: auto;
     padding: 5px; /* Adds some space around the bars */
     margin-top: 5%;
-    margin-left: 14%; /* Adjust as needed */
+    margin-left: 32%; /* Adjust as needed */
   }
 
   .signal-bar {
@@ -293,6 +296,7 @@ button {
     border: 1px solid #333; /* Adds a border */
     border-radius: 10px;
     margin-right: 4px; /* Adjust as needed */
+    margin-top: -5%;
     transition: background 0.3s ease-in-out;
   }
 
@@ -333,14 +337,15 @@ button {
 
   .signal-strength {
     display: flex;
+    flex-direction: row; /* Bars are aligned horizontally */
     justify-content: space-between;
-    width: 70%; /* Adjust as needed */
-    height: 30px; /* Adjust as needed */
+    width: 32%; /* Adjust as needed */
+    height: 80%; /* Adjust as needed, this will be the height of the bars */
     grid-column: 1;
     grid-row: auto;
     padding: 5px; /* Adds some space around the bars */
     margin-top: 5%;
-    margin-left: 15%; /* Adjust as needed */
+    margin-left: 32%; /* Adjust as needed */
   }
 
   .signal-bar {
@@ -350,6 +355,7 @@ button {
     border: 1px solid #333; /* Adds a border */
     border-radius: 10px;
     margin-right: 4px; /* Adjust as needed */
+    margin-top: -5%;
     transition: background 0.3s ease-in-out;
   }
 
@@ -396,14 +402,15 @@ button {
 
   .signal-strength {
     display: flex;
+    flex-direction: row; /* Bars are aligned horizontally */
     justify-content: space-between;
-    width: 70%; /* Adjust as needed */
-    height: 30px; /* Adjust as needed */
+    width: 32%; /* Adjust as needed */
+    height: 80%; /* Adjust as needed, this will be the height of the bars */
     grid-column: 1;
     grid-row: auto;
     padding: 5px; /* Adds some space around the bars */
     margin-top: 5%;
-    margin-left: 15%; /* Adjust as needed */
+    margin-left: 32%; /* Adjust as needed */
   }
 
   .signal-bar {
@@ -413,6 +420,7 @@ button {
     border: 1px solid #333; /* Adds a border */
     border-radius: 10px;
     margin-right: 4px; /* Adjust as needed */
+    margin-top: -5%;
     transition: background 0.3s ease-in-out;
   }
 
