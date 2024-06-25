@@ -542,8 +542,7 @@
               if (isBlinking) {
                 blinkInterval = setInterval(function() {
                   ledElements.forEach(function(ledElement) {
-                    ledElement.style.fill = isGreen ? 'lightgreen' : 'rgba(255, 105, 97, 1)';
-                    ledElement.setAttribute('filter', 'url(#shiny)');
+                    ledElement.style.fill = isGreen ? 'rgba(144, 238, 144, 1)' : 'rgba(255, 105, 97, 1)';
                   });
                   isGreen = !isGreen;
                 }, 500);
@@ -551,7 +550,6 @@
                 clearInterval(blinkInterval);
                 ledElements.forEach(function(ledElement) {
                   ledElement.style.fill = '#696969';
-                  ledElement.setAttribute('filter', '');
                 });
               }
             });
