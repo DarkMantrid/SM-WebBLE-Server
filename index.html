@@ -48,6 +48,13 @@
       <button id="writeButton">Write</button>
       <p class="writeReading"><span id="writeContainer"></span></p>
     </div>
+    <div class="signal-strength">
+      <div id="signal-bar-1" class="signal-bar"></div>
+      <div id="signal-bar-2" class="signal-bar"></div>
+      <div id="signal-bar-3" class="signal-bar"></div>
+      <div id="signal-bar-4" class="signal-bar"></div>
+      <div id="signal-bar-5" class="signal-bar"></div>
+    </div>
     <footer class="footer">
       <p class="footer-text">We simplify safety</p>
     </footer>
@@ -574,6 +581,33 @@
             .catch(error => console.error('Error:', error));
             }; 
             window.onload = onLoad;
+
+            function updateSignalStrength(strength) {
+              let color;
+              if (strength <= 1) {
+                color = 'linear-gradient(to bottom, red, darkred)';
+              } else if (strength <= 3) {
+                color = 'linear-gradient(to bottom, orange, darkorange)';
+              } else {
+                color = 'linear-gradient(to bottom, green, darkgreen)';
+              }
+            
+              for (let i = 1; i <= 5; i++) {
+                const bar = document.querySelector(`#signal-bar-${i}`);
+                if (i <= strength) {
+                  bar.style.background = color;
+                } else {
+                  bar.style.background = 'linear-gradient(to bottom, #aaa, #888)'; // Here
+                }
+              }
+            }
+
+            // Generate a random signal strength every 2 seconds
+            setInterval(function() {
+              const simulatedStrength = Math.floor(Math.random() * 6); // Generates a random number between 0 and 5
+              updateSignalStrength(simulatedStrength);
+            }, 1000);
+
     </script>
   </body>
 </html>
