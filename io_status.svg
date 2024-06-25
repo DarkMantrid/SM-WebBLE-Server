@@ -42,6 +42,7 @@
          <feMergeNode in="SourceGraphic"/>
       </feMerge>
    </filter>
+   </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
