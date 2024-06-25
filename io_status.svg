@@ -34,13 +34,14 @@
      inkscape:current-layer="layer2" />
   <defs id="defs1">
    <filter id="glow">
-    <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
-    <feMerge>
-      <feMergeNode in="coloredBlur"/>
-      <feMergeNode in="SourceGraphic"/>
-    </feMerge>
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+      <feFlood flood-color="yellow" result="floodColor"/>
+      <feComposite in="floodColor" in2="blur" operator="in" result="coloredBlur"/>
+      <feMerge>
+         <feMergeNode in="coloredBlur"/>
+         <feMergeNode in="SourceGraphic"/>
+      </feMerge>
    </filter>
-  </defs>
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
