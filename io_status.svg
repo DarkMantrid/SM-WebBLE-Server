@@ -89,7 +89,8 @@
        rx="7.1772356"
        cy="232.47365"
        cx="167.83971"
-       inkscape:label="1" />
+       inkscape:label="1" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-0"
@@ -97,7 +98,8 @@
        rx="7.1772356"
        cy="264.0603"
        cx="167.34822"
-       inkscape:label="3" />
+       inkscape:label="3" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-00"
@@ -105,7 +107,8 @@
        rx="7.1772356"
        cy="294.67297"
        cx="167.01184"
-       inkscape:label="5" />
+       inkscape:label="5" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-0-8"
@@ -113,7 +116,8 @@
        rx="7.1772356"
        cy="326.25961"
        cx="166.52036"
-       inkscape:label="7" />
+       inkscape:label="7" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-2"
@@ -121,7 +125,8 @@
        rx="7.1772356"
        cy="358.43777"
        cx="167.67001"
-       inkscape:label="9" />
+       inkscape:label="9" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-0-88"
@@ -129,7 +134,8 @@
        rx="7.1772356"
        cy="390.02444"
        cx="167.17853"
-       inkscape:label="11" />
+       inkscape:label="11" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-00-2"
@@ -137,7 +143,8 @@
        rx="7.1772356"
        cy="420.63712"
        cx="166.84215"
-       inkscape:label="13" />
+       inkscape:label="13" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-0-8-6"
@@ -145,7 +152,8 @@
        rx="7.1772356"
        cy="452.22375"
        cx="166.35066"
-       inkscape:label="15" />
+       inkscape:label="15" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-6"
@@ -153,7 +161,8 @@
        rx="7.1772356"
        cy="232.42534"
        cx="256.23514"
-       inkscape:label="2" />
+       inkscape:label="2" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-0-6"
@@ -161,7 +170,8 @@
        rx="7.1772356"
        cy="264.01199"
        cx="255.74367"
-       inkscape:label="4" />
+       inkscape:label="4" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-00-7"
@@ -169,7 +179,8 @@
        rx="7.1772356"
        cy="294.62466"
        cx="255.4073"
-       inkscape:label="6" />
+       inkscape:label="6" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-0-8-0"
@@ -177,7 +188,8 @@
        rx="7.1772356"
        cy="326.2113"
        cx="254.91582"
-       inkscape:label="8" />
+       inkscape:label="8" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-2-8"
@@ -185,7 +197,8 @@
        rx="7.1772356"
        cy="356.5567"
        cx="255.14909"
-       inkscape:label="10" />
+       inkscape:label="10" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-0-88-8"
@@ -193,7 +206,8 @@
        rx="7.1772356"
        cy="388.14337"
        cx="254.65761"
-       inkscape:label="12" />
+       inkscape:label="12" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-00-2-3"
@@ -201,7 +215,8 @@
        rx="7.1772356"
        cy="418.75604"
        cx="254.32121"
-       inkscape:label="14" />
+       inkscape:label="14" 
+       filter="url(#glow)" />
     <ellipse
        style="fill:#f2f2f2;stroke-width:0.418854"
        id="path7-0-8-6-9"
@@ -209,7 +224,8 @@
        rx="7.1772356"
        cy="450.34268"
        cx="253.82973"
-       inkscape:label="16" />
+       inkscape:label="16" 
+       filter="url(#glow)" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:18.6667px;font-family:Calibri;-inkscape-font-specification:'Calibri Bold';text-align:center;text-anchor:middle;fill:#f2f2f2"
