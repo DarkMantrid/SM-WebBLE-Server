@@ -633,18 +633,25 @@
                   });
             
                   function updateSignalStrength(strength) {
-                    // Update the center path based on the signal strength
-                    if (strength > 0) {
-                      signalElements[0].style.fill = '#000000'; // Active color
+                    let color;
+                    if (strength === 0) {
+                      color = '#A9A9A9'; // Default color
+                    } else if (strength === 1) {
+                      color = '#FE0000'; 
+                    } else if (strength === 2) {
+                      color = '#FF8000'; 
                     } else {
-                      signalElements[0].style.fill = '#A9A9A9'; // Default color
+                      color = '#00CC00'; 
                     }
+                  
+                    // Update the center path based on the signal strength
+                    signalElements[0].style.fill = strength > 0 ? color : '#A9A9A9'; // Default color
                   
                     // Update the pairs based on the signal strength
                     for (let i = 1; i < signalElements.length; i += 2) {
                       if (i < strength * 2) {
-                        signalElements[i].style.fill = '#000000'; // Active color
-                        signalElements[i + 1].style.fill = '#000000'; // Active color
+                        signalElements[i].style.fill = color;
+                        signalElements[i + 1].style.fill = color;
                       } else {
                         signalElements[i].style.fill = '#A9A9A9'; // Default color
                         signalElements[i + 1].style.fill = '#A9A9A9'; // Default color
@@ -652,11 +659,11 @@
                     }
                   }
                   
-                  // Generate a random signal strength every 2 seconds
+                  // Generate a random signal strength every x seconds
                   setInterval(function() {
                     const simulatedStrength = Math.floor(Math.random() * ((signalElements.length - 1) / 2 + 1)); // Generates a random number between 0 and the number of signal pairs
                     updateSignalStrength(simulatedStrength);
-                  }, 1000);
+                  }, 600);
                 })
                 .catch(error => console.error('Error:', error));
             };
