@@ -559,6 +559,29 @@
             let mode = 0; // 0 = off, 1 = green/red blinking, 2 = orange/off blinking
 
             const button = document.querySelector('#layer3');
+            const path8 = document.querySelector('#path8');
+            const path10 = document.querySelector('#path10');
+
+            function addGlow() {
+              // Add glow effect to paths
+              path8.style.fill = 'rgba(242, 242, 242, 0.5)'; // adjust rgba values as needed
+              path10.style.fill = 'rgba(255, 255, 255, 0.5)'; // adjust rgba values as needed
+            }
+
+            function removeGlow() {
+              // Remove glow effect
+              path8.style.fill = '#f2f2f2';
+              path10.style.fill = '#ffffff';
+            }
+
+
+            button.addEventListener('mousedown', addGlow);
+            button.addEventListener('mouseup', removeGlow);
+                      
+            // For mobile devices
+            button.addEventListener('touchstart', addGlow);
+            button.addEventListener('touchend', removeGlow);
+
             button.addEventListener('click', function() {
               clearInterval(blinkInterval); // Clear any existing interval
             
