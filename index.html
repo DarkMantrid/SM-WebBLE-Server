@@ -6,14 +6,51 @@
   <link rel="icon" type="image/png" href="favicon.ico" />
   <link rel="stylesheet" type="text/css" href="style.css" />
   <meta charset="UTF-8" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    // Create a client instance
+    var client = new Paho.MQTT.Client("mqtt.eclipseprojects.io", 443, "");
+
+    // Set callback handlers
+    client.onConnectionLost = onConnectionLost;
+    client.onMessageArrived = onMessageArrived;
+
+    // Connect the client
+    client.connect({onSuccess:onConnect});
+
+    // Called when the client connects
+    function onConnect() {
+      // Once a connection has been made, make a subscription and send a message.
+      console.log("onConnect");
+      client.subscribe("/topic/test1");
+      message = new Paho.MQTT.Message("Hello From Browser!");
+      message.destinationName = "/topic/test0";
+      client.send(message);
+    }
+
+    // Called when the client loses its connection
+    function onConnectionLost(responseObject) {
+      if (responseObject.errorCode !== 0) {
+        console.log("onConnectionLost:"+responseObject.errorMessage);
+      }
+    }
+
+    // Called when a message arrives
+    function onMessageArrived(message) {
+      // console.log("onMessageArrived:"+message.payloadString);
+      var table = document.getElementById("messageTable").getElementsByTagName('tbody')[0];
+      var row = table.insertRow(-1);
+      var cell1 = row.insertCell(0);
+      cell1.innerHTML = message.payloadString;
+    }
+  </script>
 </head>
 
 <body>
   <div class="header">
-    <h2>Simplifier Observer</h2>
-    <!-- <div class="logo">
-      <img src="sspn-logo-b.png" alt="Logo" class="logo-img" />
-    </div> -->
+    <h2>Simplifier Observer
+      <a href="#" id="toggle-dev-settings" class="dev-tools">Dev Tools -></a>
+    </h2>
   </div>
   <div class="card-table">
     <div class="card">
@@ -41,12 +78,17 @@
       <p class="statusReading"><span id="statusContainer"></span></p>
       <p class="gray-label" id="timestamp"></p>
     </div>
-    
-    <div class="card write-card" style="display: none">
-      <h4>Write</h4>
-      <textarea id="writeValue" rows="4" cols="50"></textarea>
-      <button id="writeButton">Write</button>
-      <p class="writeReading"><span id="writeContainer"></span></p>
+    <div id="logs" class="scrollable-table" style="display: none;">
+      <table id="messageTable">
+        <thead>
+          <tr>
+            <th>Logs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Rows will be added here by the script -->
+        </tbody>
+      </table>
     </div>
     <footer class="footer">
       <p class="footer-text">We simplify safety</p>
@@ -130,14 +172,12 @@
         // Event Listeners
         connectButton.addEventListener("click", handleConnectButtonClick);
         disconnectButton.addEventListener("click", disconnectDevice);
-        writeButton.addEventListener("click", handleWriteButtonClick);
 
         
         // Bluetooth Constants
         const deviceName = "ESP32-C3";
         const bleService = "08fed9e7-90be-44b5-b02c-91393f6e8988";
         const readCharacteristic = "601d23b8-72c2-4965-90d1-2d8bab04f73a";
-        const writeCharacteristic = "960df2dd-b2c9-4722-9fad-b18f64a945d9";
 
         // Event Handlers
         function handleConnectButtonClick(event) {
@@ -145,26 +185,6 @@
             if (isWebBluetoothEnabled()) {
               connectToDevice(selectedDevice); // Pass selected device to connectToDevice
             }
-          }
-        }
-
-        function handleWriteButtonClick() {
-          const value = writeValueTextarea.value;
-          if (value) {
-            const data = new TextEncoder().encode(value);
-            writeCharacteristicFound
-              .writeValue(data)
-              .then(() => {
-                console.log("Wrote value to characteristic:", value);
-              })
-              .catch((error) => {
-                console.error(
-                  "Failed to write value to characteristic:",
-                  error
-                );
-              });
-          } else {
-            console.error("No value to write.");
           }
         }
 
@@ -182,11 +202,7 @@
                   // Update UI and reset variables
                   updateBleState("Preparing...", "#ff7a00");
                   clearInterval(intervalId);
-                  hideInfoCard();
-                  hideStatusCard();
-                  hideWriteCard();
-                  hideIOCard();
-                  hideSignalStrengthCard();
+                  hideAllCards();
                   bleServer = null;
                   readCharacteristicFound = null;
                   intervalId = null;
@@ -283,31 +299,11 @@
                     );
                     return characteristic.startNotifications();
                   }),
-                service
-                  .getCharacteristic(writeCharacteristic)
-                  .then((characteristic) => {
-                    console.log(
-                      "Write Characteristic discovered:",
-                      characteristic.uuid
-                    );
-                    if (characteristic.properties.write) {
-                      console.log("Write Characteristic has write permission");
-                      writeCharacteristicFound = characteristic;
-                    } else {
-                      console.error(
-                        "Write Characteristic does not have write permission"
-                      );
-                    }
-                  }),
               ]);
             })
             .then(() => {
               intervalId = setInterval(updateTimestamp, 1000);
-              showInfoCard();
-              showStatusCard();
-              // showWriteCard();
-              showIOCard();
-              showSignalStrengthCard();
+              showAllCards();
               return readCharacteristicFound.readValue(); // Use readCharacteristicFound here
             })
             .catch((error) => {
@@ -335,11 +331,7 @@
             console.log("Device Disconnected, Restarting Advertise.");
           }
           clearInterval(intervalId);
-          hideInfoCard();
-          hideStatusCard();
-          hideWriteCard();
-          hideIOCard();
-          hideSignalStrengthCard();
+          hideAllCards();
           retryAttempts = 0;
           bleServer = null;
           readCharacteristicFound = null;
@@ -437,18 +429,6 @@
           }
         }
 
-        function showWriteCard() {
-          if (writeCard) {
-            writeCard.style.display = "block";
-          }
-        }
-
-        function hideWriteCard() {
-          if (writeCard) {
-            writeCard.style.display = "none";
-          }
-        }
-
         function showIOCard() {
           const ioCard = document.querySelector(".io-card");
           if (ioCard) {
@@ -482,6 +462,37 @@
           const timestamp = getDateTime();
           timestampContainer.textContent = `Last reading: ${timestamp}`;
         }
+
+        function showAllCards() {
+          showInfoCard();
+          showStatusCard();
+          showIOCard();
+          showSignalStrengthCard();
+          // Add more show functions here as needed
+        }
+
+
+        function hideAllCards() {
+          hideInfoCard();
+          hideStatusCard();
+          hideIOCard();
+          hideSignalStrengthCard();
+          // Add more hide functions here as needed
+        }
+
+        document.getElementById('toggle-dev-settings').addEventListener('click', function() {
+          var logs = document.getElementById('logs');
+          var devToolsLink = document.getElementById('toggle-dev-settings');
+          if (logs.style.display === 'none') {
+            logs.style.display = 'block';
+            devToolsLink.textContent = 'Exit Dev Mode'; // Change the text to 'Exit Dev Mode'
+            hideAllCards(); // Hide all cards
+          } else {
+            logs.style.display = 'none';
+            devToolsLink.textContent = 'Dev Tools ->'; // Change the text back to 'Dev Tools ->'
+            showAllCards(); // Show all cards
+          }
+        });
 
         // Utility Functions
         function getDateTime() {
@@ -543,7 +554,7 @@
                 loadedLeds++;
                 ledElements.push(ledElement);
                 ledElement.style.fill = '#696969';
-                console.log(led.name + ' with id ' + led.id + ' loaded');
+                // console.log(led.name + ' with id ' + led.id + ' loaded');
               } else {
                 console.error(led.name + ' with id ' + led.id + ' not found');
               }
@@ -691,7 +702,6 @@
                 .catch(error => console.error('Error:', error));
             };
             window.onload = onSignalSvgLoad;
-
 
     </script>
   </body>
