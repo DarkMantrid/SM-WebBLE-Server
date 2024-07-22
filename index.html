@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Simplifier Manager Web tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,14 +11,14 @@
   <script type="text/javascript">
     // Create a client instance
     var client = new Paho.MQTT.Client("mqtt.eclipseprojects.io", Number(443), "clientId" + new Date().getTime());
-      
+
     // Set callback handlers
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
-      
+
     // Connect the client
-    client.connect({useSSL: true, onSuccess: onConnect});
-      
+    client.connect({ useSSL: true, onSuccess: onConnect });
+
     // Called when the client connects
     function onConnect() {
       // Once a connection has been made, make a subscription and send a message.
@@ -27,14 +28,14 @@
       message.destinationName = "/topic/test0";
       client.send(message);
     }
-    
+
     // Called when the client loses its connection
     function onConnectionLost(responseObject) {
       if (responseObject.errorCode !== 0) {
-        console.log("onConnectionLost:"+responseObject.errorMessage);
+        console.log("onConnectionLost:" + responseObject.errorMessage);
       }
     }
-    
+
     // Called when a message arrives
     function onMessageArrived(message) {
       // console.log("onMessageArrived:"+message.payloadString);
@@ -43,7 +44,7 @@
       var cell1 = row.insertCell(0);
       cell1.innerHTML = message.payloadString;
     }
-    
+
   </script>
 </head>
 
@@ -70,11 +71,11 @@
         </strong>
       </p>
     </div>
-    <div class="card info-card">
+    <div class="card info-card" style="display: none;">
       <h3>General information</h3>
       <p class="infoReading"><span id="infoContainer"></span></p>
     </div>
-    <div class="card status-card">
+    <div class="card status-card" style="display: none;">
       <h4>Status</h4>
       <p class="statusReading"><span id="statusContainer"></span></p>
       <p class="gray-label" id="timestamp"></p>
@@ -95,615 +96,646 @@
       <p class="footer-text">We simplify safety</p>
     </footer>
 </body>
-  <div class="content">
-    <div class="chrome-alternative" style="display: none">
-      <p><b>Web Bluetooth is not supported in Mozilla Firefox. </b></p>
-      <p>
-        To use this service, please click this button to copy the URL:
-        <span id="chromeUrl" style="display: none"
-          >https://darkmantrid.github.io/SM-WebBLE-Server/</span
-        ><button onclick="copyUrl()" class="copyButton">Copy</button>
-      </p>
-      <p>
-        Once copied open Google chrome and paste the URL into the search bar
-      </p>
-    </div>
-    <div class="safari-alternative" style="display: none">
-      <p><b>Web Bluetooth is not supported in Safari. </b></p>
-      <p>
-        To use this service, please click this button to copy the URL:
-        <span id="safariUrl" style="display: none"
-          >https://darkmantrid.github.io/SM-WebBLE-Server/</span
-        ><button onclick="copySafariUrl()" class="copyButton">Copy</button>
-      </p>
-      <p>
-        Once copied, open Google Chrome and paste the URL into the address bar
-      </p>
-    </div>
+<div class="content">
+  <div class="chrome-alternative" style="display: none">
+    <p><b>Web Bluetooth is not supported in Mozilla Firefox. </b></p>
+    <p>
+      To use this service, please click this button to copy the URL:
+      <span id="chromeUrl" style="display: none">https://darkmantrid.github.io/SM-WebBLE-Server/</span><button
+        onclick="copyUrl()" class="copyButton">Copy</button>
+    </p>
+    <p>
+      Once copied open Google chrome and paste the URL into the search bar
+    </p>
   </div>
-  <script>
-    function copyUrl() {
-      var urlSpan = document.getElementById("chromeUrl");
-      var tempInput = document.createElement("input");
-      tempInput.value = urlSpan.textContent;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand("copy");
-      document.body.removeChild(tempInput);
+  <div class="safari-alternative" style="display: none">
+    <p><b>Web Bluetooth is not supported in Safari. </b></p>
+    <p>
+      To use this service, please click this button to copy the URL:
+      <span id="safariUrl" style="display: none">https://darkmantrid.github.io/SM-WebBLE-Server/</span><button
+        onclick="copySafariUrl()" class="copyButton">Copy</button>
+    </p>
+    <p>
+      Once copied, open Google Chrome and paste the URL into the address bar
+    </p>
+  </div>
+</div>
+<script>
+  function copyUrl() {
+    var urlSpan = document.getElementById("chromeUrl");
+    var tempInput = document.createElement("input");
+    tempInput.value = urlSpan.textContent;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+  }
+
+  function copySafariUrl() {
+    var urlSpan = document.getElementById("safariUrl");
+    var tempInput = document.createElement("input");
+    tempInput.value = urlSpan.textContent;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+  }
+</script>
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // DOM Elements
+    const connectButton = document.getElementById("connectBleButton");
+    const disconnectButton = document.getElementById("disconnectBleButton");
+    const bleStateContainer = document.getElementById("bleState");
+    const timestampContainer = document.getElementById("timestamp");
+    const statusContainer = document.getElementById("statusContainer");
+    const infoContainer = document.getElementById("infoContainer");
+    const ioCard = document.querySelector(".io-card");
+    const signalStrengthContainer = document.querySelector(".signal-card");
+
+    // Bluetooth Variables
+    let bleServer;
+    let readCharacteristicFound;
+    let intervalId;
+    let retryAttempts = 0;
+    let connectionFailed = false; // Flag to track connection failure
+    const maxRetryAttempts = 3; // Maximum number of retry attempts
+    let selectedDevice = null; // To store the selected device
+    let initialConnectionEstablished = false; // Flag to track initial connection
+    let connectButtonDisabled = false; // Flag to track if the connect button is disabled
+    let isErrorSimulated = false; //!! Remove this line after testing
+    let unexpectedDisconnect = false; // Flag to track unexpected disconnection
+    let expectedDisconnect = false; // Flag to track expected disconnection
+
+    // Event Listeners
+    connectButton.addEventListener("click", handleConnectButtonClick);
+    disconnectButton.addEventListener("click", disconnectDevice);
+
+
+    // Bluetooth Constants
+    const deviceName = "ESP32-C3";
+    const bleService = "08fed9e7-90be-44b5-b02c-91393f6e8988";
+    const readCharacteristic = "601d23b8-72c2-4965-90d1-2d8bab04f73a";
+
+    // Event Handlers
+    function handleConnectButtonClick(event) {
+      if (!bleServer) {
+        if (isWebBluetoothEnabled()) {
+          connectToDevice(selectedDevice); // Pass selected device to connectToDevice
+        }
+      }
     }
 
-    function copySafariUrl() {
-      var urlSpan = document.getElementById("safariUrl");
-      var tempInput = document.createElement("input");
-      tempInput.value = urlSpan.textContent;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand("copy");
-      document.body.removeChild(tempInput);
-    }
-  </script>
-
-    <script>
-
-      document.addEventListener("DOMContentLoaded", function () {
-        // DOM Elements
-        const connectButton = document.getElementById("connectBleButton");
-        const disconnectButton = document.getElementById("disconnectBleButton");
-        const bleStateContainer = document.getElementById("bleState");
-        const timestampContainer = document.getElementById("timestamp");
-        const statusContainer = document.getElementById("statusContainer");
-        const infoContainer = document.getElementById("infoContainer");
-        const writeValueTextarea = document.getElementById("writeValue");
-        const writeButton = document.getElementById("writeButton");
-        const writeCard = document.querySelector(".write-card");
-        const ioCard = document.querySelector(".io-card");
-        const signalStrengthContainer = document.querySelector(".signal-card");
-
-        // Bluetooth Variables
-        let bleServer;
-        let readCharacteristicFound;
-        let intervalId;
-        let retryAttempts = 0;
-        let connectionFailed = false; // Flag to track connection failure
-        const maxRetryAttempts = 3; // Maximum number of retry attempts
-        let selectedDevice = null; // To store the selected device
-        let initialConnectionEstablished = false; // Flag to track initial connection
-        let connectButtonDisabled = false; // Flag to track if the connect button is disabled
-
-        // Event Listeners
-        connectButton.addEventListener("click", handleConnectButtonClick);
-        disconnectButton.addEventListener("click", disconnectDevice);
-
-        
-        // Bluetooth Constants
-        const deviceName = "ESP32-C3";
-        const bleService = "08fed9e7-90be-44b5-b02c-91393f6e8988";
-        const readCharacteristic = "601d23b8-72c2-4965-90d1-2d8bab04f73a";
-
-        // Event Handlers
-        function handleConnectButtonClick(event) {
-          if (!bleServer) {
-            if (isWebBluetoothEnabled()) {
-              connectToDevice(selectedDevice); // Pass selected device to connectToDevice
-            }
-          }
-        }
-
-        function disconnectDevice() {
-          if (bleServer && bleServer.connected) {
-            if (readCharacteristicFound) {
-              // Stop notifications on the characteristic
-              readCharacteristicFound
-                .stopNotifications()
-                .then(() => {
-                  // Disconnect from the GATT server
-                  return bleServer.disconnect();
-                })
-                .then(() => {
-                  // Update UI and reset variables
-                  updateBleState("Preparing...", "#ff7a00");
-                  clearInterval(intervalId);
-                  hideAllCards();
-                  bleServer = null;
-                  readCharacteristicFound = null;
-                  intervalId = null;
-                  retryAttempts = 0;
-                  connectionFailed = false;
-                  selectedDevice = null;
-
-                  // Disable connect button for 2.5 seconds after disconnecting to prevent bugs.
-                  connectButton.disabled = true;
-                  setTimeout(() => {
-                    connectButton.disabled = false;
-                    updateBleState("Ready to connect", "#d13a30");
-                  }, 2500);
-                })
-                .catch((error) => console.error("An error occurred:", error));
-            }
-          } else {
-            console.error("Bluetooth is not connected.");
-            window.alert("Bluetooth is not connected.");
-          }
-        }
-
-        // Bluetooth Functions
-        function isWebBluetoothEnabled() {
-          if (!navigator.bluetooth) {
-            console.log("Web Bluetooth API is not available in this browser!");
-            updateBleState("Web Bluetooth API is not available", "#d13a30");
-            return false;
-          }
-          console.log("Web Bluetooth API supported in this browser.");
-          return true; // Remove connectToDevice call from here
-        }
-
-        function connectToDevice(device) {
-          // Check if the device is provided
-          if (!device) {
-            console.log("Initializing Bluetooth...");
-            // Request device selection
-            navigator.bluetooth
-              .requestDevice({
-                acceptAllDevices: true,
-                optionalServices: [bleService],
-              })
-              .then((selectedDevice) => {
-                console.log("Device Selected:", selectedDevice.name);
-                connectToDevice(selectedDevice); // Call connectToDevice with selected device
-              })
-              .catch((error) => {
-                console.error("Failed to select device:", error);
-              });
-            return; // Exit function if device selection is pending
-          }
-
-          console.log("Connecting to selected device...");
-          selectedDevice = device; // Store the selected device
-
-          // Event listener for disconnection
-          selectedDevice.addEventListener(
-            "gattserverdisconnected",
-            onDisconnected
-          );
-
-          // Attempt to connect to the GATT server
-          selectedDevice.gatt
-            .connect()
-            .then((gattServer) => {
-              bleServer = gattServer;
-              connectionFailed = false; // Reset connectionFailed flag
-              initialConnectionEstablished = true; // Set initial connection flag
-              console.log("Connected to GATT Server");
-              updateBleState(
-                `Connected to ${selectedDevice.name}`,
-                "#24af37",
-                true,
-                selectedDevice.name
-              ); // Update device connected message
-              retryAttempts = 0; // Reset retryAttempts on successful connection
-              return bleServer.getPrimaryService(bleService);
-            })
-            .then((service) => {
-              console.log("Service discovered:", service.uuid);
-              return Promise.all([
-                service
-                  .getCharacteristic(readCharacteristic)
-                  .then((characteristic) => {
-                    console.log(
-                      "Read Characteristic discovered:",
-                      characteristic.uuid
-                    );
-                    readCharacteristicFound = characteristic;
-                    characteristic.addEventListener(
-                      "characteristicvaluechanged",
-                      handleCharacteristicChangeDebounced
-                    );
-                    return characteristic.startNotifications();
-                  }),
-              ]);
+    function disconnectDevice() {
+      if (bleServer && bleServer.connected) {
+        expectedDisconnect = true; // Set expectedDisconnect to true
+        if (readCharacteristicFound) {
+          // Stop notifications on the characteristic
+          readCharacteristicFound
+            .stopNotifications()
+            .then(() => {
+              // Disconnect from the GATT server
+              return bleServer.disconnect();
             })
             .then(() => {
-              intervalId = setInterval(updateTimestamp, 1000);
-              showAllCards();
-              return readCharacteristicFound.readValue(); // Use readCharacteristicFound here
+              // Update UI and reset variables
+              updateBleState("Preparing...", "#ff7a00");
+              clearInterval(intervalId);
+              hideAllCards();
+              bleServer = null;
+              readCharacteristicFound = null;
+              intervalId = null;
+              retryAttempts = 0;
+              connectionFailed = false;
+              selectedDevice = null;
+
+              // Disable connect button for 2.5 seconds after disconnecting to prevent bugs.
+              connectButton.disabled = true;
+              setTimeout(() => {
+                connectButton.disabled = false;
+                updateBleState("Ready to connect", "#d13a30");
+              }, 2500);
             })
-            .catch((error) => {
-              console.error("Error: ", error);
-              if (error instanceof DOMException) {
-                console.error("DOMException:", error.message);
-              }
-              connectionFailed = true; // Set connectionFailed flag
-              if (retryAttempts < maxRetryAttempts) {
-                console.log("Retrying...");
-                retryAttempts++;
-                setTimeout(connectToDevice, 1000, selectedDevice); // Retry after 3 seconds with selected device
-              } else {
-                console.error("Maximum retry attempts reached.");
-                retryAttempts = 0;
-              }
-            });
+            .catch((error) => console.error("An error occurred:", error));
         }
+      } else {
+        console.error("Bluetooth is not connected.");
+        window.alert("Bluetooth is not connected.");
+      }
+    }
 
-        function onDisconnected(event) {
-          console.log("Device disconnected event triggered.");
-          try {
-            console.log("Device Disconnected:", event.target.device.name);
-          } catch (error) {
-            console.log("Device Disconnected, Restarting Advertise.");
-          }
-          clearInterval(intervalId);
-          hideAllCards();
-          retryAttempts = 0;
-          bleServer = null;
-          readCharacteristicFound = null;
-          selectedDevice = null; // Clear selected device on disconnect
-          initialConnectionEstablished = false; // Reset initial connection flag
-          setTimeout(function () {
-            console.log("Ready to connect");
-          }, 2500);
-        }
+    // Bluetooth Functions
+    function isWebBluetoothEnabled() {
+      if (!navigator.bluetooth) {
+        console.log("Web Bluetooth API is not available in this browser!");
+        updateBleState("Web Bluetooth API is not available", "#d13a30");
+        return false;
+      }
+      console.log("Web Bluetooth API supported in this browser.");
+      return true; // Remove connectToDevice call from here
+    }
 
-        // Function to debounce characteristic value changes
-        function handleCharacteristicChangeDebounced(event) {
-          if (initialConnectionEstablished) {
-            debounce(handleCharacteristicChange, 500)(event);
-          } else {
-            handleCharacteristicChange(event);
-          }
-        }
-
-        function debounce(func, delay) {
-          let timeoutId;
-          return function () {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-              func.apply(this, arguments);
-            }, delay);
-          };
-        }
-
-        function handleCharacteristicChange(event) {
-          if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
-            const newValueReceived = new TextDecoder().decode(
-              event.target.value
+    function connectToDevice(device) {
+      // Check if the device is provided
+      if (!device) {
+        console.log("Initializing Bluetooth...");
+        return navigator.bluetooth
+          .requestDevice({
+            acceptAllDevices: true,
+            optionalServices: [bleService],
+          })
+          .then((device) => {
+            console.log("Device Selected:", device.name);
+            selectedDevice = device;
+            selectedDevice.addEventListener(
+              "gattserverdisconnected",
+              onDisconnected
             );
+            return gattOperations(device); // Call gattOperations after device is selected
+          })
+          .catch((error) => {
+            console.error("Failed to select device:", error);
+          });
+      } else {
+        return gattOperations(device);
+      }
+    }
 
-            try {
-              console.log(newValueReceived);
-              const obj = JSON.parse(newValueReceived);
-              if (event.target.uuid === readCharacteristic) {
-                statusContainer.style.whiteSpace = "pre-line";
-                infoContainer.style.whiteSpace = "pre-line";
-                // Convert string "true" or "false" to boolean value
-                const connected = obj.connected === "true";
-                const voltageV = obj.voltage_mv / 1000; // Convert millivolts to volts
-                statusContainer.textContent = `Connected: ${connected}\nPackets received: ${obj.num_packets}\nVoltage: ${voltageV} V\nTemperature: ${obj.temperature} °C`;
-                infoContainer.textContent = `ID code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nHardware version: ${obj.hardware_version}\nConfig id: ${obj.config_id}`;
-              }
-            } catch (error) {
-              console.error(
-                "Error parsing or handling characteristic change:",
-                error
-              );
-            }
+    function gattOperations(device) {
+      console.log("Connecting to selected device...");
+      return device.gatt
+        .connect()
+        .then((gattServer) => {
+          bleServer = gattServer;
+          connectionFailed = false;
+          initialConnectionEstablished = true;
+          console.log("Connected to GATT Server");
+          selectedDevice = device; // Set selectedDevice to the connected device
+
+          if (unexpectedDisconnect) {
+            updateBleState(
+              `Reconnected to ${device.name} after unexpected disconnection`,
+              "#24af37",
+              true,
+              device.name
+            );
           } else {
-            console.log("Unknown event type:", event);
+            updateBleState(
+              `Connected to ${device.name}`,
+              "#24af37",
+              true,
+              device.name
+            );
           }
-        }
 
-        // UI Functions
-        function updateBleState(message, color, connected, deviceName) {
-          bleStateContainer.innerHTML = message;
-          bleStateContainer.style.color = color;
-          if (connected !== undefined) {
-            bleStateContainer.textContent = connected
-              ? `Connected to ${deviceName}`
-              : "Disconnected";
+          unexpectedDisconnect = false;
+          retryAttempts = 0;
+          return bleServer.getPrimaryService(bleService);
+        })
+        .then((service) => {
+          console.log("Service discovered:", service.uuid);
+          return service.getCharacteristic(readCharacteristic);
+        })
+        .then((characteristic) => {
+          console.log(
+            "Read Characteristic discovered:",
+            characteristic.uuid
+          );
+          readCharacteristicFound = characteristic;
+          characteristic.addEventListener(
+            "characteristicvaluechanged",
+            handleCharacteristicChangeDebounced
+          );
+          return characteristic.startNotifications();
+        })
+        .then(() => {
+          intervalId = setInterval(updateTimestamp, 1000);
+          showAllCards();
+        })
+        .catch((error) => {
+          console.error("Error: ", error);
+          if (error instanceof DOMException) {
+            console.error("DOMException:", error.message);
           }
-        }
-
-        function showInfoCard() {
-          const statusCard = document.querySelector(".info-card");
-          if (statusCard) {
-            statusCard.style.display = "block";
-          }
-        }
-
-        function hideInfoCard() {
-          const statusCard = document.querySelector(".info-card");
-          if (statusCard) {
-            statusCard.style.display = "none";
-          }
-        }
-
-        function showStatusCard() {
-          const statusCard = document.querySelector(".status-card");
-          if (statusCard) {
-            statusCard.style.display = "block";
-          }
-        }
-
-        function hideStatusCard() {
-          const statusCard = document.querySelector(".status-card");
-          if (statusCard) {
-            statusCard.style.display = "none";
-          }
-        }
-
-        function showIOCard() {
-          const ioCard = document.querySelector(".io-card");
-          if (ioCard) {
-            ioCard.style.display = "block";
-          }
-        }
-
-        function hideIOCard() {
-          const ioCard = document.querySelector(".io-card");
-          if (ioCard) {
-            ioCard.style.display = "none";
-          }
-        }
-
-        function showSignalStrengthCard() {
-          const signalStrengthCard = document.querySelector(".signal-card");
-          if (signalStrengthCard) {
-            signalStrengthCard.style.display = "block";
-          }
-        }
-
-        function hideSignalStrengthCard() {
-          const signalStrengthCard = document.querySelector(".signal-card");
-          if (signalStrengthCard) {
-            signalStrengthCard.style.display = "none";
-          }
-        }
-
-        // Update timestamp every second
-        function updateTimestamp() {
-          const timestamp = getDateTime();
-          timestampContainer.textContent = `Last reading: ${timestamp}`;
-        }
-
-        function showAllCards() {
-          showInfoCard();
-          showStatusCard();
-          showIOCard();
-          showSignalStrengthCard();
-          // Add more show functions here as needed
-        }
-
-
-        function hideAllCards() {
-          hideInfoCard();
-          hideStatusCard();
-          hideIOCard();
-          hideSignalStrengthCard();
-          // Add more hide functions here as needed
-        }
-
-        document.getElementById('toggle-dev-settings').addEventListener('click', function() {
-          var logs = document.getElementById('logs');
-          var devToolsLink = document.getElementById('toggle-dev-settings');
-          if (logs.style.display === 'none') {
-            logs.style.display = 'block';
-            devToolsLink.textContent = 'Exit Dev Mode'; // Change the text to 'Exit Dev Mode'
-            hideAllCards(); // Hide all cards
+          connectionFailed = true;
+          if (retryAttempts < maxRetryAttempts) {
+            console.log("Retrying...");
+            retryAttempts++;
+            setTimeout(() => gattOperations(selectedDevice), 1000);
           } else {
-            logs.style.display = 'none';
-            devToolsLink.textContent = 'Dev Tools ->'; // Change the text back to 'Dev Tools ->'
-            showAllCards(); // Show all cards
+            console.error("Maximum retry attempts reached.");
+            retryAttempts = 0;
+          }
+        });
+    }
+
+    function onDisconnected(event) {
+      console.log("Device disconnected event triggered.");
+      let disconnectedDevice = event.target; // Store disconnected device
+      try {
+        console.log("Device Disconnected:", disconnectedDevice.name);
+      } catch (error) {
+        console.log("Device Disconnected, Restarting Advertise.");
+      }
+
+      // If expectedDisconnect is true, it means the disconnection was expected
+      if (expectedDisconnect) {
+        expectedDisconnect = false; // Reset expectedDisconnect
+        return; // Exit the function
+      }
+      // Handle unexpected disconnect
+      clearInterval(intervalId);
+      hideAllCards();
+      retryAttempts = 0;
+      bleServer = null;
+      readCharacteristicFound = null;
+      selectedDevice = null; // Clear selected device on disconnect
+      initialConnectionEstablished = false; // Reset initial connection flag
+      unexpectedDisconnect = true; // Set unexpected disconnect flag
+      updateBleState("Unexptected Disconnect, retrying...", "#ff7a00", false);
+      setTimeout(() => {
+        gattOperations(disconnectedDevice); // Call gattOperations with the disconnected device
+      }, 1000);
+      // Disable connect button for 2.5 seconds after disconnecting to prevent bugs.
+      updateBleState("Preparing...", "#ff7a00");
+      connectButton.disabled = true;
+      setTimeout(() => {
+        connectButton.disabled = false;
+        updateBleState(
+          `Connected to ${disconnectedDevice.name}`,
+          "#24af37",
+          true,
+          disconnectedDevice.name
+        );
+        console.log("Reconnecting...");
+      }, 2500);
+    }
+
+    // Function to debounce characteristic value changes
+    function handleCharacteristicChangeDebounced(event) {
+      if (initialConnectionEstablished) {
+        debounce(handleCharacteristicChange, 500)(event);
+      } else {
+        handleCharacteristicChange(event);
+      }
+    }
+
+    function debounce(func, delay) {
+      let timeoutId;
+      return function () {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          func.apply(this, arguments);
+        }, delay);
+      };
+    }
+
+    function handleCharacteristicChange(event) {
+      if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
+        const newValueReceived = new TextDecoder().decode(
+          event.target.value
+        );
+
+        try {
+          console.log(newValueReceived);
+          const obj = JSON.parse(newValueReceived);
+          if (event.target.uuid === readCharacteristic) {
+            statusContainer.style.whiteSpace = "pre-line";
+            infoContainer.style.whiteSpace = "pre-line";
+            // Convert string "true" or "false" to boolean value
+            const connected = obj.connected === "true";
+            const voltageV = obj.voltage_mv / 1000; // Convert millivolts to volts
+            statusContainer.textContent = `Connected: ${connected}\nPackets received: ${obj.num_packets}\nVoltage: ${voltageV} V\nTemperature: ${obj.temperature} °C`;
+            infoContainer.textContent = `ID code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nHardware version: ${obj.hardware_version}\nConfig id: ${obj.config_id}`;
+          }
+        } catch (error) {
+          console.error(
+            "Error parsing or handling characteristic change:",
+            error
+          );
+        }
+      } else {
+        console.log("Unknown event type:", event);
+      }
+    }
+
+    // UI Functions
+    function updateBleState(message, color, connected, deviceName) {
+      bleStateContainer.innerHTML = message;
+      bleStateContainer.style.color = color;
+      if (connected !== undefined) {
+        bleStateContainer.textContent = connected
+          ? `Connected to ${deviceName}`
+          : "Disconnected";
+      }
+    }
+
+    function showInfoCard() {
+      const statusCard = document.querySelector(".info-card");
+      if (statusCard) {
+        statusCard.style.display = "block";
+      }
+    }
+
+    function hideInfoCard() {
+      const statusCard = document.querySelector(".info-card");
+      if (statusCard) {
+        statusCard.style.display = "none";
+      }
+    }
+
+    function showStatusCard() {
+      const statusCard = document.querySelector(".status-card");
+      if (statusCard) {
+        statusCard.style.display = "block";
+      }
+    }
+
+    function hideStatusCard() {
+      const statusCard = document.querySelector(".status-card");
+      if (statusCard) {
+        statusCard.style.display = "none";
+      }
+    }
+
+    function showIOCard() {
+      const ioCard = document.querySelector(".io-card");
+      if (ioCard) {
+        ioCard.style.display = "block";
+      }
+    }
+
+    function hideIOCard() {
+      const ioCard = document.querySelector(".io-card");
+      if (ioCard) {
+        ioCard.style.display = "none";
+      }
+    }
+
+    function showSignalStrengthCard() {
+      const signalStrengthCard = document.querySelector(".signal-card");
+      if (signalStrengthCard) {
+        signalStrengthCard.style.display = "block";
+      }
+    }
+
+    function hideSignalStrengthCard() {
+      const signalStrengthCard = document.querySelector(".signal-card");
+      if (signalStrengthCard) {
+        signalStrengthCard.style.display = "none";
+      }
+    }
+
+    // Update timestamp every second
+    function updateTimestamp() {
+      const timestamp = getDateTime();
+      timestampContainer.textContent = `Last reading: ${timestamp}`;
+    }
+
+    function showAllCards() {
+      showInfoCard();
+      showStatusCard();
+      showIOCard();
+      showSignalStrengthCard();
+      // Add more show functions here as needed
+    }
+
+
+    function hideAllCards() {
+      hideInfoCard();
+      hideStatusCard();
+      hideIOCard();
+      hideSignalStrengthCard();
+      // Add more hide functions here as needed
+    }
+
+    document.getElementById('toggle-dev-settings').addEventListener('click', function () {
+      var logs = document.getElementById('logs');
+      var devToolsLink = document.getElementById('toggle-dev-settings');
+      if (logs.style.display === 'none') {
+        logs.style.display = 'block';
+        devToolsLink.textContent = 'Exit Dev Mode'; // Change the text to 'Exit Dev Mode'
+        hideAllCards(); // Hide all cards
+      } else {
+        logs.style.display = 'none';
+        devToolsLink.textContent = 'Dev Tools ->'; // Change the text back to 'Dev Tools ->'
+        showAllCards(); // Show all cards
+      }
+    });
+
+    // Utility Functions
+    function getDateTime() {
+      const currentdate = new Date();
+      const day = ("00" + currentdate.getDate()).slice(-2);
+      const month = ("00" + (currentdate.getMonth() + 1)).slice(-2);
+      const year = currentdate.getFullYear();
+      const hours = ("00" + currentdate.getHours()).slice(-2);
+      const minutes = ("00" + currentdate.getMinutes()).slice(-2);
+      const seconds = ("00" + currentdate.getSeconds()).slice(-2);
+      return `${day}/${month}/${year} at ${hours}:${minutes}:${seconds}`;
+    }
+  });
+
+  const onDisplayLoad = function () {
+    console.log('SVG load event fired');
+
+    fetch('https://raw.githubusercontent.com/DarkMantrid/SM-WebBLE-Server/main/io_status.svg')
+      .then(response => response.text())
+      .then(svgText => {
+        const parser = new DOMParser();
+        const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+        console.log('SVG document:', svgDoc);
+
+        // Create a container for the SVG
+        const svgContainer = document.createElement('div');
+        svgContainer.className = 'io-card'; // Assign the class to the container
+        svgContainer.style.display = 'none'; // Hide the container initially
+        svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
+
+        // Append the container to the HTML document's body
+        document.body.appendChild(svgContainer);
+
+        const leds = [
+          { name: 'LED 1', id: 'path7' },
+          { name: 'LED 2', id: 'path7-0' },
+          { name: 'LED 3', id: 'path7-00' },
+          { name: 'LED 4', id: 'path7-0-8' },
+          { name: 'LED 5', id: 'path7-2' },
+          { name: 'LED 6', id: 'path7-0-88' },
+          { name: 'LED 7', id: 'path7-00-2' },
+          { name: 'LED 8', id: 'path7-0-8-6' },
+          { name: 'LED 9', id: 'path7-6' },
+          { name: 'LED 10', id: 'path7-0-6' },
+          { name: 'LED 11', id: 'path7-00-7' },
+          { name: 'LED 12', id: 'path7-0-8-0' },
+          { name: 'LED 13', id: 'path7-2-8' },
+          { name: 'LED 14', id: 'path7-0-88-8' },
+          { name: 'LED 15', id: 'path7-00-2-3' },
+          { name: 'LED 16', id: 'path7-0-8-6-9' },
+        ];
+
+        let loadedLeds = 0;
+        let ledElements = [];
+
+        leds.forEach(function (led) {
+          const ledElement = svgContainer.querySelector('#' + led.id);
+          if (ledElement) {
+            loadedLeds++;
+            ledElements.push(ledElement);
+            ledElement.style.fill = '#696969';
+            // console.log(led.name + ' with id ' + led.id + ' loaded');
+          } else {
+            console.error(led.name + ' with id ' + led.id + ' not found');
           }
         });
 
-        // Utility Functions
-        function getDateTime() {
-          const currentdate = new Date();
-          const day = ("00" + currentdate.getDate()).slice(-2);
-          const month = ("00" + (currentdate.getMonth() + 1)).slice(-2);
-          const year = currentdate.getFullYear();
-          const hours = ("00" + currentdate.getHours()).slice(-2);
-          const minutes = ("00" + currentdate.getMinutes()).slice(-2);
-          const seconds = ("00" + currentdate.getSeconds()).slice(-2);
-          return `${day}/${month}/${year} at ${hours}:${minutes}:${seconds}`;
+        if (loadedLeds === 16) {
+          console.log('All 16 LEDs have been loaded');
         }
-      });
-      
-      const onDisplayLoad = function() {
-        console.log('SVG load event fired');
-      
-        fetch('https://raw.githubusercontent.com/DarkMantrid/SM-WebBLE-Server/main/io_status.svg')
-          .then(response => response.text())
-          .then(svgText => {
-            const parser = new DOMParser();
-            const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
-            console.log('SVG document:', svgDoc);
-      
-            // Create a container for the SVG
-            const svgContainer = document.createElement('div');
-            svgContainer.className = 'io-card'; // Assign the class to the container
-            // svgContainer.style.display = 'none'; // Hide the container initially
-            svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
-      
-            // Append the container to the HTML document's body
-            document.body.appendChild(svgContainer);
-      
-            const leds = [
-              { name: 'LED 1', id: 'path7' },
-              { name: 'LED 2', id: 'path7-0' },
-              { name: 'LED 3', id: 'path7-00' },
-              { name: 'LED 4', id: 'path7-0-8' },
-              { name: 'LED 5', id: 'path7-2' },
-              { name: 'LED 6', id: 'path7-0-88' },
-              { name: 'LED 7', id: 'path7-00-2' },
-              { name: 'LED 8', id: 'path7-0-8-6' },
-              { name: 'LED 9', id: 'path7-6' },
-              { name: 'LED 10', id: 'path7-0-6' },
-              { name: 'LED 11', id: 'path7-00-7' },
-              { name: 'LED 12', id: 'path7-0-8-0' },
-              { name: 'LED 13', id: 'path7-2-8' },
-              { name: 'LED 14', id: 'path7-0-88-8' },
-              { name: 'LED 15', id: 'path7-00-2-3' },
-              { name: 'LED 16', id: 'path7-0-8-6-9' },
-            ];
-      
-            let loadedLeds = 0;
-            let ledElements = [];
-            
-            leds.forEach(function(led) {
-              const ledElement = svgContainer.querySelector('#' + led.id);
-              if (ledElement) {
-                loadedLeds++;
-                ledElements.push(ledElement);
+
+        let isBlinking = false;
+        let blinkInterval;
+
+        let mode = 0; // 0 = off, 1 = green/red blinking, 2 = orange/off blinking
+
+        const button = document.querySelector('#layer3');
+        const path8 = document.querySelector('#path8');
+        const path10 = document.querySelector('#path10');
+
+        function addGlow() {
+          // Add glow effect to paths
+          path8.style.fill = 'rgba(123, 255, 60, 0.8)'; // semi-transparent yellow
+          path10.style.fill = 'rgba(123, 255, 60, 0.8)'; // semi-transparent yellow
+        }
+
+        function removeGlow() {
+          // Remove glow effect
+          path8.style.fill = '#f2f2f2';
+          path10.style.fill = '#ffffff';
+        }
+
+
+        button.addEventListener('mousedown', addGlow);
+        button.addEventListener('mouseup', removeGlow);
+
+        // For mobile devices
+        button.addEventListener('touchstart', addGlow);
+        button.addEventListener('touchend', removeGlow);
+
+        button.addEventListener('click', function () {
+          clearInterval(blinkInterval); // Clear any existing interval
+
+          mode = (mode + 1) % 3; // Cycle through the modes
+
+          switch (mode) {
+            case 0: // Off
+              ledElements.forEach(function (ledElement) {
                 ledElement.style.fill = '#696969';
-                // console.log(led.name + ' with id ' + led.id + ' loaded');
-              } else {
-                console.error(led.name + ' with id ' + led.id + ' not found');
-              }
-            });
-            
-            if (loadedLeds === 16) {
-              console.log('All 16 LEDs have been loaded');
+              });
+              break;
+            case 1: // Green/Red blinking
+              blinkInterval = setInterval(function () {
+                ledElements.forEach(function (ledElement) {
+                  ledElement.style.fill = isPrimaryColor ? 'rgba(144, 238, 144, 1)' : 'rgba(255, 105, 97, 1)';
+                });
+                isPrimaryColor = !isPrimaryColor;
+              }, 500);
+              break;
+            case 2: // Orange/Off blinking
+              blinkInterval = setInterval(function () {
+                ledElements.forEach(function (ledElement) {
+                  ledElement.style.fill = isPrimaryColor ? 'rgba(255, 170, 0, 1)' : '#696969';
+                });
+                isPrimaryColor = !isPrimaryColor;
+              }, 500);
+              break;
+          }
+        });
+
+        let isPrimaryColor = true;
+      })
+      .catch(error => console.error('Error:', error));
+  };
+  window.onload = onDisplayLoad;
+
+  window.addEventListener('load', onDisplayLoad);
+
+  const onSignalSvgLoad = function () {
+    fetch('https://raw.githubusercontent.com/DarkMantrid/SM-WebBLE-Server/main/radio_signal.svg')
+      .then(response => response.text())
+      .then(svgText => {
+        const parser = new DOMParser();
+        const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+
+        // Create a container for the SVG
+        const svgContainer = document.createElement('div');
+        svgContainer.className = 'signal-card'; // Assign the class to the container
+        svgContainer.style.display = 'none'; // Hide the container initially
+        svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
+
+        // Append the container to the HTML document's body
+        document.body.appendChild(svgContainer);
+
+        const signals = [
+          { name: 'Center', id: 'path1' },
+          { name: 'L1', id: 'path2' },
+          { name: 'R1', id: 'path2-9' },
+          { name: 'L2', id: 'path2-6' },
+          { name: 'R2', id: 'path2-6-7' },
+          { name: 'L3', id: 'path2-6-9' },
+          { name: 'R3', id: 'path2-6-9-1' },
+        ];
+
+        const signalElements = [];
+        signals.forEach(signal => {
+          const element = svgContainer.querySelector('#' + signal.id);
+          if (element) {
+            signalElements.push(element);
+          } else {
+            console.error(`Element with id ${signal.id} not found`);
+          }
+        });
+
+        function updateSignalStrength(strength) {
+          let color;
+          if (strength === 0) {
+            color = '#A9A9A9'; // Default color
+          } else if (strength === 1) {
+            color = '#FE0000';
+          } else if (strength === 2) {
+            color = '#FF8000';
+          } else {
+            color = '#00CC00';
+          }
+
+          // Update the center path based on the signal strength
+          signalElements[0].style.fill = strength > 0 ? color : '#A9A9A9'; // Default color
+
+          // Update the pairs based on the signal strength
+          for (let i = 1; i < signalElements.length; i += 2) {
+            if (i < strength * 2) {
+              signalElements[i].style.fill = color;
+              signalElements[i + 1].style.fill = color;
+            } else {
+              signalElements[i].style.fill = '#A9A9A9'; // Default color
+              signalElements[i + 1].style.fill = '#A9A9A9'; // Default color
             }
-            
-            let isBlinking = false;
-            let blinkInterval;
-            
-            let mode = 0; // 0 = off, 1 = green/red blinking, 2 = orange/off blinking
+          }
+        }
 
-            const button = document.querySelector('#layer3');
-            const path8 = document.querySelector('#path8');
-            const path10 = document.querySelector('#path10');
+        // Generate a random signal strength every x seconds
+        setInterval(function () {
+          const simulatedStrength = Math.floor(Math.random() * ((signalElements.length - 1) / 2 + 1)); // Generates a random number between 0 and the number of signal pairs
+          updateSignalStrength(simulatedStrength);
+        }, 600);
+      })
+      .catch(error => console.error('Error:', error));
+  };
+  window.onload = onSignalSvgLoad;
 
-            function addGlow() {
-              // Add glow effect to paths
-              path8.style.fill = 'rgba(123, 255, 60, 0.8)'; // semi-transparent yellow
-              path10.style.fill = 'rgba(123, 255, 60, 0.8)'; // semi-transparent yellow
-            }
+</script>
+</body>
 
-            function removeGlow() {
-              // Remove glow effect
-              path8.style.fill = '#f2f2f2';
-              path10.style.fill = '#ffffff';
-            }
-
-
-            button.addEventListener('mousedown', addGlow);
-            button.addEventListener('mouseup', removeGlow);
-                      
-            // For mobile devices
-            button.addEventListener('touchstart', addGlow);
-            button.addEventListener('touchend', removeGlow);
-
-            button.addEventListener('click', function() {
-              clearInterval(blinkInterval); // Clear any existing interval
-            
-              mode = (mode + 1) % 3; // Cycle through the modes
-            
-              switch (mode) {
-                case 0: // Off
-                  ledElements.forEach(function(ledElement) {
-                    ledElement.style.fill = '#696969';
-                  });
-                  break;
-                case 1: // Green/Red blinking
-                  blinkInterval = setInterval(function() {
-                    ledElements.forEach(function(ledElement) {
-                      ledElement.style.fill = isPrimaryColor ? 'rgba(144, 238, 144, 1)' : 'rgba(255, 105, 97, 1)';
-                    });
-                    isPrimaryColor = !isPrimaryColor;
-                  }, 500);
-                  break;
-                case 2: // Orange/Off blinking
-                  blinkInterval = setInterval(function() {
-                    ledElements.forEach(function(ledElement) {
-                      ledElement.style.fill = isPrimaryColor ? 'rgba(255, 170, 0, 1)' : '#696969';
-                    });
-                    isPrimaryColor = !isPrimaryColor;
-                  }, 500);
-                  break;
-              }
-            });
-            
-            let isPrimaryColor = true;
-            })
-            .catch(error => console.error('Error:', error));
-            }; 
-            window.onload = onDisplayLoad;
-
-            window.addEventListener('load', onDisplayLoad);
-
-            const onSignalSvgLoad = function() {
-              fetch('https://raw.githubusercontent.com/DarkMantrid/SM-WebBLE-Server/main/radio_signal.svg')
-                .then(response => response.text())
-                .then(svgText => {
-                  const parser = new DOMParser();
-                  const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
-            
-                  // Create a container for the SVG
-                  const svgContainer = document.createElement('div');
-                  svgContainer.className = 'signal-card'; // Assign the class to the container
-                  svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
-            
-                  // Append the container to the HTML document's body
-                  document.body.appendChild(svgContainer);
-            
-                  const signals = [
-                    { name: 'Center', id: 'path1' },
-                    { name: 'L1', id: 'path2' },
-                    { name: 'R1', id: 'path2-9' },
-                    { name: 'L2', id: 'path2-6' },
-                    { name: 'R2', id: 'path2-6-7' },
-                    { name: 'L3', id: 'path2-6-9' },
-                    { name: 'R3', id: 'path2-6-9-1' },
-                  ];
-            
-                  const signalElements = [];
-                  signals.forEach(signal => {
-                    const element = svgContainer.querySelector('#' + signal.id);
-                    if (element) {
-                      signalElements.push(element);
-                    } else {
-                      console.error(`Element with id ${signal.id} not found`);
-                    }
-                  });
-            
-                  function updateSignalStrength(strength) {
-                    let color;
-                    if (strength === 0) {
-                      color = '#A9A9A9'; // Default color
-                    } else if (strength === 1) {
-                      color = '#FE0000'; 
-                    } else if (strength === 2) {
-                      color = '#FF8000'; 
-                    } else {
-                      color = '#00CC00'; 
-                    }
-                  
-                    // Update the center path based on the signal strength
-                    signalElements[0].style.fill = strength > 0 ? color : '#A9A9A9'; // Default color
-                  
-                    // Update the pairs based on the signal strength
-                    for (let i = 1; i < signalElements.length; i += 2) {
-                      if (i < strength * 2) {
-                        signalElements[i].style.fill = color;
-                        signalElements[i + 1].style.fill = color;
-                      } else {
-                        signalElements[i].style.fill = '#A9A9A9'; // Default color
-                        signalElements[i + 1].style.fill = '#A9A9A9'; // Default color
-                      }
-                    }
-                  }
-                  
-                  // Generate a random signal strength every x seconds
-                  setInterval(function() {
-                    const simulatedStrength = Math.floor(Math.random() * ((signalElements.length - 1) / 2 + 1)); // Generates a random number between 0 and the number of signal pairs
-                    updateSignalStrength(simulatedStrength);
-                  }, 600);
-                })
-                .catch(error => console.error('Error:', error));
-            };
-            window.onload = onSignalSvgLoad;
-
-    </script>
-  </body>
 </html>
