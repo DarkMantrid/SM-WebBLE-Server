@@ -577,19 +577,19 @@
         ];
 
         let loadedLeds = 0;
-        let ledElements = [];
 
-        leds.forEach(function (led) {
+        const ledElements = leds.map(function (led) {
           const ledElement = svgContainer.querySelector('#' + led.id);
           if (ledElement) {
             loadedLeds++;
-            ledElements.push(ledElement);
             ledElement.style.fill = '#696969';
             // console.log(led.name + ' with id ' + led.id + ' loaded');
+            return ledElement;
           } else {
             console.error(led.name + ' with id ' + led.id + ' not found');
+            return null;
           }
-        });
+        }).filter(element => element !== null); // filter out any null elements
 
         if (loadedLeds === 16) {
           console.log('All 16 LEDs have been loaded');
@@ -688,15 +688,15 @@
           { name: 'R3', id: 'path2-6-9-1' },
         ];
 
-        const signalElements = [];
-        signals.forEach(signal => {
+        const signalElements = signals.map(signal => {
           const element = svgContainer.querySelector('#' + signal.id);
           if (element) {
-            signalElements.push(element);
+            return element;
           } else {
             console.error(`Element with id ${signal.id} not found`);
+            return null;
           }
-        });
+        }).filter(element => element !== null); // filter out any null elements
 
         function updateSignalStrength(strength) {
           let color;
