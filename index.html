@@ -51,7 +51,7 @@
 <body>
   <div class="header">
     <h2>Simplifier Observer
-      <a href="#" id="toggle-dev-settings" class="dev-tools">Dev Tools -></a>
+      <!-- <a href="#" id="toggle-dev-settings" class="dev-tools">Dev Tools -></a> -->
     </h2>
   </div>
   <div class="card-table">
@@ -511,19 +511,19 @@
       // Add more hide functions here as needed
     }
 
-    document.getElementById('toggle-dev-settings').addEventListener('click', function () {
-      var logs = document.getElementById('logs');
-      var devToolsLink = document.getElementById('toggle-dev-settings');
-      if (logs.style.display === 'none') {
-        logs.style.display = 'block';
-        devToolsLink.textContent = 'Exit Dev Mode'; // Change the text to 'Exit Dev Mode'
-        hideAllCards(); // Hide all cards
-      } else {
-        logs.style.display = 'none';
-        devToolsLink.textContent = 'Dev Tools ->'; // Change the text back to 'Dev Tools ->'
-        showAllCards(); // Show all cards
-      }
-    });
+    // document.getElementById('toggle-dev-settings').addEventListener('click', function () {
+    //   var logs = document.getElementById('logs');
+    //   var devToolsLink = document.getElementById('toggle-dev-settings');
+    //   if (logs.style.display === 'none') {
+    //     logs.style.display = 'block';
+    //     devToolsLink.textContent = 'Exit Dev Mode'; // Change the text to 'Exit Dev Mode'
+    //     hideAllCards(); // Hide all cards
+    //   } else {
+    //     logs.style.display = 'none';
+    //     devToolsLink.textContent = 'Dev Tools ->'; // Change the text back to 'Dev Tools ->'
+    //     showAllCards(); // Show all cards
+    //   }
+    // });
 
     // Utility Functions
     function getDateTime() {
