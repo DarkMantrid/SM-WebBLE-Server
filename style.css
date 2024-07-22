@@ -41,13 +41,13 @@ h2 {
   margin: 0;
   text-align: center;
   flex: 1;
-  margin-left: 18%;
+  margin-left: 0%;
 }
 
 .dev-tools {
   float: right;
   font-size: 1rem;
-  color: #2d00d1c0;
+  color: #0004ff;
 }
 
 .scrollable-table {
