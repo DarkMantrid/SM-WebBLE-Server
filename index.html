@@ -71,11 +71,11 @@
         </strong>
       </p>
     </div>
-    <div class="card info-card" style="display: none;">
+    <div class="card info-card" style="display: block;">
       <h3>General information</h3>
       <p class="infoReading"><span id="infoContainer"></span></p>
     </div>
-    <div class="card status-card" style="display: none;">
+    <div class="card status-card" style="display: block;">
       <h4>Status</h4>
       <p class="statusReading"><span id="statusContainer"></span></p>
       <p class="gray-label" id="timestamp"></p>
@@ -168,6 +168,9 @@
     let isErrorSimulated = false; //!! Remove this line after testing
     let unexpectedDisconnect = false; // Flag to track unexpected disconnection
     let expectedDisconnect = false; // Flag to track expected disconnection
+
+
+    
 
     // Event Listeners
     connectButton.addEventListener("click", handleConnectButtonClick);
@@ -407,19 +410,22 @@
             // Convert string "true" or "false" to boolean value
             const connected = obj.connected === "true";
             const voltageV = obj.voltage_mv / 1000; // Convert millivolts to volts
-            statusContainer.textContent = `Connected: ${connected}\nPackets received: ${obj.num_packets}\nVoltage: ${voltageV} V\nTemperature: ${obj.temperature} °C`;
+            statusContainer.textContent = `Connected: ${connected}\nPackets received: ${obj.num_packets}\nVoltage: ${voltageV} V\nTemperature: ${obj.temperature} °C\n Fatal error code: ${obj.fatal_error_code}`;
             infoContainer.textContent = `ID code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nHardware version: ${obj.hardware_version}\nConfig id: ${obj.config_id}`;
+            // New logic to control the color of LED 1 based on io_status
+            if ('io_status' in obj) {
+              const ioStatusEvent = new CustomEvent('ioStatusChange', { detail: { io_status: obj.io_status } });
+              document.dispatchEvent(ioStatusEvent);
+            }
           }
         } catch (error) {
-          console.error(
-            "Error parsing or handling characteristic change:",
-            error
-          );
+          console.error("Error parsing or handling characteristic change:", error);
         }
       } else {
         console.log("Unknown event type:", event);
       }
     }
+
 
     // UI Functions
     function updateBleState(message, color, connected, deviceName) {
@@ -538,6 +544,8 @@
     }
   });
 
+
+
   const onDisplayLoad = function () {
     console.log('SVG load event fired');
 
@@ -551,11 +559,19 @@
         // Create a container for the SVG
         const svgContainer = document.createElement('div');
         svgContainer.className = 'io-card'; // Assign the class to the container
-        svgContainer.style.display = 'none'; // Hide the container initially
+        svgContainer.style.display = 'block'; // Hide the container initially
         svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
+
+        document.addEventListener('ioStatusChange', function(e) {
+          const ioStatus = parseInt(e.detail.io_status, 16);
+          console.log(`New io_status: ${ioStatus}`);
+          changeMode(ioStatus); // Call changeMode with the new io_status
+        });
 
         // Append the container to the HTML document's body
         document.body.appendChild(svgContainer);
+
+        let initialConnectionEstablished = false;
 
         const leds = [
           { name: 'LED 1', id: 'path7' },
@@ -578,6 +594,25 @@
 
         let loadedLeds = 0;
 
+        //  Initialize the state of LEDs
+        let led1State = 0xFFFF;
+        let led2State = 0xFFFF;
+        let led3State = 0xFFFF;
+        let led4State = 0xFFFF;
+        let led5State = 0xFFFF;
+        let led6State = 0xFFFF;
+        let led7State = 0xFFFF;
+        let led8State = 0xFFFF;
+        let led9State = 0xFFFF;
+        let led10State = 0xFFFF;
+        let led11State = 0xFFFF;
+        let led12State = 0xFFFF;
+        let led13State = 0xFFFF;
+        let led14State = 0xFFFF;
+        let led15State = 0xFFFF;
+        let led16State = 0xFFFF;
+
+
         const ledElements = leds.map(function (led) {
           const ledElement = svgContainer.querySelector('#' + led.id);
           if (ledElement) {
@@ -591,76 +626,136 @@
           }
         }).filter(element => element !== null); // filter out any null elements
 
+        function initializeLedColorsBasedOnConnection() {
+          console.log('Initializing LED colors, total LEDs:', leds.length);
+          leds.forEach((led, index) => {
+            // console.log(`LED ${index}:`, led);
+            const ledElement = svgContainer.querySelector('#' + led.id);
+            if (ledElement) {
+              ledElement.style.fill = '#696969'; // Example color setting
+            } else {
+              console.error(`LED element with id ${led.id} not found at index ${index}`);
+            }
+          });
+        }
+
+        // Initialize the colors of LEDs based on connection status
+        initializeLedColorsBasedOnConnection();
+
         if (loadedLeds === 16) {
           console.log('All 16 LEDs have been loaded');
         }
-
+        
         let isBlinking = false;
         let blinkInterval;
-
-        let mode = 0; // 0 = off, 1 = green/red blinking, 2 = orange/off blinking
-
+        
+        let mode = 0; // Initialize mode to 0 = off
+        let isPrimaryColor = true; // Initialize isPrimaryColor to true
+        
         const button = document.querySelector('#layer3');
         const path8 = document.querySelector('#path8');
         const path10 = document.querySelector('#path10');
-
+        
         function addGlow() {
           // Add glow effect to paths
           path8.style.fill = 'rgba(123, 255, 60, 0.8)'; // semi-transparent yellow
           path10.style.fill = 'rgba(123, 255, 60, 0.8)'; // semi-transparent yellow
         }
-
+        
         function removeGlow() {
           // Remove glow effect
           path8.style.fill = '#f2f2f2';
           path10.style.fill = '#ffffff';
         }
-
-
-        button.addEventListener('mousedown', addGlow);
-        button.addEventListener('mouseup', removeGlow);
-
-        // For mobile devices
-        button.addEventListener('touchstart', addGlow);
-        button.addEventListener('touchend', removeGlow);
-
-        button.addEventListener('click', function () {
+        
+        function changeMode(io_status = 0xFFFF) {
           clearInterval(blinkInterval); // Clear any existing interval
 
-          mode = (mode + 1) % 3; // Cycle through the modes
-
-          switch (mode) {
-            case 0: // Off
-              ledElements.forEach(function (ledElement) {
-                ledElement.style.fill = '#696969';
-              });
-              break;
-            case 1: // Green/Red blinking
-              blinkInterval = setInterval(function () {
-                ledElements.forEach(function (ledElement) {
-                  ledElement.style.fill = isPrimaryColor ? 'rgba(144, 238, 144, 1)' : 'rgba(255, 105, 97, 1)';
-                });
-                isPrimaryColor = !isPrimaryColor;
-              }, 500);
-              break;
-            case 2: // Orange/Off blinking
-              blinkInterval = setInterval(function () {
-                ledElements.forEach(function (ledElement) {
-                  ledElement.style.fill = isPrimaryColor ? 'rgba(255, 170, 0, 1)' : '#696969';
-                });
-                isPrimaryColor = !isPrimaryColor;
-              }, 500);
-              break;
-          }
+        // Initialize the color of LEDs
+        let led1Color = '#696969';
+        let led2Color = '#696969';
+        let led3Color = '#696969';
+        let led4Color = '#696969';
+        let led5Color = '#696969';
+        let led6Color = '#696969';
+        let led7Color = '#696969';
+        let led8Color = '#696969';
+        let led9Color = '#696969';
+        let led10Color = '#696969';
+        let led11Color = '#696969';
+        let led12Color = '#696969';
+        let led13Color = '#696969';
+        let led14Color = '#696969';
+        let led15Color = '#696969';
+        let led16Color = '#696969';
+        
+        let initialColor = '#696969'; // Default color for LEDs
+        
+        // Reset LEDs to initial color before changing states
+        ledElements.forEach(function (ledElement) {
+          ledElement.style.fill = initialColor;
         });
+        
+        switch (mode) {
+          case 0: // Off
+            console.log('LEDs case 0');
+            // Determine the color of LED 1 based on io_status
+            if (io_status === 0x0001) {
+              led1Color = 'rgba(144, 238, 144, 1)'; // Set LED 1 to green
+            } 
+            else if (io_status === 0x0000) {
+              led1Color = 'rgba(255, 105, 97, 1)'; // Set LED 1 to red
+            } 
+            else if (io_status === 0xFFFF) {
+              led1Color = '#696969'; // Set LED 1 to default color
+            } else {
+              led1Color = '#696969'; // Set LED 1 to default color
+            }
+            document.querySelector('#path7').style.fill = led1Color; 
+            break;
+            case 1: // Green/Red blinking
+            console.log('LEDs case 1');
+            // Ensure ledElements is correctly populated and isPrimaryColor is initialized
+            blinkInterval = setInterval(function () {
+              ledElements.forEach(function (ledElement) {
+                ledElement.style.fill = isPrimaryColor ? 'rgba(144, 238, 144, 1)' : 'rgba(255, 105, 97, 1)';
+              });
+              isPrimaryColor = !isPrimaryColor;
+            }, 500);
+            break;
+          case 2: // Orange/Off blinking
+            console.log('LEDs case 2');
+            blinkInterval = setInterval(function () {
+              ledElements.forEach(function (ledElement) {
+                ledElement.style.fill = isPrimaryColor ? 'rgba(255, 170, 0, 1)' : '#696969';
+              });
+              isPrimaryColor = !isPrimaryColor;
+            }, 500);
+            break;
+          }
+        }
+        
+        // Set initial mode
+        changeMode(); // Call this function on load to set the mode to case 0
 
-        let isPrimaryColor = true;
+        document.addEventListener('ioStatusChange', function(e) {
+          const ioStatus = parseInt(e.detail.io_status, 16);
+          changeMode(ioStatus); // Correctly pass ioStatus
+        });
+        
+        // Event listeners for button
+        button.addEventListener('mousedown', addGlow);
+        button.addEventListener('mouseup', removeGlow);
+        button.addEventListener('touchstart', addGlow);
+        button.addEventListener('touchend', removeGlow);
+        
+        button.addEventListener('click', function () {
+          mode = (mode + 1) % 3; // Cycle through the modes
+          changeMode(); // Apply changes based on the new mode
+        });
       })
       .catch(error => console.error('Error:', error));
   };
-  window.onload = onDisplayLoad;
-
-  window.addEventListener('load', onDisplayLoad);
 
   const onSignalSvgLoad = function () {
     fetch('https://raw.githubusercontent.com/DarkMantrid/SM-WebBLE-Server/main/radio_signal.svg')
@@ -672,7 +767,7 @@
         // Create a container for the SVG
         const svgContainer = document.createElement('div');
         svgContainer.className = 'signal-card'; // Assign the class to the container
-        svgContainer.style.display = 'none'; // Hide the container initially
+        svgContainer.style.display = 'block'; // Hide the container initially
         svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
 
         // Append the container to the HTML document's body
@@ -733,7 +828,11 @@
       })
       .catch(error => console.error('Error:', error));
   };
+
+  window.onload = onDisplayLoad;
   window.onload = onSignalSvgLoad;
+
+  window.addEventListener('load', onDisplayLoad);
 
 </script>
 </body>
