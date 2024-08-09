@@ -395,6 +395,11 @@
       };
     }
 
+    function withCtrlDigit(actual) {
+      return (actual >>> 0) * 10 + (((actual >>> 0) * 0xFAE75C27 + 1) >>> 0) % 10;
+    }
+
+    //!! IMPORTANT FUNCTIONALITY
     function handleCharacteristicChange(event) {
       if (event.target instanceof BluetoothRemoteGATTCharacteristic) {
         const newValueReceived = new TextDecoder().decode(
@@ -404,14 +409,16 @@
         try {
           console.log(newValueReceived);
           const obj = JSON.parse(newValueReceived);
+          const idCodeWithCtrlDigit = withCtrlDigit(parseInt(obj.id_code, 10));
           if (event.target.uuid === readCharacteristic) {
             statusContainer.style.whiteSpace = "pre-line";
             infoContainer.style.whiteSpace = "pre-line";
             // Convert string "true" or "false" to boolean value
             const connected = obj.connected === "true";
             const voltageV = obj.voltage_mv / 1000; // Convert millivolts to volts
-            statusContainer.textContent = `Connected: ${connected}\nPackets received: ${obj.num_packets}\nVoltage: ${voltageV} V\nTemperature: ${obj.temperature} °C\n Fatal error code: ${obj.fatal_error_code}`;
-            infoContainer.textContent = `ID code: ${obj.id_code}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nHardware version: ${obj.hardware_version}\nConfig id: ${obj.config_id}`;
+            const temperatureC = obj.temperature / 100; // Convert centi-degrees to degrees
+            statusContainer.textContent = `Connected: ${connected}\nPackets received: ${obj.num_packets}\nVoltage: ${voltageV} V\nTemperature: ${temperatureC} °C\n Fatal error code: ${obj.fatal_error_code}`;
+            infoContainer.textContent = `ID code: ${idCodeWithCtrlDigit}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nHardware version: ${obj.hardware_version}\nConfig id: ${obj.config_id}`;
             // New logic to control the color of LED 1 based on io_status
             if ('io_status' in obj) {
               const ioStatusEvent = new CustomEvent('ioStatusChange', { detail: { io_status: obj.io_status } });
@@ -594,23 +601,8 @@
 
         let loadedLeds = 0;
 
-        //  Initialize the state of LEDs
-        let led1State = 0xFFFF;
-        let led2State = 0xFFFF;
-        let led3State = 0xFFFF;
-        let led4State = 0xFFFF;
-        let led5State = 0xFFFF;
-        let led6State = 0xFFFF;
-        let led7State = 0xFFFF;
-        let led8State = 0xFFFF;
-        let led9State = 0xFFFF;
-        let led10State = 0xFFFF;
-        let led11State = 0xFFFF;
-        let led12State = 0xFFFF;
-        let led13State = 0xFFFF;
-        let led14State = 0xFFFF;
-        let led15State = 0xFFFF;
-        let led16State = 0xFFFF;
+        //  Initialize the state of LEDs, reach them like in any array e.g. ledStates[0] = 0x0001.
+        const ledStates = new Array(16).fill(0xFFFF);
 
 
         const ledElements = leds.map(function (led) {
@@ -672,22 +664,10 @@
           clearInterval(blinkInterval); // Clear any existing interval
 
         // Initialize the color of LEDs
-        let led1Color = '#696969';
-        let led2Color = '#696969';
-        let led3Color = '#696969';
-        let led4Color = '#696969';
-        let led5Color = '#696969';
-        let led6Color = '#696969';
-        let led7Color = '#696969';
-        let led8Color = '#696969';
-        let led9Color = '#696969';
-        let led10Color = '#696969';
-        let led11Color = '#696969';
-        let led12Color = '#696969';
-        let led13Color = '#696969';
-        let led14Color = '#696969';
-        let led15Color = '#696969';
-        let led16Color = '#696969';
+        let ledColors = {};
+        for (let i = 1; i <= 16; i++) {
+            ledColors[`led${i}Color`] = '#696969';
+        }
         
         let initialColor = '#696969'; // Default color for LEDs
         
@@ -696,6 +676,7 @@
           ledElement.style.fill = initialColor;
         });
         
+        //!! IMPORTANT FUNCTIONALITY
         switch (mode) {
           case 0: // Off
             console.log('LEDs case 0');
