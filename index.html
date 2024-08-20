@@ -178,7 +178,7 @@
 
 
     // Bluetooth Constants
-    const deviceName = "ESP32-C3";
+    const deviceName = "ESP32";
     const bleService = "08fed9e7-90be-44b5-b02c-91393f6e8988";
     const readCharacteristic = "dc0d552c-05b6-4e8c-a729-8a8f97d977a0";
 
@@ -396,6 +396,10 @@
     }
 
     function withCtrlDigit(actual) {
+      // Correctly check if the input is not valid, not present, or is 0
+      if (actual === null || actual === undefined || isNaN(actual) || actual === 0) {
+        return 0;
+      }
       return (actual >>> 0) * 10 + (((actual >>> 0) * 0xFAE75C27 + 1) >>> 0) % 10;
     }
 
@@ -415,8 +419,8 @@
             infoContainer.style.whiteSpace = "pre-line";
             // Convert string "true" or "false" to boolean value
             const connected = obj.connected === "true";
-            const voltageV = obj.voltage_mv / 1000; // Convert millivolts to volts
-            const temperatureC = obj.temperature / 100; // Convert centi-degrees to degrees
+            const voltageV = +(obj.voltage_mv / 1000).toFixed(1); // Convert millivolts to volts and format
+            const temperatureC = +(obj.temperature / 100).toFixed(1); // Convert centi-degrees to degrees and format
             statusContainer.textContent = `Connected: ${connected}\nPackets received: ${obj.num_packets}\nVoltage: ${voltageV} V\nTemperature: ${temperatureC} °C\n Fatal error code: ${obj.fatal_error_code}`;
             infoContainer.textContent = `ID code: ${idCodeWithCtrlDigit}\nCPU1: ${obj.firmware_cpu1}\nCPU2: ${obj.firmware_cpu2}\nHardware version: ${obj.hardware_version}\nConfig id: ${obj.config_id}`;
             // New logic to control the color of LED 1 based on io_status
