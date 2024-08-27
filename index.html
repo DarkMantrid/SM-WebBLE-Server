@@ -71,11 +71,11 @@
         </strong>
       </p>
     </div>
-    <div class="card info-card" style="display: block;">
+    <div class="card info-card" style="display: none;">
       <h3>General information</h3>
       <p class="infoReading"><span id="infoContainer"></span></p>
     </div>
-    <div class="card status-card" style="display: block;">
+    <div class="card status-card" style="display: none;">
       <h4>Status</h4>
       <p class="statusReading"><span id="statusContainer"></span></p>
       <p class="gray-label" id="timestamp"></p>
@@ -140,6 +140,19 @@
     document.execCommand("copy");
     document.body.removeChild(tempInput);
   }
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var isFirefox = typeof InstallTrigger !== 'undefined';
+    var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+
+    if (isFirefox) {
+      document.querySelector('.chrome-alternative').style.display = 'block';
+    } else if (isSafari) {
+      document.querySelector('.safari-alternative').style.display = 'block';
+    }
+  });
 </script>
 
 <script>
@@ -570,7 +583,7 @@
         // Create a container for the SVG
         const svgContainer = document.createElement('div');
         svgContainer.className = 'io-card'; // Assign the class to the container
-        svgContainer.style.display = 'block'; // Hide the container initially
+        svgContainer.style.display = 'none'; // Hide the container initially
         svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
 
         document.addEventListener('ioStatusChange', function(e) {
@@ -752,7 +765,7 @@
         // Create a container for the SVG
         const svgContainer = document.createElement('div');
         svgContainer.className = 'signal-card'; // Assign the class to the container
-        svgContainer.style.display = 'block'; // Hide the container initially
+        svgContainer.style.display = 'none'; // Hide the container initially
         svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
 
         // Append the container to the HTML document's body
