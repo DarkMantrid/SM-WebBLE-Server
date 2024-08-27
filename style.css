@@ -192,6 +192,11 @@ button {
   cursor: pointer;
 }
 
+.copyButton {
+  background-color: #0004ff;
+  cursor: pointer;
+}
+
 .gray-label {
   color: #bebebe;
   font-size: 1rem;
