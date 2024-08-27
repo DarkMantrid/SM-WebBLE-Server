@@ -287,6 +287,11 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .content {
+    padding: 50px;
+    padding-bottom: 10%;
+  }
+
   .card,
   .info-card,
   .status-card {
@@ -323,6 +328,11 @@ button {
 @media (max-width: 768px) {
   .card-table {
     grid-template-columns: 1fr;
+  }
+
+  .content {
+    padding: 50px;
+    padding-bottom: 10%;
   }
 
   .card,
@@ -362,6 +372,11 @@ button {
     grid-template-columns: 1fr;
   }
 
+  .content {
+    padding: 50px;
+    padding-bottom: 10%;
+  }
+
   .card,
   .info-card,
   .status-card {
@@ -397,6 +412,11 @@ button {
 @media (max-width: 400px) {
   .card-table {
     grid-template-columns: 1fr;
+  }
+
+  .content {
+    padding: 50px;
+    padding-bottom: 10%;
   }
 
   .card {
