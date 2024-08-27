@@ -9,43 +9,43 @@
   <meta charset="UTF-8" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
   <script type="text/javascript">
-    // Create a client instance
-    var client = new Paho.MQTT.Client("mqtt.eclipseprojects.io", Number(443), "clientId" + new Date().getTime());
-
-    // Set callback handlers
-    client.onConnectionLost = onConnectionLost;
-    client.onMessageArrived = onMessageArrived;
-
-    // Connect the client
-    client.connect({ useSSL: true, onSuccess: onConnect });
-
-    // Called when the client connects
-    function onConnect() {
-      // Once a connection has been made, make a subscription and send a message.
-      console.log("onConnect");
-      client.subscribe("/topic/test1");
-      message = new Paho.MQTT.Message("Hello From Browser!");
-      message.destinationName = "/topic/test0";
-      client.send(message);
-    }
-
-    // Called when the client loses its connection
-    function onConnectionLost(responseObject) {
-      if (responseObject.errorCode !== 0) {
-        console.log("onConnectionLost:" + responseObject.errorMessage);
-      }
-    }
-
-    // Called when a message arrives
-    function onMessageArrived(message) {
-      // console.log("onMessageArrived:"+message.payloadString);
-      var table = document.getElementById("messageTable").getElementsByTagName('tbody')[0];
-      var row = table.insertRow(-1);
-      var cell1 = row.insertCell(0);
-      cell1.innerHTML = message.payloadString;
-    }
-
-  </script>
+//     // Create a client instance
+//     var client = new Paho.MQTT.Client("mqtt.eclipseprojects.io", Number(443), "clientId" + new Date().getTime());
+// 
+//     // Set callback handlers
+//     client.onConnectionLost = onConnectionLost;
+//     client.onMessageArrived = onMessageArrived;
+// 
+//     // Connect the client
+//     client.connect({ useSSL: true, onSuccess: onConnect });
+// 
+//     // Called when the client connects
+//     function onConnect() {
+//       // Once a connection has been made, make a subscription and send a message.
+//       console.log("onConnect");
+//       client.subscribe("/topic/test1");
+//       message = new Paho.MQTT.Message("Hello From Browser!");
+//       message.destinationName = "/topic/test0";
+//       client.send(message);
+//     }
+// 
+//     // Called when the client loses its connection
+//     function onConnectionLost(responseObject) {
+//       if (responseObject.errorCode !== 0) {
+//         console.log("onConnectionLost:" + responseObject.errorMessage);
+//       }
+//     }
+// 
+//     // Called when a message arrives
+//     function onMessageArrived(message) {
+//       // console.log("onMessageArrived:"+message.payloadString);
+//       var table = document.getElementById("messageTable").getElementsByTagName('tbody')[0];
+//       var row = table.insertRow(-1);
+//       var cell1 = row.insertCell(0);
+//       cell1.innerHTML = message.payloadString;
+//     }
+// 
+//   </script>
 </head>
 
 <body>
@@ -71,11 +71,11 @@
         </strong>
       </p>
     </div>
-    <div class="card info-card" style="display: none;">
+    <div class="card info-card" style="display: block;">
       <h3>General information</h3>
       <p class="infoReading"><span id="infoContainer"></span></p>
     </div>
-    <div class="card status-card" style="display: none;">
+    <div class="card status-card" style="display: block;">
       <h4>Status</h4>
       <p class="statusReading"><span id="statusContainer"></span></p>
       <p class="gray-label" id="timestamp"></p>
@@ -583,7 +583,7 @@
         // Create a container for the SVG
         const svgContainer = document.createElement('div');
         svgContainer.className = 'io-card'; // Assign the class to the container
-        svgContainer.style.display = 'none'; // Hide the container initially
+        svgContainer.style.display = 'block'; // Hide the container initially
         svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
 
         document.addEventListener('ioStatusChange', function(e) {
@@ -755,80 +755,80 @@
       .catch(error => console.error('Error:', error));
   };
 
-  const onSignalSvgLoad = function () {
-    fetch('https://raw.githubusercontent.com/DarkMantrid/SM-WebBLE-Server/main/radio_signal.svg')
-      .then(response => response.text())
-      .then(svgText => {
-        const parser = new DOMParser();
-        const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+//   const onSignalSvgLoad = function () {
+//     fetch('https://raw.githubusercontent.com/DarkMantrid/SM-WebBLE-Server/main/radio_signal.svg')
+//       .then(response => response.text())
+//       .then(svgText => {
+//         const parser = new DOMParser();
+//         const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+// 
+//         // Create a container for the SVG
+//         const svgContainer = document.createElement('div');
+//         svgContainer.className = 'signal-card'; // Assign the class to the container
+//         svgContainer.style.display = 'none'; // Hide the container initially
+//         svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
+// 
+//         // Append the container to the HTML document's body
+//         document.body.appendChild(svgContainer);
+// 
+//         const signals = [
+//           { name: 'Center', id: 'path1' },
+//           { name: 'L1', id: 'path2' },
+//           { name: 'R1', id: 'path2-9' },
+//           { name: 'L2', id: 'path2-6' },
+//           { name: 'R2', id: 'path2-6-7' },
+//           { name: 'L3', id: 'path2-6-9' },
+//           { name: 'R3', id: 'path2-6-9-1' },
+//         ];
+// 
+//         const signalElements = signals.map(signal => {
+//           const element = svgContainer.querySelector('#' + signal.id);
+//           if (element) {
+//             return element;
+//           } else {
+//             console.error(`Element with id ${signal.id} not found`);
+//             return null;
+//           }
+//         }).filter(element => element !== null); // filter out any null elements
+// 
+//         function updateSignalStrength(strength) {
+//           let color;
+//           if (strength === 0) {
+//             color = '#A9A9A9'; // Default color
+//           } else if (strength === 1) {
+//             color = '#FE0000';
+//           } else if (strength === 2) {
+//             color = '#FF8000';
+//           } else {
+//             color = '#00CC00';
+//           }
+// 
+//           // Update the center path based on the signal strength
+//           signalElements[0].style.fill = strength > 0 ? color : '#A9A9A9'; // Default color
+// 
+//           // Update the pairs based on the signal strength
+//           for (let i = 1; i < signalElements.length; i += 2) {
+//             if (i < strength * 2) {
+//               signalElements[i].style.fill = color;
+//               signalElements[i + 1].style.fill = color;
+//             } else {
+//               signalElements[i].style.fill = '#A9A9A9'; // Default color
+//               signalElements[i + 1].style.fill = '#A9A9A9'; // Default color
+//             }
+//           }
+//         }
+// 
+//         // Generate a random signal strength every x seconds
+//         setInterval(function () {
+//           const simulatedStrength = Math.floor(Math.random() * ((signalElements.length - 1) / 2 + 1)); // Generates a random number between 0 and the number of signal pairs
+//           updateSignalStrength(simulatedStrength);
+//         }, 600);
+//       })
+//       .catch(error => console.error('Error:', error));
+//   };
 
-        // Create a container for the SVG
-        const svgContainer = document.createElement('div');
-        svgContainer.className = 'signal-card'; // Assign the class to the container
-        svgContainer.style.display = 'none'; // Hide the container initially
-        svgContainer.appendChild(svgDoc.documentElement); // Append the SVG to the container
-
-        // Append the container to the HTML document's body
-        document.body.appendChild(svgContainer);
-
-        const signals = [
-          { name: 'Center', id: 'path1' },
-          { name: 'L1', id: 'path2' },
-          { name: 'R1', id: 'path2-9' },
-          { name: 'L2', id: 'path2-6' },
-          { name: 'R2', id: 'path2-6-7' },
-          { name: 'L3', id: 'path2-6-9' },
-          { name: 'R3', id: 'path2-6-9-1' },
-        ];
-
-        const signalElements = signals.map(signal => {
-          const element = svgContainer.querySelector('#' + signal.id);
-          if (element) {
-            return element;
-          } else {
-            console.error(`Element with id ${signal.id} not found`);
-            return null;
-          }
-        }).filter(element => element !== null); // filter out any null elements
-
-        function updateSignalStrength(strength) {
-          let color;
-          if (strength === 0) {
-            color = '#A9A9A9'; // Default color
-          } else if (strength === 1) {
-            color = '#FE0000';
-          } else if (strength === 2) {
-            color = '#FF8000';
-          } else {
-            color = '#00CC00';
-          }
-
-          // Update the center path based on the signal strength
-          signalElements[0].style.fill = strength > 0 ? color : '#A9A9A9'; // Default color
-
-          // Update the pairs based on the signal strength
-          for (let i = 1; i < signalElements.length; i += 2) {
-            if (i < strength * 2) {
-              signalElements[i].style.fill = color;
-              signalElements[i + 1].style.fill = color;
-            } else {
-              signalElements[i].style.fill = '#A9A9A9'; // Default color
-              signalElements[i + 1].style.fill = '#A9A9A9'; // Default color
-            }
-          }
-        }
-
-        // Generate a random signal strength every x seconds
-        setInterval(function () {
-          const simulatedStrength = Math.floor(Math.random() * ((signalElements.length - 1) / 2 + 1)); // Generates a random number between 0 and the number of signal pairs
-          updateSignalStrength(simulatedStrength);
-        }, 600);
-      })
-      .catch(error => console.error('Error:', error));
-  };
-
-  window.onload = onDisplayLoad;
-  window.onload = onSignalSvgLoad;
+  // window.onload = onDisplayLoad;
+  // window.onload = onSignalSvgLoad;
 
   window.addEventListener('load', onDisplayLoad);
 
